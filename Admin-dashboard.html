@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="Styles/Pages/Admin-Dashboard.css">
+</head>
+<body>
+    <div id="nav-bar">
+        <input id="nav-toggle" type="checkbox"/>
+        <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
+          <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
+          <hr/>
+        </div>
+        <div id="nav-content">
+            <a href="Admin-dashboard.html"> 
+                <div class="nav-button active" ><img src="images/home.png" alt=""><span>Dashboard</span></div>
+            </a>
+            <a href="admin-lost.html"> 
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Lost Items</span></div>
+            </a>
+            <a href="admin-Found.html">
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Found Items</span></div>
+            </a>
+            <a href="admin-match.html"> 
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Matched Items</span></div>
+            </a>
+            <a href="admin-accounts.html"> 
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Accounts</span></div>
+            </a>
+        
+          <hr/>
+          <div class="nav-button"><i class="fas fa-gem"></i><span>Logout</span></div>
+          <div id="nav-content-highlight"></div>
+        </div>
+        <input id="nav-footer-toggle" type="checkbox"/>
+        <div id="nav-footer">
+          <div id="nav-footer-heading">
+            <div id="nav-footer-avatar"><img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547"/></div>
+            <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>
+            <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
+          </div>
+          <div id="nav-footer-content">
+            <Lorem>ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Lorem>
+          </div>
+        </div>
+      </div>
+
+    <div class="dashboard">
+        <h1>Dashboard</h1>
+        <div class="cards-container">
+            <div class="card lost">
+                <p id="lost-item-count">0</p>
+                <span class="lost">Lost Item</span>
+            </div>
+            <div class="card found">
+                <p id="found-item-count">0</p>
+                <span class="found">Found Item</span>
+            </div>
+            <div class="card matched">
+                <p>0</p>
+                <span class="matched">Matched Item</span>
+            </div>
+            <div class="card">
+                <p id="student-account-count">0</p>
+                <span>Student Account</span>
+            </div>
+            <div class="card">
+                <p id="admin-account-count">0</p>
+                <span>Admin Account</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+function updateDashboardCounts() {
+    const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+    const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+
+    let studentCount = 0;
+    let adminCount = 0;
+
+   
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const accountData = JSON.parse(localStorage.getItem(key));
+
+        if (accountData) {
+            if (accountData.accountType === 'student') {
+                studentCount++;
+            } else if (accountData.accountType === 'admin') {
+                adminCount++;
+            }
+        }
+    }
+
+   
+    document.getElementById('lost-item-count').textContent = lostItems.length;
+    document.getElementById('found-item-count').textContent = foundItems.length;
+    document.getElementById('student-account-count').textContent = studentCount;
+    document.getElementById('admin-account-count').textContent = adminCount;
+}
+
+window.onload = updateDashboardCounts;
+
+    </script>
+</body>
+</html>

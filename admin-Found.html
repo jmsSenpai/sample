@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Found Items</title>
+    <link rel="stylesheet" href="Styles/Pages/admin-found.css"> 
+</head>
+<body>
+    <div id="nav-bar">
+        <input id="nav-toggle" type="checkbox"/>
+        <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
+          <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
+          <hr/>
+        </div>
+        <div id="nav-content">
+            <a href="Admin-dashboard.html"> 
+                <div class="nav-button " ><img src="images/home.png" alt=""><span>Dashboard</span></div>
+            </a>
+            <a href="admin-lost.html"> 
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Lost Items</span></div>
+            </a>
+            <a href="admin-Found.html">
+                <div class="nav-button active"><img src="images/home.png" alt=""><span>Found Items</span></div>
+            </a>
+            <a href="admin-match.html"> 
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Matched Items</span></div>
+            </a>
+            <a href="admin-accounts.html">  
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Accounts</span></div>
+            </a>
+        
+          <hr/>
+          <div class="nav-button"><i class="fas fa-gem"></i><span>Logout</span></div>
+          <div id="nav-content-highlight"></div>
+        </div>
+        <input id="nav-footer-toggle" type="checkbox"/>
+        <div id="nav-footer">
+          <div id="nav-footer-heading">
+            <div id="nav-footer-avatar"><img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547"/></div>
+            <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>
+            <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
+          </div>
+          <div id="nav-footer-content">
+            <Lorem>ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Lorem>
+          </div>
+        </div>
+      </div>
+
+    <div class="found-items">
+        <h1 class="title">Found Items</h1>
+        <div class="items-list" id="items-list"></div>
+    </div>
+
+  
+    <div id="detailsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Item Details</h2>
+            <img id="modal-image" src="" alt="Item Image" style="max-width: 100%; height: auto;">
+            <p><strong>Student Name:</strong> <span id="modal-studentName"></span></p>
+            <p><strong>Category:</strong> <span id="modal-category"></span></p>
+            <p><strong>Item Name:</strong> <span id="modal-itemName"></span></p>
+            <p><strong>Found at:</strong> <span id="modal-foundAt"></span></p>
+            <p><strong>Description:</strong> <span id="modal-description"></span></p>
+            <button onclick="deleteItem()" id="Delete">Delete</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            let sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("collapsed");
+        }
+
+        function displayFoundItems() {
+        const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+        const itemsList = document.getElementById('items-list');
+        itemsList.innerHTML = "";
+
+        foundItems.forEach((item, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.classList.add('item');
+            itemDiv.innerHTML = `
+                <img src="${item.image}" alt="Item Image" style="width: 100px; height: auto;">
+                <p><strong>Description:</strong> ${item.description}</p>
+                <button onclick='showDetails(${index})'>See Details</button>
+                <button onclick='deleteItem(${index})'>Delete</button>
+            `;
+            itemsList.appendChild(itemDiv);
+        });
+    }
+
+    function showDetails(index) {
+        const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+        const item = foundItems[index];
+        
+        document.getElementById('modal-studentName').innerText = item.name;
+        document.getElementById('modal-category').innerText = item.category;
+        document.getElementById('modal-itemName').innerText = item.itemName;
+        document.getElementById('modal-foundAt').innerText = item.foundAt;
+        document.getElementById('modal-description').innerText = item.description;
+        document.getElementById('modal-image').src = item.image || 'images/default-image.png';
+        document.getElementById('detailsModal').style.display = 'block';
+        document.getElementById('detailsModal').setAttribute('data-index', index);
+    }
+
+    function closeModal() {
+        document.getElementById('detailsModal').style.display = 'none';
+    }
+
+    function deleteItem(index) {
+        let foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+        foundItems.splice(index, 1);
+        localStorage.setItem('foundItems', JSON.stringify(foundItems));
+        displayFoundItems();
+        closeModal();
+    }
+
+    window.onload = displayFoundItems;
+    </script>
+</body>
+</html>

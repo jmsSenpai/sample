@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts</title>
+    <link rel="stylesheet" href="Styles/Pages/admin-accept-student.css">
+</head>
+<body>
+
+    <div id="nav-bar">
+        <input id="nav-toggle" type="checkbox"/>
+        <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
+          <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
+          <hr/>
+        </div>
+        <div id="nav-content">
+            <a href="Admin-dashboard.html"> 
+                <div class="nav-button " ><img src="images/home.png" alt=""><span>Dashboard</span></div>
+            </a>
+            <a href="admin-lost.html"> 
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Lost Items</span></div>
+            </a>
+            <a href="admin-Found.html">
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Found Items</span></div>
+            </a>
+            <a href="admin-match.html"> 
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Matched Items</span></div>
+            </a>
+            <a href="admin-accounts.html"> 
+                <div class="nav-button active"><img src="images/home.png" alt=""><span>Accounts</span></div>
+            </a>
+        
+          <hr/>
+          <div class="nav-button"><i class="fas fa-gem"></i><span>Logout</span></div>
+          <div id="nav-content-highlight"></div>
+        </div>
+        <input id="nav-footer-toggle" type="checkbox"/>
+        <div id="nav-footer">
+          <div id="nav-footer-heading">
+            <div id="nav-footer-avatar"><img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547"/></div>
+            <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>
+            <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
+          </div>
+          <div id="nav-footer-content">
+            <Lorem>ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Lorem>
+          </div>
+        </div>
+      </div>
+
+    <div class="accounts-content">
+        <a class="back-btn" href="admin-accounts.html">Back</a>
+        <h1 class="title">Student Accounts</h1>
+        <div class="accounts-table">
+            <div class="table-header">
+                <div class="header-item">Name</div>
+                <div class="header-item">Grade & Section</div>
+                <div class="header-item">Username</div>
+                <div class="header-item">Actions</div>
+            </div>
+            <div id="student-accounts"></div> 
+        </div>
+    </div>
+   
+    <div id="student-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+        <div id="modal-content" style="background-color:white; margin:15% auto; padding:20px; border:1px solid #888;    width:80%;">       
+         </div>
+    </div>
+
+    <script src="scripts/accept -student.js">
+       
+    </script>
+</body>
+</html>

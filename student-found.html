@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Found Item</title>
+    <link rel="stylesheet" href="Styles/Pages/student-found.css">
+</head>
+<body>
+    <div id="nav-bar">
+        <input id="nav-toggle" type="checkbox"/>
+        <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
+          <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
+          <hr/>
+        </div>
+        <div id="nav-content">
+            <a href="student-dashboard.html"> 
+                <div class="nav-button " ><img src="images/home.png" alt=""><span>Dashboard</span></div>
+            </a>
+            <a href="student-lost.html"> 
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Lost Items</span></div>
+            </a>
+            <a href="#">
+                <div class="nav-button active"><img src="images/home.png" alt=""><span>Found Items</span></div>
+            </a>
+        
+          <hr/>
+          <div class="nav-button"><i class="fas fa-gem"></i><span>Logout</span></div>
+          <div id="nav-content-highlight"></div>
+        </div>
+        <input id="nav-footer-toggle" type="checkbox"/>
+        <div id="nav-footer">
+          <div id="nav-footer-heading">
+            <div id="nav-footer-avatar"><img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547"/></div>
+            <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Student</span></div>
+            <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
+          </div>
+          <div id="nav-footer-content">
+            <Lorem>ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Lorem>
+          </div>
+        </div>
+      </div>
+
+    <div class="dashboard">
+        <h1>Found an item?</h1>
+        <p style="font-size: 1.2em;">Kindly fill up the details for easy tracking.</p>
+        
+        <form id="found-item-form" class="found-item-form" onsubmit="submitForm(event)">
+            <div class="input-group">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <select id="category" required>
+                    <option value="">Select Category</option>
+                    <option value="Personal Belongings">Personal Belongings</option>
+                    <option value="Electronics & Gadgets">Electronics & Gadgets</option>
+                    <option value="Clothing & Accessories">Clothing & Accessories</option>
+                    <option value="Identification & Documents">Identification & Documents</option>
+                    <option value="Bags & Luggage">Bags & Luggage</option>
+                    <option value="Keys & Security Items">Keys & Security Items</option>
+                    <option value="Books & Stationery">Books & Stationery</option>
+                    <option value="Sports & Fitness Equipment">Sports & Fitness Equipment</option>
+                    <option value="Transportation & Travel Items">Transportation & Travel Items</option>
+                    <option value="Miscellaneous Items">Miscellaneous Items</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <input type="text" id="itemName" placeholder="Name of the Item" required>
+                <input type="text" id="foundAt" placeholder="Found at" required>
+            </div>
+            <input type="file" id="itemImage" accept="image/*" required>
+            <textarea id="description" placeholder="Short description" required></textarea>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            let sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("collapsed");
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const category = document.getElementById('category').value;
+            const itemName = document.getElementById('itemName').value;
+            const foundAt = document.getElementById('foundAt').value;
+            const description = document.getElementById('description').value;
+            const imageFile = document.getElementById('itemImage').files[0];
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imageBase64 = event.target.result;
+                const foundItem = { name, category, itemName, foundAt, description, image: imageBase64 };
+                
+                let foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+                foundItems.push(foundItem);
+                localStorage.setItem('foundItems', JSON.stringify(foundItems));
+                
+                alert("Item submitted successfully!");
+                document.getElementById('found-item-form').reset();
+            };
+            reader.readAsDataURL(imageFile);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Styles/Pages/student-login.css">
+    <title>Student Login</title>
+</head>
+<body>
+    <div class="container" id="container">
+        <!-- Sign Up Form -->
+        <div class="form-container sign-up-container">
+            <form id="signUpForm">
+                <h1>Sign up</h1>
+                <div class="input-columns">
+                    <div class="form-grid">
+                        <input type="text" placeholder="Last Name" id="last-name" />
+                        <input type="text" placeholder="First Name" id="first-name" />
+                        <input type="text" placeholder="Middle Name" id="middle-name" />
+                        <input type="text" placeholder="Grade & Section" id="grade-section" />
+                        <input type="email" placeholder="Email" id="email" />
+                        <input type="text" placeholder="Username" id="username" /> <!-- Added username input -->
+                        <input type="password" placeholder="Password" id="password" />
+                        <input type="password" placeholder="Confirm Password" id="confirm-password" />
+                
+                        <div class="file-wrapper">
+                            <label for="student-id">Upload Student ID</label>
+                            <input type="file" id="student-id" />
+                        </div>
+                
+                        <div class="security-wrapper">
+                             <select id="security-question">
+                                <option value="">Select a question</option>
+                                <option value="pet">What is your pet’s name?</option>
+                                <option value="school">What was the name of your first school?</option>
+                                <option value="city">In what city were you born?</option>
+                                <option value="nickname">What is your childhood nickname?</option>
+                            </select>
+                            <input type="text" placeholder="Your Answer" id="security-answer" />
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit">Create</button>
+                <div class="button-row">
+                    <span>Already have an account?</span>
+                    <input type="button" id="signIn" value="Sign In">
+                </div>
+            </form>
+        </div>
+
+        <!-- Sign In Form -->
+        <div class="form-container sign-in-container">
+            <form id="signInForm">
+                <h1>Sign in</h1>
+                <input type="text" placeholder="Username" id="student-email" /><br>
+                <input type="password" placeholder="Password" id="student-pass" />
+                <a href="#" id="forgotLink">Forgot your password?</a><br>
+                <button type="submit">Sign In</button>
+                <div class="button-row">
+                    <p>Don't have an account?</p>
+                    <input type="button" id="signUp" value="Sign Up">
+                </div>
+            </form>
+        </div>
+
+        <!-- Overlay -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left"></div>
+                <div class="overlay-panel overlay-right"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="forgotModal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="closeModal">&times;</span>
+          <h2>Reset Password</h2>
+          <input type="email" id="forgot-email" placeholder="Email" required />
+          <select id="forgot-question" required>
+            <option value="">Select your question</option>
+            <option value="pet">What is your pet’s name?</option>
+            <option value="school">What was the name of your first school?</option>
+            <option value="city">In what city were you born?</option>
+            <option value="nickname">What is your childhood nickname?</option>
+          </select>
+          <input type="text" id="forgot-answer" placeholder="Your Answer" required />
+          <div id="password-fields" style="display: none;">
+              <input type="password" id="new-password" placeholder="New Password" required />
+              <input type="password" id="confirm-password" placeholder="Confirm Password" required />
+          </div>
+          <button type="button" id="resetPassword">Reset Password</button>
+        </div>
+    </div>
+
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeMessageModal">&times;</span>
+            <p id="messageText"></p>
+        </div>
+    </div>
+    
+    <script src="scripts/student-login.js"></script>
+</body>
+</html>

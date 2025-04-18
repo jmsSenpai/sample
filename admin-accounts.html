@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts</title> 
+    <link rel="stylesheet" href="Styles/Pages/admin-accounts.css"> 
+</head>
+<body>
+    <div id="nav-bar">
+        <input id="nav-toggle" type="checkbox"/>
+        <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
+          <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
+          <hr/>
+        </div>
+        <div id="nav-content">
+            <a href="Admin-dashboard.html"> 
+                <div class="nav-button " ><img src="images/home.png" alt=""><span>Dashboard</span></div>
+            </a>
+            <a href="admin-lost.html"> 
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Lost Items</span></div>
+            </a>
+            <a href="admin-Found.html">
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Found Items</span></div>
+            </a>
+            <a href="admin-match.html"> 
+                <div class="nav-button"><img src="images/home.png" alt=""><span>Matched Items</span></div>
+            </a>
+            <a href="Admin-dashboard.html"> 
+                <div class="nav-button active"><img src="images/home.png" alt=""><span>Accounts</span></div>
+            </a>
+        
+          <hr/>
+          <div class="nav-button"><i class="fas fa-gem"></i><span>Logout</span></div>
+          <div id="nav-content-highlight"></div>
+        </div>
+        <input id="nav-footer-toggle" type="checkbox"/>
+        <div id="nav-footer">
+          <div id="nav-footer-heading">
+            <div id="nav-footer-avatar"><img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547"/></div>
+            <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>
+            <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
+          </div>
+          <div id="nav-footer-content">
+            <Lorem>ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Lorem>
+          </div>
+        </div>
+      </div>
+
+    <div class="accounts-content"> 
+        <h1 class="title">Accounts</h1>
+        <div class="accounts-list"> 
+            <div class="account">
+                <a href="admin-accept-student.html">
+                <div class="account-image"><img src="images/student.png" alt=""></div> 
+                <div class="account-details">
+                    <h2>Student Accounts</h2>
+                </div>
+            </a>
+            </div>
+            <div class="account">
+                <a href="admin-adminAccount.html">
+                <div class="account-image"><img src="images/settings.png" alt=""></div> 
+                <div class="account-details">
+                    <h2>Admin Accounts</h2>
+                </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+         function toggleMenu() {
+            let sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("collapsed");
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+    </script>
+</body>
+</html>
