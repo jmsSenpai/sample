@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let attempts = 0;
     let lockedUntil = null;
 
-  
     document.getElementById("signUp").addEventListener('click', () => {
         document.getElementById('container').classList.add("right-panel-active");
     });
@@ -27,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('container').classList.remove("right-panel-active");
     });
 
-  
     forgotLink.addEventListener("click", function (e) {
         e.preventDefault();
         forgotModal.style.display = "block";
@@ -49,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    
     function showMessage(message, autoClose = false) {
         messageText.innerText = message;
         messageModal.style.display = "block";
@@ -57,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (autoClose) {
             setTimeout(function () {
                 messageModal.style.display = "none";
-            }, 2000); 
+            }, 2000);
         }
     }
 
@@ -65,59 +62,79 @@ document.addEventListener("DOMContentLoaded", function () {
         messageModal.style.display = "none";
     });
 
-    
     resetPasswordBtn.addEventListener("click", function () {
         const username = document.getElementById("forgot-email").value.trim();
+        console.log("Username entered during password reset:", username);
+    
         const question = document.getElementById("forgot-question").value.trim();
         const answer = document.getElementById("forgot-answer").value.trim();
         const newPassword = document.getElementById("new-password").value.trim();
-        const confirmPassword = document.getElementById("confirm-password").value.trim();
+        const confirmPassword = document.getElementById("reset-confirm-password").value.trim();
 
-        const studentData = JSON.parse(localStorage.getItem(username)); 
-        const now = new Date().getTime();
-
+    
+        
+        if (!username || !question || !answer) {
+            showMessage("Please fill in the required fields.");
+            return;
+        }
+    
        
+        const studentData = JSON.parse(localStorage.getItem(username));
+        console.log("Current student data from localStorage:", studentData);
+    
+        const now = new Date().getTime();
+    
         if (lockedUntil && now < lockedUntil) {
             const seconds = Math.ceil((lockedUntil - now) / 1000);
             showMessage(`Too many attempts. Please try again in ${seconds} second(s).`);
             return;
         }
-
+    
         if (!studentData) {
             showMessage("No account found with this username.");
             return;
         }
-
+    
         if (studentData.securityQuestion === question && studentData.securityAnswer === answer) {
-            
-            passwordFields.style.display = "block";
-
+            passwordFields.style.display = "block"; 
+    
+           
             if (!newPassword || !confirmPassword) {
                 showMessage("Please enter and confirm your new password.");
                 return;
             }
-
+    
             if (newPassword !== confirmPassword) {
                 showMessage("Passwords do not match.");
                 return;
             }
-
+    
             if (!isValidPassword(newPassword)) {
                 showMessage("Password must contain at least one lowercase letter, one uppercase letter, one number, and be at least 8 characters long.");
                 return;
             }
-
-            studentData.password = newPassword;
-            localStorage.setItem(username, JSON.stringify(studentData));
+    
+           
+            studentData.password = newPassword; 
+            console.log("Password updated. New password:", studentData.password);
+    
+           
+            localStorage.setItem(username, JSON.stringify(studentData)); 
+    
+            
+            const updatedStudentData = JSON.parse(localStorage.getItem(username));
+            console.log("Updated student data:", updatedStudentData); 
+    
+          
             showMessage("Password reset successful.");
             forgotModal.style.display = "none";
-            passwordFields.style.display = "none";
-            attempts = 0;
+            passwordFields.style.display = "none"; s
+            attempts = 0; 
         } else {
            
             attempts++;
             if (attempts >= 5) {
-                lockedUntil = new Date().getTime() + 60000; 
+                lockedUntil = new Date().getTime() + 60000;
                 showMessage("Too many failed attempts. Try again in 1 minute.");
                 passwordFields.style.display = "none";
             } else {
@@ -126,7 +143,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
-
+    
+    
+    
     
     signUpForm.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -135,13 +154,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const firstName = document.getElementById('first-name').value.trim();
         const middleName = document.getElementById('middle-name').value.trim();
         const gradeSection = document.getElementById('grade-section').value.trim();
-        const email = document.getElementById('email').value.trim(); 
-        const username = document.getElementById('username').value.trim(); 
+        const email = document.getElementById('email').value.trim();
+        const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
         const idFileInput = document.getElementById('student-id');
         const securityQuestion = document.getElementById('security-question').value;
         const securityAnswer = document.getElementById('security-answer').value.trim();
+
+        console.log("Student email during registration:", email);
 
         if (!lastName || !firstName || !username || !password || !confirmPassword || !securityAnswer) {
             showMessage("Please fill in all required fields.");
@@ -173,8 +194,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 firstName,
                 middleName,
                 gradeSection,
-                email, 
-                username, 
+                email,
+                username,
                 password,
                 accepted: false,
                 accountType: 'student',
@@ -183,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 securityAnswer
             };
 
-            localStorage.setItem(username, JSON.stringify(studentData)); 
+            localStorage.setItem(username, JSON.stringify(studentData));
             showMessage("Account created! Please wait for admin approval.");
             signUpForm.reset();
         };
@@ -201,9 +222,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (studentData) {
             if (studentData.password === password) {
                 if (studentData.accepted) {
-                    showMessage("Login successful!", true); 
+                    showMessage("Login successful!", true);
                     setTimeout(function () {
-                        window.location.href = 'student-dashboard.html'; 
+                        window.location.href = 'student-dashboard.html';
                     }, 2000);
                 } else {
                     showMessage("Your account is not yet accepted by the admin.");

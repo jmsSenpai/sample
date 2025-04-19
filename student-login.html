@@ -87,8 +87,9 @@
           </select>
           <input type="text" id="forgot-answer" placeholder="Your Answer" required />
           <div id="password-fields" style="display: none;">
-              <input type="password" id="new-password" placeholder="New Password" required />
-              <input type="password" id="confirm-password" placeholder="Confirm Password" required />
+            <input type="password" id="new-password" placeholder="New Password" required autocomplete="new-password" />
+            <input type="password" id="reset-confirm-password" placeholder="Confirm Password" required autocomplete="new-password" />
+
           </div>
           <button type="button" id="resetPassword">Reset Password</button>
         </div>
