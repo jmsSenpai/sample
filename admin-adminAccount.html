@@ -31,7 +31,9 @@
             </a>
         
           <hr/>
-          <div class="nav-button"><i class="fas fa-gem"></i><span>Logout</span></div>
+          <div class="nav-button" id="logout-btn">
+            <img src="images/home.png" alt=""><span>Logout</span>
+        </div>
           <div id="nav-content-highlight"></div>
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
@@ -47,17 +49,53 @@
         </div>
       </div>
 
-    <div class="accounts-content">
+      <div class="accounts-content">
         <a class="back-btn" href="admin-accounts.html">Back</a>
-        <h1 class="title">Admin Accounts</h1>
+        <h1 class="title">Student Accounts</h1>
         <div class="accounts-table">
-            
+            <div class="table-header">
+                <div class="header-item">Name</div>
+                <div class="header-item">Grade & Section</div>
+                <div class="header-item">Username</div>
+                <div class="header-item">Actions</div>
             </div>
+            <div id="student-accounts"></div> 
+        </div>
+    </div>
+   
+    <div id="student-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+        <div id="modal-content" style="background-color:white; margin:15% auto; padding:20px; border:1px solid #888;    width:80%;">       
+         </div>
+    </div>
         <a href="admin-CreateAccount.html" class="create-account-btn">Create Account</a>
     </div>
 
     <script src="scripts/admin-login.js">
-      
+        document.addEventListener("DOMContentLoaded", function () {
+    
+    const logoutButton = document.getElementById("logout-btn");
+
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+          
+            document.body.classList.add("fade-out");
+
+           
+            setTimeout(function () {
+            
+                localStorage.removeItem("loggedInAdmin");
+
+                const inputs = document.querySelectorAll("input");
+                inputs.forEach(input => {
+                    input.value = "";
+                });
+
+                window.location.href = "admin-login.html";
+
+            }, 1000); 
+        });
+    }
+});
     </script>
 </body>
 </html>

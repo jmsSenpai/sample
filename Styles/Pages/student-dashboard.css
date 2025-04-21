@@ -292,16 +292,26 @@ label[for=nav-toggle] {
 
 #nav-footer-titlebox {
   position: relative;
-  margin-left: 16px;
+  margin-left: 30px;
   width: 10px;
   display: flex;
   flex-direction: column;
   transition: opacity 1s;
+  text-align: center;
+}
+
+#nav-footer-title{
+  margin-left: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  white-space: nowrap;
 }
 
 #nav-footer-subtitle {
   color: var(--navbar-light-secondary);
-  font-size: 0.6rem;
+  font-size: 0.8rem;
+  margin-left: 65px;
+  font-weight: bold;
 }
 
 #nav-footer-toggle:checked + #nav-footer {
@@ -390,5 +400,19 @@ label[for=nav-footer-toggle] {
   .dashboard {
       margin-left: 60px;
   }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.fade-out {
+  animation: fadeOut 1s forwards;
+}
+
+
+#logout-btn {
+  cursor: pointer;
 }
  

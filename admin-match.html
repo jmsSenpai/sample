@@ -31,7 +31,9 @@
             </a>
         
           <hr/>
-          <div class="nav-button"><i class="fas fa-gem"></i><span>Logout</span></div>
+          <div class="nav-button" id="logout-btn">
+            <img src="images/home.png" alt=""><span>Logout</span>
+        </div>
           <div id="nav-content-highlight"></div>
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
@@ -46,109 +48,28 @@
           </div>
         </div>
       </div>
-
-    <div class="found-items">
-        <h1 class="title">Matched Items</h1>
-        <div class="items-list">
-            <div class="item">
-                <div class="item-comparison">
-                    <div class="item-section">
-                        <img src="images/lost_iphone.jpg" alt="Lost iPhone">
-                        <p><strong>Lost:</strong> Black iPhone, cracked screen.</p>
-                    </div>
-                    <div class="item-section">
-                        <img src="images/found_smartphone.jpg" alt="Found Smartphone">
-                        <p><strong>Found:</strong> Damaged black smartphone.</p>
-                    </div>
-                </div>
-                <button class="details-button" onclick="openModal('modal1')">Details</button>
-            </div>
-
-            <div class="item">
-                <div class="item-comparison">
-                    <div class="item-section">
-                        <img src="images/lost_watch.jpg" alt="Lost Watch">
-                        <p><strong>Lost:</strong> Silver watch, leather strap.</p>
-                    </div>
-                    <div class="item-section">
-                        <img src="images/found_watch.jpg" alt="Found Watch">
-                        <p><strong>Found:</strong> Metallic watch with brown band.</p>
-                    </div>
-                </div>
-                <button class="details-button" onclick="openModal('modal2')">Details</button>
-            </div>
-
-            <div class="item">
-                <div class="item-comparison">
-                    <div class="item-section">
-                        <img src="images/lost_keys.jpg" alt="Lost Keys">
-                        <p><strong>Lost:</strong> Set of keys with blue keychain.</p>
-                    </div>
-                    <div class="item-section">
-                        <img src="images/found_keys.jpg" alt="Found Keys">
-                        <p><strong>Found:</strong> Keys with a light blue tag.</p>
-                    </div>
-                </div>
-                <button class="details-button" onclick="openModal('modal3')">Details</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal1" class="modal">
+      <div class="matched-container">
+        <h2>Matched Items</h2>
+        <div id="matched-list"></div>
+      </div>
+    
+     
+      <div id="matchModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal('modal1')">&times;</span>
-            <p><strong>Lost Item:</strong></p>
-            <p><strong>Name:</strong> John Doe</p>
-            <p><strong>Category:</strong> Electronics</p>
-            <p><strong>Last Seen:</strong> Library</p>
-            <p><strong>Description:</strong> Black iPhone 12, cracked screen.</p>
-            <br>
-            <p><strong>Found Item:</strong></p>
-            <p><strong>Name:</strong> Jane Smith</p>
-            <p><strong>Category:</strong> Electronics</p>
-            <p><strong>Found at:</strong> Park</p>
-            <p><strong>Description:</strong> Damaged black smartphone.</p>
-            <p><strong>Match Confidence:</strong> High (Similar Description)</p>
+          <span class="close" onclick="closeModal()">&times;</span>
+          <div id="modalDetails"></div>
         </div>
-    </div>
+      </div>
+    
+  
+      <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <img id="previewImg" src="" alt="Full Image">
+      </div>
+    <script src="scripts/match.js">
+        
+        
+        
 
-    <div id="modal2" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('modal2')">&times;</span>
-            <p><strong>Lost Item:</strong></p>
-            <p><strong>Name:</strong> Alice Johnson</p>
-            <p><strong>Category:</strong> Accessories</p>
-            <p><strong>Last Seen:</strong> Cafeteria</p>
-            <p><strong>Description:</strong> Silver watch with a leather strap.</p>
-            <br>
-            <p><strong>Found Item:</strong></p>
-            <p><strong>Name:</strong> Robert Brown</p>
-            <p><strong>Category:</strong> Accessories</p>
-            <p><strong>Found at:</strong> Gym</p>
-            <p><strong>Description:</strong> Metallic watch with a brown band.</p>
-            <p><strong>Match Confidence:</strong> Medium (General Similarity)</p>
-        </div>
-    </div>
-
-    <div id="modal3" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('modal3')">&times;</span>
-            <p><strong>Lost Item:</strong></p>
-            <p><strong>Name:</strong> Michael Davis</p>
-            <p><strong>Category:</strong> Personal Items</p>
-            <p><strong>Last Seen:</strong> Main Entrance</p>
-            <p><strong>Description:</strong> Set of keys with blue keychain.</p>
-            <br>
-            <p><strong>Found Item:</strong></p>
-            <p><strong>Name:</strong> Emily Wilson</p>
-            <p><strong>Category:</strong> Personal Items</p>
-            <p><strong>Found at:</strong> Parking Lot</p>
-            <p><strong>Description:</strong> Keys with a light blue tag.</p>
-            <p><strong>Match Confidence:</strong> High (Color Similarity)</p>
-        </div>
-    </div>
-
-    <script>
         function toggleMenu() {
             let sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("collapsed");
@@ -161,6 +82,32 @@
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = "none";
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+    
+    const logoutButton = document.getElementById("logout-btn");
+
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+          
+            document.body.classList.add("fade-out");
+
+           
+            setTimeout(function () {
+            
+                localStorage.removeItem("loggedInAdmin");
+
+                const inputs = document.querySelectorAll("input");
+                inputs.forEach(input => {
+                    input.value = "";
+                });
+
+                window.location.href = "admin-login.html";
+
+            }, 1000); 
+        });
+    }
+});
     </script>
 </body>
 </html>

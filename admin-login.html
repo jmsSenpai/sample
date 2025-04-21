@@ -10,25 +10,49 @@
 <body>
   <div class="container" id="container">
     <div class="form-container sign-in-container">
-      <form action="#" id="Admin-form">
-        <h1>Sign in</h1>
-        <span>or use your account</span>
-        <input type="email" placeholder="Email" id="admin-email">
-        <input type="password" placeholder="Password" id="admin-password">
-        <a href="#">Forgot your password?</a>
-        <input type="submit" value="Sign In" class="btn">
+      <form id="signInForm">
+          <h1>Sign in</h1>
+          <label for="admin-email">Username</label>
+          <input type="text" placeholder="Username" id="admin-email" /><br>
+          <label for="admin-pass">Password</label>
+          <input type="password" placeholder="Password" id="admin-pass" /><br>
+          <a href="#" id="forgotLink">Forgot your password?</a><br>
+          <button type="submit">Sign In</button>
+    
       </form>
-    </div>
-    <div class="overlay-container">
+  </div>
+
+  
+  <div class="overlay-container">
       <div class="overlay">
-        <div class="overlay-panel overlay-left">
-         
-        </div>
-        <div class="overlay-panel overlay-right">
-          
-        </div>
+          <div class="overlay-panel overlay-left"></div>
+          <div class="overlay-panel overlay-right"></div>
       </div>
+  </div>
+</div>
+
+<div id="forgotModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h2>Reset Password</h2>
+    <input type="email" id="forgot-email" placeholder="Email" required />
+    <select id="forgot-question" required>
+      <option value="">Select your question</option>
+      <option value="pet">What is your pet’s name?</option>
+      <option value="school">What was the name of your first school?</option>
+      <option value="city">In what city were you born?</option>
+      <option value="nickname">What is your childhood nickname?</option>
+    </select>
+    <input type="text" id="forgot-answer" placeholder="Your Answer" required />
+    <div id="password-fields" style="display: none;">
+      <input type="password" id="new-password" placeholder="New Password" required autocomplete="new-password" />
+      <input type="password" id="reset-confirm-password" placeholder="Confirm Password" required autocomplete="new-password" />
+
     </div>
+    <button type="button" id="resetPassword">Reset Password</button>
+  </div>
+</div>
+
   </div>
   
 </body>

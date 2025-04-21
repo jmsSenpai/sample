@@ -25,13 +25,15 @@
             </a>
         
           <hr/>
-          <div class="nav-button"><i class="fas fa-gem"></i><span>Logout</span></div>
+          <div class="nav-button" id="logout-btn">
+            <img src="images/home.png" alt=""><span>Logout</span>
+        </div>
           <div id="nav-content-highlight"></div>
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
         <div id="nav-footer">
           <div id="nav-footer-heading">
-            <div id="nav-footer-avatar"><img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547"/></div>
+            
             <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Student</span></div>
             <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
           </div>
@@ -66,7 +68,20 @@
                 <input type="text" id="itemName" placeholder="Name of the Item" required>
                 <input type="text" id="foundAt" placeholder="Found at" required>
             </div>
-            <input type="file" id="itemImage" accept="image/*" required>
+        
+            <div class="input-group">
+                <label for="dateFound">Date Found</label>
+                <input type="date" id="dateFound" required>
+                
+                <label for="itemColor">Item Color</label>
+                <input type="color" id="itemColor" value="rgb(255, 255, 255)" list="white">
+            </div>
+        
+            <div class="input-group file-group">
+                <label for="itemImage" class="file-label">Image of the Item</label>
+                <input type="file" id="itemImage" class="file-input" accept="image/*" required>
+            </div>
+        
             <textarea id="description" placeholder="Short description" required></textarea>
             <button type="submit" class="submit-btn">Submit</button>
         </form>
@@ -78,30 +93,107 @@
             sidebar.classList.toggle("collapsed");
         }
 
-        function submitForm(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('name').value;
-            const category = document.getElementById('category').value;
-            const itemName = document.getElementById('itemName').value;
-            const foundAt = document.getElementById('foundAt').value;
-            const description = document.getElementById('description').value;
-            const imageFile = document.getElementById('itemImage').files[0];
+        document.addEventListener("DOMContentLoaded", function () {
+            const fullName = sessionStorage.getItem("loggedInStudentName");
 
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const imageBase64 = event.target.result;
-                const foundItem = { name, category, itemName, foundAt, description, image: imageBase64 };
-                
-                let foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-                foundItems.push(foundItem);
-                localStorage.setItem('foundItems', JSON.stringify(foundItems));
-                
-                alert("Item submitted successfully!");
-                document.getElementById('found-item-form').reset();
+            if (fullName) {
+                const footerBox = document.getElementById("nav-footer-titlebox");
+                const title = document.getElementById("nav-footer-title");
+                const subtitle = document.getElementById("nav-footer-subtitle");
+
+                if (footerBox && title && subtitle) {
+                    title.textContent = fullName;
+                    subtitle.textContent = "Student";
+                }
+            }
+        });
+
+        function submitForm(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('name').value;
+        const category = document.getElementById('category').value;
+        const itemName = document.getElementById('itemName').value;
+        const foundAt = document.getElementById('foundAt').value;
+        const dateFound = document.getElementById('dateFound').value;
+        const itemColor = document.getElementById('itemColor').value;
+        const description = document.getElementById('description').value;
+        const imageFile = document.getElementById('itemImage').files[0];
+        
+       
+        const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+        const idFound = idGenerator(lostItems);
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const imageBase64 = event.target.result;
+            const foundItem = {
+                name, category, itemName, foundAt, dateFound, itemColor, description, image: imageBase64, idFound
             };
-            reader.readAsDataURL(imageFile);
+            
+           
+            let foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+            foundItems.push(foundItem);
+            localStorage.setItem('foundItems', JSON.stringify(foundItems));
+            
+            alert("Item submitted successfully!");
+            document.getElementById('found-item-form').reset();
+        };
+        reader.readAsDataURL(imageFile);
+    }
+
+    function idGenerator(foundItems) {
+        let id = Math.random() * 100000;
+        
+        for (let i = 0; i < foundItems.length; i++) {
+            if (foundItems[i].idFound === id) {
+                id = Math.random() * 100000;
+                i = 0; 
+            }
         }
+        return id;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+            const fullName = sessionStorage.getItem("loggedInStudentName");
+
+            if (fullName) {
+                const footerBox = document.getElementById("nav-footer-titlebox");
+                const title = document.getElementById("nav-footer-title");
+                const subtitle = document.getElementById("nav-footer-subtitle");
+
+                if (footerBox && title && subtitle) {
+                    title.textContent = fullName;
+                    subtitle.textContent = "Student";
+                }
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+    
+    const logoutButton = document.getElementById("logout-btn");
+
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+          
+            document.body.classList.add("fade-out");
+
+           
+            setTimeout(function () {
+            
+                localStorage.removeItem("loggedInAdmin");
+
+                const inputs = document.querySelectorAll("input");
+                inputs.forEach(input => {
+                    input.value = "";
+                });
+
+                window.location.href = "student-login.html";
+
+            }, 1000); 
+        });
+    }
+});
     </script>
 </body>
 </html>

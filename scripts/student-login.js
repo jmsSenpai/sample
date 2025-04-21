@@ -162,6 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const securityQuestion = document.getElementById('security-question').value;
         const securityAnswer = document.getElementById('security-answer').value.trim();
 
+
         console.log("Student email during registration:", email);
 
         if (!lastName || !firstName || !username || !password || !confirmPassword || !securityAnswer) {
@@ -212,28 +213,46 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     signInForm.addEventListener('submit', function (event) {
-        event.preventDefault();
+    event.preventDefault();
 
-        const username = document.getElementById('student-email').value.trim(); 
-        const password = document.getElementById('student-pass').value;
+    const username = document.getElementById('student-email').value.trim(); 
+    const password = document.getElementById('student-pass').value;
 
-        const studentData = JSON.parse(localStorage.getItem(username)); 
+    const studentData = JSON.parse(localStorage.getItem(username)); 
 
-        if (studentData) {
-            if (studentData.password === password) {
-                if (studentData.accepted) {
-                    showMessage("Login successful!", true);
-                    setTimeout(function () {
-                        window.location.href = 'student-dashboard.html';
-                    }, 2000);
-                } else {
-                    showMessage("Your account is not yet accepted by the admin.");
-                }
+    if (studentData) {
+        if (studentData.password === password) {
+            if (studentData.accepted) {
+                const fullName = getFormattedName(studentData);
+                sessionStorage.setItem("loggedInStudentName", fullName);
+        
+               
+                sessionStorage.setItem("loggedInStudentEmail", studentData.email);
+        
+                showMessage("Login successful!", true);
+                setTimeout(function () {
+                    window.location.href = 'student-dashboard.html'; 
+                }, 2000);
             } else {
-                showMessage("Incorrect password.");
+                showMessage("Your account is not yet accepted by the admin.");
             }
-        } else {
-            showMessage("No account found with this username.");
         }
-    });
+         else {
+            showMessage("Incorrect password.");
+        }
+    } else {
+        showMessage("No account found with this username.");
+    }
+});
+
+function getFormattedName(data) {
+    const first = capitalize(data.firstName);
+    
+    return `${first}`.trim();
+}
+
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
 });

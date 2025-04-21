@@ -26,13 +26,15 @@
             </a>
         
           <hr/>
-          <div class="nav-button"><i class="fas fa-gem"></i><span>Logout</span></div>
+          <div class="nav-button" id="logout-btn">
+            <img src="images/home.png" alt=""><span>Logout</span>
+        </div>
           <div id="nav-content-highlight"></div>
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
         <div id="nav-footer">
           <div id="nav-footer-heading">
-            <div id="nav-footer-avatar"><img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547"/></div>
+            
             <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Student</span></div>
             <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
           </div>
@@ -53,6 +55,48 @@
             let sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("collapsed");
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const fullName = sessionStorage.getItem("loggedInStudentName");
+
+            if (fullName) {
+                const footerBox = document.getElementById("nav-footer-titlebox");
+                const title = document.getElementById("nav-footer-title");
+                const subtitle = document.getElementById("nav-footer-subtitle");
+
+                if (footerBox && title && subtitle) {
+                    title.textContent = fullName;
+                    subtitle.textContent = "Student";
+                }
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+    
+    const logoutButton = document.getElementById("logout-btn");
+
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+          
+            document.body.classList.add("fade-out");
+
+           
+            setTimeout(function () {
+            
+                localStorage.removeItem("loggedInAdmin");
+
+                const inputs = document.querySelectorAll("input");
+                inputs.forEach(input => {
+                    input.value = "";
+                });
+
+                window.location.href = "student-login.html";
+
+            }, 1000); 
+        });
+    }
+});
+
     </script>
 </body>
 </html>

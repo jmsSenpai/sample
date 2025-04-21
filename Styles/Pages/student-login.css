@@ -10,7 +10,8 @@ body {
 	flex-direction: column;
 	font-family: 'Montserrat', sans-serif;
 	height: 100vh;
-	margin: -20px 0 50px;
+	margin: 0; /* Removed extra margin that could cause overflow */
+	overflow: hidden; /* Prevents scrolling */
 }
 
 h1 {

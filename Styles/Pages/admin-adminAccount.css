@@ -566,3 +566,17 @@ label[for=nav-footer-toggle] {
   position: relative;
   padding-bottom: 70px;
 }
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.fade-out {
+  animation: fadeOut 1s forwards;
+}
+
+
+#logout-btn {
+  cursor: pointer;
+}

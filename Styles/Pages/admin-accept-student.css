@@ -523,5 +523,19 @@ label[for=nav-footer-toggle] {
     background-color: #0056b3;
 }
 
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.fade-out {
+  animation: fadeOut 1s forwards;
+}
+
+
+#logout-btn {
+  cursor: pointer;
+}
+
 
 
