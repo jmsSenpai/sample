@@ -539,3 +539,193 @@ label[for=nav-footer-toggle] {
 
 
 
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  padding: 20px;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: var(--navbar-dark-primary);
+  color: var(--navbar-light-primary);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--navbar-light-primary);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: var(--navbar-dark-secondary);
+}
+
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.student-info {
+  display: grid;
+  gap: 15px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.info-item strong {
+  min-width: 120px;
+  color: var(--navbar-dark-primary);
+}
+
+.student-image {
+  margin-top: 10px;
+}
+
+.student-image strong {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--navbar-dark-primary);
+}
+
+.id-image-container {
+  max-width: 100%;
+  text-align: center;
+}
+
+.id-image-container img {
+  max-width: 100%;
+  max-height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.id-image-container p {
+  color: #666;
+  font-style: italic;
+}
+
+.modal-footer {
+  padding: 15px 20px;
+  text-align: right;
+  border-top: 1px solid #eee;
+  background-color: #f8f9fa;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.modal-close-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--navbar-dark-primary);
+  color: var(--navbar-light-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modal-close-btn:hover {
+  background-color: #5e0000;
+}
+
+@keyframes slideIn {
+  from {
+      transform: translateY(-50px);
+      opacity: 0;
+  }
+  to {
+      transform: translateY(0);
+      opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .modal-content {
+      width: 90%;
+  }
+
+  .info-item {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+
+  .info-item strong {
+      min-width: auto;
+  }
+}
+
+#nav-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+  padding: 15px 0; /* Add some vertical padding */
+}
+
+#nav-logo-container {
+  display: flex;
+  justify-content: center; 
+  text-align: center;
+}
+
+#nav-logo {
+  width: 60px; /* Adjust size as needed */
+  height: auto;
+  margin-right: 1px; /* Space between logo and text */
+  vertical-align: middle; /* Align with text */
+  border: 2px solid #ffffff; /* White outline around the logo */
+  border-radius: 50%; /* Optional: rounded corners for the outline */
+  background-color: #f0f0f0; 
+  padding: 3px; /* Space between image and outline */
+}
+
+#nav-title {
+  display: flex;
+  align-items: center; /* Vertically align logo and text */
+  text-decoration: none; /* Remove underline from link */
+  color: inherit; /* Match navbar text color */
+  font-size: 1.2em; /* Adjust text size as needed */
+}

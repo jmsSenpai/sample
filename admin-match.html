@@ -9,31 +9,43 @@
 <body>
     <div id="nav-bar">
         <input id="nav-toggle" type="checkbox"/>
-        <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
+        <div id="nav-header">
+          <div id="nav-logo-container">
+            <a id="nav-title" href="https://codepen.io" target="_blank">
+              <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
+              Lost & Found
+            </a>
+          </div>
           <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
           <hr/>
         </div>
         <div id="nav-content">
-            <a href="Admin-dashboard.html"> 
-                <div class="nav-button " ><img src="images/home.png" alt=""><span>Dashboard</span></div>
-            </a>
-            <a href="admin-lost.html"> 
-                <div class="nav-button"><img src="images/home.png" alt=""><span>Lost Items</span></div>
-            </a>
-            <a href="admin-Found.html">
-                <div class="nav-button"><img src="images/home.png" alt=""><span>Found Items</span></div>
-            </a>
-            <a href="admin-match.html"> 
-                <div class="nav-button active"><img src="images/home.png" alt=""><span>Matched Items</span></div>
-            </a>
-            <a href="admin-accounts.html">  
-                <div class="nav-button"><img src="images/home.png" alt=""><span>Accounts</span></div>
-            </a>
-        
-          <hr/>
-          <div class="nav-button" id="logout-btn">
-            <img src="images/home.png" alt=""><span>Logout</span>
-        </div>
+          <a href="Admin-dashboard.html"> 
+            <div class="nav-button"><img src="images/dashboard.png" alt=""><span>Dashboard</span></div>
+        </a>
+        <a href="admin-lost.html"> 
+            <div class="nav-button"><img src="images/lost item.png" alt=""><span>Lost Items</span></div>
+        </a>
+        <a href="admin-Found.html">
+            <div class="nav-button"><img src="images/found item.png" alt=""><span>Found Items</span></div>
+        </a>
+        <a href="admin-match.html"> 
+            <div class="nav-button active"><img src="images/matched.png" alt=""><span>Matched Items</span></div>
+        </a>
+        <a href="Admin-Report-Item.html">  
+            <div class="nav-button "><img src="images/item report.png" alt=""><span>Report An Item</span></div>
+        </a>
+        <a href="Admin-reports.html">  
+            <div class="nav-button "><img src="images/report.png" alt=""><span>Reports</span></div>
+        </a>
+        <a href="admin-accounts.html">  
+            <div class="nav-button "><img src="images/admin acc.png" alt=""><span>Accounts</span></div>
+        </a>
+    
+      <hr/>
+      <div class="nav-button" id="logout-btn">
+        <img src="images/logout.png" alt=""><span>Logout</span>
+    </div>
           <div id="nav-content-highlight"></div>
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
@@ -62,52 +74,21 @@
       </div>
     
   
-      <div id="imageModal" class="image-modal" onclick="closeImageModal()">
-        <img id="previewImg" src="" alt="Full Image">
-      </div>
-    <script src="scripts/match.js">
-        
-        
-        
-
+      
+      <script src="scripts/match.js">
         function toggleMenu() {
             let sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("collapsed");
         }
-
+        
         function openModal(modalId) {
             document.getElementById(modalId).style.display = "block";
         }
-
+        
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = "none";
         }
-
-        document.addEventListener("DOMContentLoaded", function () {
-    
-    const logoutButton = document.getElementById("logout-btn");
-
-    if (logoutButton) {
-        logoutButton.addEventListener("click", function () {
-          
-            document.body.classList.add("fade-out");
-
-           
-            setTimeout(function () {
-            
-                localStorage.removeItem("loggedInAdmin");
-
-                const inputs = document.querySelectorAll("input");
-                inputs.forEach(input => {
-                    input.value = "";
-                });
-
-                window.location.href = "admin-login.html";
-
-            }, 1000); 
-        });
-    }
-});
-    </script>
+        
+        </script>
 </body>
 </html>

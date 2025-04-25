@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Lost Item</title>
     <link rel="stylesheet" href="Styles/Pages/student-lost.css">
+    
 </head>
 <body>
     <div id="nav-bar">
@@ -15,38 +16,37 @@
         </div>
         <div id="nav-content">
             <a href="student-dashboard.html"> 
-                <div class="nav-button " ><img src="images/home.png" alt=""><span>Dashboard</span></div>
+                <div class="nav-button " ><img src="images/dashboard.png" alt=""><span>Dashboard</span></div>
             </a>
             <a href="#"> 
-                <div class="nav-button active"><img src="images/home.png" alt=""><span>Lost Items</span></div>
+                <div class="nav-button active"><img src="images/lost item.png" alt=""><span>Lost Items</span></div>
             </a>
             <a href="student-found.html">
-                <div class="nav-button"><img src="images/home.png" alt=""><span>Found Items</span></div>
+                <div class="nav-button"><img src="images/found item.png" alt=""><span>Found Items</span></div>
             </a>
-        
+            <a href="Students-Reports.html">
+                <div class="nav-button"><img src="images/report.png" alt=""><span>My Reports</span></div>
+            </a>
           <hr/>
           <div class="nav-button" id="logout-btn">
-            <img src="images/home.png" alt=""><span>Logout</span>
+            <img src="images/logout.png" alt=""><span>Logout</span>
         </div>
           <div id="nav-content-highlight"></div>
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
         <div id="nav-footer">
           <div id="nav-footer-heading">
-            
             <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Student</span></div>
             <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
           </div>
-              
           <div id="nav-footer-content">
             <Lorem>ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Lorem>
           </div>
         </div>
       </div>
 
-
-      <div class="dashboard">
-        <h1>Lost an item?</h1>
+    <div class="dashboard">
+        <h1>Report a Lost Item</h1>
         <p style="font-size: 1.2em;">Kindly fill up the details for easy tracking.</p>
         <input type="hidden" id="ownerEmail" value="">
         <form id="lost-item-form" class="found-item-form" onsubmit="submitForm(event)">
@@ -74,7 +74,6 @@
             <div class="input-group">
                 <label for="dateLost">Date Lost</label>
                 <input type="date" id="dateLost" placeholder="Date Lost" required>
-
                 
                 <label for="itemColor">Item Color</label>
                 <input type="color" id="itemColor" value="rgb(255, 255, 255)" list="white">
@@ -90,11 +89,27 @@
         </form>
     </div>
 
+    <!-- Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h2>Item Successfully Submitted</h2>
+            <p>Please wait for an email notification if someone has found your item.</p>
+            <button class="modal-close" onclick="closeModal()">OK</button>
+        </div>
+    </div>
 
     <script>
         function toggleMenu() {
             let sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("collapsed");
+        }
+
+        function showModal() {
+            document.getElementById('successModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
         }
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -113,87 +128,76 @@
         });
 
         function submitForm(event) {
-    event.preventDefault();
+            event.preventDefault();
 
-    const name = document.getElementById('name').value;
-    const category = document.getElementById('category').value;
-    const itemName = document.getElementById('itemName').value;
-    const lastLocated = document.getElementById('lastLocated').value;
-    const dateLost = document.getElementById('dateLost').value;
-    const itemColor = document.getElementById('itemColor').value;
-    const description = document.getElementById('description').value;
-    const imageFile = document.getElementById('itemImage').files[0];
+            const name = document.getElementById('name').value;
+            const category = document.getElementById('category').value;
+            const itemName = document.getElementById('itemName').value;
+            const lastLocated = document.getElementById('lastLocated').value;
+            const dateLost = document.getElementById('dateLost').value;
+            const itemColor = document.getElementById('itemColor').value;
+            const description = document.getElementById('description').value;
+            const imageFile = document.getElementById('itemImage').files[0];
 
-   
-    const ownerEmail = sessionStorage.getItem("loggedInStudentEmail");
+            const ownerEmail = sessionStorage.getItem("loggedInStudentEmail");
+            const reportedBy = sessionStorage.getItem("loggedInStudentName");
+            if (!ownerEmail) {
+                alert("Email not found! Please login again.");
+                return;
+            }
 
-    if (!ownerEmail) {
-        alert("Email not found! Please login again.");
-        return;
-    }
+            const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+            const idLost = idGenerator(lostItems);
 
-    const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
-    const idLost = idGenerator(lostItems);
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageBase64 = event.target.result; 
+                    const lostItem = {
+                        name, category, itemName, lastLocated, dateLost, itemColor, description, image: imageBase64, idLost, ownerEmail, reportedBy
+                    };
 
-    if (imageFile) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const imageBase64 = event.target.result; 
-            const lostItem = {
-                name, category, itemName, lastLocated, dateLost, itemColor, description, image: imageBase64, idLost, ownerEmail
-            };
+                    lostItems.push(lostItem);
+                    localStorage.setItem('lostItems', JSON.stringify(lostItems));
 
-            lostItems.push(lostItem);
-            localStorage.setItem('lostItems', JSON.stringify(lostItems));
-
-            alert("Item submitted successfully!");
-            document.getElementById('lost-item-form').reset();
-        };
-        reader.readAsDataURL(imageFile);
-    } else {
-        alert('Please upload an image!');
-    }
-}
-
-
-    function idGenerator(lostItems) {
-        let id = Math.random() * 100000;
-       
-        for (let i = 0; i < lostItems.length; i++) {
-            if (lostItems[i].idLost === id) {
-                id = Math.random() * 100000;
-                i = 0; 
+                    document.getElementById('lost-item-form').reset();
+                    showModal();
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                alert('Please upload an image!');
             }
         }
-        return id;
-    }
 
-    document.addEventListener("DOMContentLoaded", function () {
-    
-    const logoutButton = document.getElementById("logout-btn");
-
-    if (logoutButton) {
-        logoutButton.addEventListener("click", function () {
-          
-            document.body.classList.add("fade-out");
-
-           
-            setTimeout(function () {
+        function idGenerator(lostItems) {
+            let id = Math.random() * 100000;
             
-                localStorage.removeItem("loggedInAdmin");
+            for (let i = 0; i < lostItems.length; i++) {
+                if (lostItems[i].idLost === id) {
+                    id = Math.random() * 100000;
+                    i = 0; 
+                }
+            }
+            return id;
+        }
 
-                const inputs = document.querySelectorAll("input");
-                inputs.forEach(input => {
-                    input.value = "";
+        document.addEventListener("DOMContentLoaded", function () {
+            const logoutButton = document.getElementById("logout-btn");
+
+            if (logoutButton) {
+                logoutButton.addEventListener("click", function () {
+                    document.body.classList.add("fade-out");
+                    setTimeout(function () {
+                        localStorage.removeItem("loggedInAdmin");
+                        const inputs = document.querySelectorAll("input");
+                        inputs.forEach(input => {
+                            input.value = "";
+                        });
+                        window.location.href = "student-login.html";
+                    }, 1000); 
                 });
-
-                window.location.href = "student-login.html";
-
-            }, 1000); 
+            }
         });
-    }
-});
-
     </script>
 </body>
 </html>

@@ -461,3 +461,35 @@ label[for=nav-footer-toggle] {
 #logout-btn {
   cursor: pointer;
 }
+
+#nav-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+  padding: 15px 0; /* Add some vertical padding */
+}
+
+#nav-logo-container {
+  display: flex;
+  justify-content: center; 
+  text-align: center;
+}
+
+#nav-logo {
+  width: 60px; /* Adjust size as needed */
+  height: auto;
+  margin-right: 1px; /* Space between logo and text */
+  vertical-align: middle; /* Align with text */
+  border: 2px solid #ffffff; /* White outline around the logo */
+  border-radius: 50%; /* Optional: rounded corners for the outline */
+  background-color: #f0f0f0; 
+  padding: 3px; /* Space between image and outline */
+}
+
+#nav-title {
+  display: flex;
+  align-items: center; /* Vertically align logo and text */
+  text-decoration: none; /* Remove underline from link */
+  color: inherit; /* Match navbar text color */
+  font-size: 1.2em; /* Adjust text size as needed */
+}

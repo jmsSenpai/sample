@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/Pages/student-reports.css">
+    <title>Student Dashboard</title>
+    <style>
+        
+
+    </style>
+</head>
+<body>
+    <div id="nav-bar">
+        <input id="nav-toggle" type="checkbox"/>
+        <div id="nav-header">
+            <a id="nav-title" href="#" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
+            <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
+            <hr/>
+        </div>
+        <div id="nav-content">
+            <a href="student-dashboard.html"> 
+                <div class="nav-button"><img src="images/dashboard.png" alt=""><span>Dashboard</span></div>
+            </a>
+            <a href="student-lost.html"> 
+                <div class="nav-button"><img src="images/lost item.png" alt=""><span>Lost Items</span></div>
+            </a>
+            <a href="student-found.html">
+                <div class="nav-button"><img src="images/found item.png" alt=""><span>Found Items</span></div>
+            </a>
+            <a href="Students-Reports.html">
+                <div class="nav-button active"><img src="images/report.png" alt=""><span>My Reports</span></div>
+            </a>
+            <hr/>
+            <div class="nav-button" id="logout-btn">
+                <img src="images/logout.png" alt=""><span>Logout</span>
+            </div>
+            <div id="nav-content-highlight"></div>
+        </div>
+        <input id="nav-footer-toggle" type="checkbox"/>
+        <div id="nav-footer">
+            <div id="nav-footer-heading">
+                <div id="nav-footer-titlebox">
+                    <a id="nav-footer-title" href="#">uahnbu</a>
+                    <span id="nav-footer-subtitle">Student</span>
+                </div>
+                <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
+            </div>
+            <div id="nav-footer-content">
+                <p>ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <h1>My Reported Items</h1>
+        <h2>Everything You've Reported in the Lost & Found System</h2>
+      
+        <div class="reported-sections">
+            <div class="reported-section lost">
+                <h3>Reported Lost Items</h3>
+                <ul id="recentLostItems" class="item-list"></ul>
+            </div>
+      
+            <div class="reported-section found">
+                <h3>Reported Found Items</h3>
+                <ul id="recentFoundItems" class="item-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Found Item Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('viewModal')">×</span>
+            <h2>View Found Item</h2>
+            <img id="viewImage" style="max-width:100%; max-height:200px;">
+            <p><strong>Name:</strong> <span id="viewName"></span></p>
+            <p><strong>Category:</strong> <span id="viewCategory"></span></p>
+            <p><strong>Found At:</strong> <span id="viewFoundAt"></span></p>
+            <p><strong>Date Found:</strong> <span id="viewDateFound"></span></p>
+            <p><strong>Color:</strong> <span id="viewColor"></span></p>
+            <p><strong>Description:</strong> <span id="viewDescription"></span></p>
+        </div>
+    </div>
+
+    <!-- Edit Found Item Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editModal')">×</span>
+            <h2>Edit Found Item</h2>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                <label>Name:</label><br>
+                <input type="text" id="editName"><br>
+                <label>Category:</label><br>
+                <input type="text" id="editCategory"><br>
+                <label>Found At:</label><br>
+                <input type="text" id="editFoundAt"><br>
+                <label>Date Found:</label><br>
+                <input type="date" id="editDateFound"><br>
+                <label>Color:</label><br>
+                <input type="text" id="editColor"><br>
+                <label>Description:</label><br>
+                <textarea id="editDescription"></textarea><br>
+                <label>Change Image (optional):</label><br>
+                <input type="file" id="editImageInput"><br><br>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Lost Item Modal -->
+    <div id="viewLostItemModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('viewLostItemModal')">×</span>
+            <h2>View Lost Item</h2>
+            <img id="viewLostImage" style="max-width:100%; max-height:200px;">
+            <p><strong>Name:</strong> <span id="viewLostName"></span></p>
+            <p><strong>Category:</strong> <span id="viewLostCategory"></span></p>
+            <p><strong>Last Located:</strong> <span id="viewLostLastLocated"></span></p>
+            <p><strong>Date Lost:</strong> <span id="viewLostDateLost"></span></p>
+            <p><strong>Color:</strong> <span id="viewLostColor"></span></p>
+            <p><strong>Description:</strong> <span id="viewLostDescription"></span></p>
+        </div>
+    </div>
+
+    <!-- Edit Lost Item Modal -->
+    <div id="editLostItemModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editLostItemModal')">×</span>
+            <h2>Edit Lost Item</h2>
+            <form id="editLostItemForm">
+                <input type="hidden" id="editLostItemId">
+                <label>Name:</label><br>
+                <input type="text" id="editLostItemName"><br>
+                <label>Category:</label><br>
+                <input type="text" id="editLostItemCategory"><br>
+                <label>Last Located:</label><br>
+                <input type="text" id="editLostItemLastLocated"><br>
+                <label>Date Lost:</label><br>
+                <input type="date" id="editLostItemDateLost"><br>
+                <label>Color:</label><br>
+                <input type="text" id="editLostItemColor"><br>
+                <label>Description:</label><br>
+                <textarea id="editLostItemDescription"></textarea><br>
+                <label>Change Image (optional):</label><br>
+                <input type="file" id="editLostItemImageInput"><br><br>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const loggedInStudent = sessionStorage.getItem("loggedInStudentName");
+        if (!loggedInStudent) {
+            alert("Please log in first.");
+            window.location.href = "student-login.html";
+        }
+
+        function loadReports() {
+            const lostList = document.getElementById("recentLostItems");
+            const foundList = document.getElementById("recentFoundItems");
+            lostList.innerHTML = "";
+            foundList.innerHTML = "";
+
+            console.log("Logged in student:", loggedInStudent);
+
+            // Load found items
+            let foundItems = [];
+            try {
+                foundItems = JSON.parse(localStorage.getItem("foundItems")) || [];
+                console.log("All found items:", foundItems);
+            } catch (error) {
+                console.error("Error parsing foundItems:", error);
+                foundItems = [];
+            }
+
+            const studentFoundItems = foundItems.filter(i => i.reportedBy && i.reportedBy.toLowerCase() === loggedInStudent.toLowerCase());
+            console.log("Filtered found items:", studentFoundItems);
+
+            if (studentFoundItems.length === 0) {
+                const li = document.createElement("li");
+                li.className = "no-items";
+                li.textContent = "No found items reported.";
+                foundList.appendChild(li);
+            } else {
+                studentFoundItems.forEach(item => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                        <div>
+                            <strong>${item.itemName}</strong> - ${item.foundAt}<br>
+                            ${item.description}<br>
+                            <p>Status: ${item.status}</p>
+                        </div>
+                        <div>
+                            <button onclick="viewFoundItem(${item.idFound})">View</button>
+                            <button onclick="editFoundItem(${item.idFound})">Edit</button>
+                            <button onclick="deleteFoundItem(${item.idFound})">Delete</button>
+                        </div>
+                    `;
+                    foundList.appendChild(li);
+                });
+            }
+
+            // Load lost items
+            let lostItems = [];
+            try {
+                lostItems = JSON.parse(localStorage.getItem("lostItems")) || [];
+                console.log("All lost items:", lostItems);
+            } catch (error) {
+                console.error("Error parsing lostItems:", error);
+                lostItems = [];
+            }
+
+            const studentLostItems = lostItems.filter(i => i.reportedBy && i.reportedBy.toLowerCase() === loggedInStudent.toLowerCase());
+            console.log("Filtered lost items:", studentLostItems);
+
+            if (studentLostItems.length === 0) {
+                const li = document.createElement("li");
+                li.className = "no-items";
+                li.textContent = "No lost items reported.";
+                lostList.appendChild(li);
+            } else {
+                studentLostItems.forEach(item => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                        <div>
+                            <strong>${item.itemName}</strong> - Last located at: ${item.lastLocated}<br>
+                            ${item.description}<br>
+                            <p>Status: ${item.status}</p>
+                        </div>
+                        <div>
+                            <button onclick="viewLostItem(${item.idLost})">View</button>
+                            <button onclick="editLostItem(${item.idLost})">Edit</button>
+                            <button onclick="deleteLostItem(${item.idLost})">Delete</button>
+                        </div>
+                    `;
+                    lostList.appendChild(li);
+                });
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        function viewFoundItem(id) {
+            const items = JSON.parse(localStorage.getItem("foundItems")) || [];
+            const item = items.find(i => i.idFound === id && i.reportedBy.toLowerCase() === loggedInStudent.toLowerCase());
+            if (!item) return alert("Item not found or access denied");
+
+            document.getElementById("viewName").innerText = item.itemName || "N/A";
+            document.getElementById("viewCategory").innerText = item.category || "N/A";
+            document.getElementById("viewFoundAt").innerText = item.foundAt || "N/A";
+            document.getElementById("viewDateFound").innerText = item.dateFound || "N/A";
+            document.getElementById("viewColor").innerText = item.itemColor || "N/A";
+            document.getElementById("viewDescription").innerText = item.description || "N/A";
+
+            const viewImage = document.getElementById("viewImage");
+            viewImage.src = item.image || "";
+            viewImage.style.display = item.image ? "block" : "none";
+
+            document.getElementById("viewModal").style.display = "flex";
+        }
+
+        function viewLostItem(id) {
+            const items = JSON.parse(localStorage.getItem("lostItems")) || [];
+            const item = items.find(i => i.idLost === id && i.reportedBy.toLowerCase() === loggedInStudent.toLowerCase());
+            if (!item) return alert("Item not found or access denied");
+
+            document.getElementById("viewLostName").innerText = item.itemName || "N/A";
+            document.getElementById("viewLostCategory").innerText = item.category || "N/A";
+            document.getElementById("viewLostLastLocated").innerText = item.lastLocated || "N/A";
+            document.getElementById("viewLostDateLost").innerText = item.dateLost || "N/A";
+            document.getElementById("viewLostColor").innerText = item.itemColor || "N/A";
+            document.getElementById("viewLostDescription").innerText = item.description || "N/A";
+
+            const viewImage = document.getElementById("viewLostImage");
+            viewImage.src = item.image || "";
+            viewImage.style.display = item.image ? "block" : "none";
+
+            document.getElementById("viewLostItemModal").style.display = "flex";
+        }
+
+        function editFoundItem(id) {
+            const items = JSON.parse(localStorage.getItem("foundItems")) || [];
+            const item = items.find(i => i.idFound === id && i.reportedBy.toLowerCase() === loggedInStudent.toLowerCase());
+            if (!item) return alert("Item not found or access denied");
+
+            document.getElementById("editId").value = item.idFound;
+            document.getElementById("editName").value = item.itemName || "";
+            document.getElementById("editCategory").value = item.category || "";
+            document.getElementById("editFoundAt").value = item.foundAt || "";
+            document.getElementById("editDateFound").value = item.dateFound || "";
+            document.getElementById("editColor").value = item.itemColor || "";
+            document.getElementById("editDescription").value = item.description || "";
+
+            document.getElementById("editModal").style.display = "flex";
+        }
+
+        document.getElementById("editForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById("editId").value);
+            const items = JSON.parse(localStorage.getItem("foundItems")) || [];
+            const itemIndex = items.findIndex(i => i.idFound === id && i.reportedBy.toLowerCase() === loggedInStudent.toLowerCase());
+            if (itemIndex === -1) return alert("Item not found or access denied");
+
+            const updatedItem = {
+                ...items[itemIndex],
+                itemName: document.getElementById("editName").value,
+                category: document.getElementById("editCategory").value,
+                foundAt: document.getElementById("editFoundAt").value,
+                dateFound: document.getElementById("editDateFound").value,
+                itemColor: document.getElementById("editColor").value,
+                description: document.getElementById("editDescription").value
+            };
+
+            const fileInput = document.getElementById("editImageInput");
+            if (fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    updatedItem.image = e.target.result;
+                    items[itemIndex] = updatedItem;
+                    localStorage.setItem("foundItems", JSON.stringify(items));
+                    loadReports();
+                    closeModal("editModal");
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                items[itemIndex] = updatedItem;
+                localStorage.setItem("foundItems", JSON.stringify(items));
+                loadReports();
+                closeModal("editModal");
+            }
+        });
+
+        function editLostItem(id) {
+            const items = JSON.parse(localStorage.getItem("lostItems")) || [];
+            const item = items.find(i => i.idLost === id && i.reportedBy.toLowerCase() === loggedInStudent.toLowerCase());
+            if (!item) return alert("Item not found or access denied");
+
+            document.getElementById("editLostItemId").value = item.idLost;
+            document.getElementById("editLostItemName").value = item.itemName || "";
+            document.getElementById("editLostItemCategory").value = item.category || "";
+            document.getElementById("editLostItemLastLocated").value = item.lastLocated || "";
+            document.getElementById("editLostItemDateLost").value = item.dateLost || "";
+            document.getElementById("editLostItemColor").value = item.itemColor || "";
+            document.getElementById("editLostItemDescription").value = item.description || "";
+
+            document.getElementById("editLostItemModal").style.display = "flex";
+        }
+
+        document.getElementById("editLostItemForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById("editLostItemId").value);
+            const items = JSON.parse(localStorage.getItem("lostItems")) || [];
+            const itemIndex = items.findIndex(i => i.idLost === id && i.reportedBy.toLowerCase() === loggedInStudent.toLowerCase());
+            if (itemIndex === -1) return alert("Item not found or access denied");
+
+            const updatedItem = {
+                ...items[itemIndex],
+                itemName: document.getElementById("editLostItemName").value,
+                category: document.getElementById("editLostItemCategory").value,
+                lastLocated: document.getElementById("editLostItemLastLocated").value,
+                dateLost: document.getElementById("editLostItemDateLost").value,
+                itemColor: document.getElementById("editLostItemColor").value,
+                description: document.getElementById("editLostItemDescription").value
+            };
+
+            const fileInput = document.getElementById("editLostItemImageInput");
+            if (fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    updatedItem.image = e.target.result;
+                    items[itemIndex] = updatedItem;
+                    localStorage.setItem("lostItems", JSON.stringify(items));
+                    loadReports();
+                    closeModal("editLostItemModal");
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                items[itemIndex] = updatedItem;
+                localStorage.setItem("lostItems", JSON.stringify(items));
+                loadReports();
+                closeModal("editLostItemModal");
+            }
+        });
+
+        function deleteFoundItem(id) {
+            let items = JSON.parse(localStorage.getItem("foundItems")) || [];
+            items = items.filter(i => i.idFound !== id || i.reportedBy.toLowerCase() !== loggedInStudent.toLowerCase());
+            localStorage.setItem("foundItems", JSON.stringify(items));
+            loadReports();
+        }
+
+        function deleteLostItem(id) {
+            let items = JSON.parse(localStorage.getItem("lostItems")) || [];
+            items = items.filter(i => i.idLost !== id || i.reportedBy.toLowerCase() !== loggedInStudent.toLowerCase());
+            localStorage.setItem("lostItems", JSON.stringify(items));
+            loadReports();
+        }
+
+        // Update footer with student name
+        document.addEventListener("DOMContentLoaded", function () {
+            const fullName = sessionStorage.getItem("loggedInStudentName");
+            if (fullName) {
+                const title = document.getElementById("nav-footer-title");
+                const subtitle = document.getElementById("nav-footer-subtitle");
+                if (title && subtitle) {
+                    title.textContent = fullName;
+                    subtitle.textContent = "Student";
+                }
+            }
+        });
+
+        // Logout handler
+        document.addEventListener("DOMContentLoaded", function () {
+            const logoutButton = document.getElementById("logout-btn");
+            if (logoutButton) {
+                logoutButton.addEventListener("click", function () {
+                    document.body.classList.add("fade-out");
+                    setTimeout(function () {
+                        sessionStorage.removeItem("loggedInStudentName");
+                        localStorage.removeItem("loggedInAdmin");
+                        const inputs = document.querySelectorAll("input");
+                        inputs.forEach(input => input.value = "");
+                        window.location.href = "student-login.html";
+                    }, 1000);
+                });
+            }
+        });
+
+        // Load reports on page load
+        window.onload = loadReports;
+    </script>
+</body>
+</html>

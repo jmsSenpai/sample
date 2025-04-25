@@ -3,7 +3,54 @@ function toggleMenu() {
     sidebar.classList.toggle("collapsed");
 }
 
-document.addEventListener("DOMContentLoaded", loadStudentAccounts);
+document.addEventListener("DOMContentLoaded", function () {
+    loadStudentAccounts();
+
+    // Handle logout
+    const logoutButton = document.getElementById("logout-btn");
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+            document.body.classList.add("fade-out");
+            setTimeout(function () {
+                localStorage.removeItem("loggedInAdmin");
+                const inputs = document.querySelectorAll("input");
+                inputs.forEach(input => {
+                    input.value = "";
+                });
+                window.location.href = "admin-login.html";
+            }, 1000);
+        });
+    }
+
+    // Update admin name in footer
+    const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
+    if (loggedInAdminUsername) {
+        const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
+        if (adminData && adminData.accountType === 'admin') {
+            const fullName = `${adminData.firstName} `;
+            const navFooterTitle = document.getElementById("nav-footer-title");
+            if (navFooterTitle) {
+                navFooterTitle.textContent = fullName;
+                navFooterTitle.href = "#";
+            }
+        }
+    }
+
+    // Modal close on outside click
+    const modal = document.getElementById('student-modal');
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Modal close button listener
+    document.addEventListener('click', function (event) {
+        if (event.target.id === 'close-modal') {
+            document.getElementById('student-modal').style.display = 'none';
+        }
+    });
+});
 
 function loadStudentAccounts() {
     const studentAccountsContainer = document.getElementById('student-accounts');
@@ -11,16 +58,24 @@ function loadStudentAccounts() {
 
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        const studentData = JSON.parse(localStorage.getItem(key));
+        let studentData;
 
-        if (studentData && studentData.accountType === 'student') {
+        try {
+            studentData = JSON.parse(localStorage.getItem(key));
+        } catch (error) {
+            console.error(`Failed to parse localStorage item for key "${key}":`, error);
+            continue; // Skip invalid entries
+        }
+
+        // Check if studentData is an object and has the expected accountType
+        if (studentData && typeof studentData === 'object' && studentData.accountType === 'student') {
             const row = document.createElement('div');
             row.className = 'table-row';
             row.setAttribute('data-username', key);
 
             row.innerHTML = `
-                <div class="row-item">${studentData.firstName} ${studentData.middleName ? studentData.middleName + ' ' : ''}${studentData.lastName}</div>
-                <div class="row-item">${studentData.gradeSection}</div>
+                <div class="row-item">${studentData.firstName || 'N/A'} ${studentData.middleName ? studentData.middleName + ' ' : ''}${studentData.lastName || 'N/A'}</div>
+                <div class="row-item">${studentData.gradeSection || 'N/A'}</div>
                 <div class="row-item">${key}</div>
                 <div class="row-item actions">
                     ${studentData.accepted ? '' : '<button class="accept-btn">Accept</button>'}
@@ -40,14 +95,13 @@ function loadStudentAccounts() {
     acceptButtons.forEach(button => {
         button.addEventListener('click', function () {
             const row = this.closest('.table-row');
-            const username = row.getAttribute('data-username'); 
-            const studentData = JSON.parse(localStorage.getItem(username));  
-            
+            const username = row.getAttribute('data-username');
+            const studentData = JSON.parse(localStorage.getItem(username));
+
             if (studentData) {
                 studentData.accepted = true;
-                localStorage.setItem(username, JSON.stringify(studentData));  
-                
-                
+                localStorage.setItem(username, JSON.stringify(studentData));
+
                 fetch('http://localhost:3000/send-acceptance-email', {
                     method: 'POST',
                     headers: {
@@ -58,7 +112,7 @@ function loadStudentAccounts() {
                         studentName: `${studentData.firstName} ${studentData.lastName}`
                     })
                 })
-                .then(response => response.text()) 
+                .then(response => response.text())
                 .then(data => {
                     console.log('Email sent successfully:', data);
                     alert('Acceptance email sent!');
@@ -67,16 +121,11 @@ function loadStudentAccounts() {
                     console.error('Error sending email:', error);
                     alert('Failed to send acceptance email.');
                 });
-    
-             
+
                 loadStudentAccounts();
             }
         });
     });
-    
-    
-    
-    
 
     deleteButtons.forEach(button => {
         button.addEventListener('click', function () {
@@ -92,31 +141,91 @@ function loadStudentAccounts() {
         button.addEventListener('click', function () {
             const row = this.closest('.table-row');
             const username = row.getAttribute('data-username');
-            const studentData = JSON.parse(localStorage.getItem(username));
+            let studentData;
+
+            try {
+                studentData = JSON.parse(localStorage.getItem(username));
+            } catch (error) {
+                console.error(`Failed to parse student data for username "${username}":`, error);
+                alert('Error loading student details.');
+                return;
+            }
+
             if (studentData) {
                 showModal(studentData);
+            } else {
+                console.error(`No student data found for username: ${username}`);
+                alert('Student data not found.');
             }
         });
     });
 }
 
 function showModal(studentData) {
+    console.log('Showing modal with data:', studentData);
     const modal = document.getElementById('student-modal');
     const modalContent = document.getElementById('modal-content');
 
-    modalContent.innerHTML = `
-        <h2>Student Details</h2>
-        <p><strong>Name:</strong> ${studentData.firstName} ${studentData.middleName ? studentData.middleName + ' ' : ''}${studentData.lastName}</p>
-        <p><strong>Email:</strong> ${studentData.email}</p>
-        <p><strong>Grade Section:</strong> ${studentData.gradeSection}</p>
-        <p><strong>Other Info:</strong> ${studentData.otherInfo || 'N/A'}</p>
-        ${studentData.idImage ? `<p><strong>Student ID:</strong><br><img src="${studentData.idImage}" alt="Student ID" style="max-width: 300px; border: 1px solid #ccc; margin-top: 10px;"></p>` : ''}
-        <button id="close-modal">Close</button>
-    `;
+    if (!modal || !modalContent) {
+        console.error('Modal or modal-content element not found');
+        return;
+    }
 
-    modal.style.display = 'block';
+    // Populate modal fields
+    document.getElementById('modal-name').textContent = `${studentData.firstName || 'N/A'} ${studentData.middleName ? studentData.middleName + ' ' : ''}${studentData.lastName || 'N/A'}`;
+    document.getElementById('modal-email').textContent = studentData.email || 'N/A';
+    document.getElementById('modal-grade-section').textContent = studentData.gradeSection || 'N/A';
+    document.getElementById('modal-username').textContent = studentData.username || 'N/A';
+    document.getElementById('modal-other-info').textContent = studentData.otherInfo || 'N/A';
 
-    document.getElementById('close-modal').addEventListener('click', function () {
-        modal.style.display = 'none';
-    });
+    // Handle student ID image
+    const idImageContainer = document.getElementById('modal-id-image');
+    if (studentData.idImage) {
+        idImageContainer.innerHTML = `<img src="${studentData.idImage}" alt="Student ID" />`;
+    } else {
+        idImageContainer.innerHTML = '<p>No ID image available</p>';
+    }
+
+    console.log('Modal content set, displaying modal');
+    modal.style.display = 'flex';
 }
+document.addEventListener("DOMContentLoaded", function () {
+    
+    const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
+
+
+    if (loggedInAdminUsername) {
+        const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
+        if (adminData && adminData.accountType === 'admin') {
+        
+            const fullName = `${adminData.firstName} `;
+        
+            const navFooterTitle = document.getElementById("nav-footer-title");
+            if (navFooterTitle) {
+                navFooterTitle.textContent = fullName;
+            
+                navFooterTitle.href = "#"; 
+            }
+        }
+    }
+
+    
+    const logoutButton = document.getElementById("logout-btn");
+
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+            document.body.classList.add("fade-out");
+
+            setTimeout(function () {
+                localStorage.removeItem("loggedInAdmin");
+
+                const inputs = document.querySelectorAll("input");
+                inputs.forEach(input => {
+                    input.value = "";
+                });
+
+                window.location.href = "admin-login.html";
+            }, 1000);
+        });
+    }
+});

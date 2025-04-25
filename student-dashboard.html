@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
     <link rel="stylesheet" href="Styles/Pages/student-dashboard.css">
-   
 </head>
 <body>
     <div id="nav-bar">
@@ -15,88 +14,139 @@
           <hr/>
         </div>
         <div id="nav-content">
-            <a href="Admin-dashboard.html"> 
-                <div class="nav-button active" ><img src="images/home.png" alt=""><span>Dashboard</span></div>
+            <a href="student-dashboard.html"> 
+                <div class="nav-button active"><img src="images/dashboard.png" alt=""><span>Dashboard</span></div>
             </a>
             <a href="student-lost.html"> 
-                <div class="nav-button"><img src="images/home.png" alt=""><span>Lost Items</span></div>
+                <div class="nav-button"><img src="images/lost item.png" alt=""><span>Lost Items</span></div>
             </a>
             <a href="student-found.html">
-                <div class="nav-button"><img src="images/home.png" alt=""><span>Found Items</span></div>
+                <div class="nav-button"><img src="images/found item.png" alt=""><span>Found Items</span></div>
             </a>
-        
+            <a href="Students-Reports.html">
+                <div class="nav-button"><img src="images/report.png" alt=""><span>My Reports</span></div>
+            </a>
           <hr/>
           <div class="nav-button" id="logout-btn">
-            <img src="images/home.png" alt=""><span>Logout</span>
-        </div>
+            <img src="images/logout.png" alt=""><span>Logout</span>
+          </div>
           <div id="nav-content-highlight"></div>
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
         <div id="nav-footer">
           <div id="nav-footer-heading">
-            
             <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Student</span></div>
             <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
           </div>
           <div id="nav-footer-content">
-            <Lorem>ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Lorem>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </div>
         </div>
-      </div>
+    </div>
 
     <div class="dashboard">
-        <h1>Dashboard</h1>
-        <h2><span>Welcome To the</span> <span>Lost and Found </span><span>System.</span></h2>
+        <div class="dashboard-header">
+            <h1>Dashboard</h1>
+            <p>Welcome to the Lost and Found System</p>
+        </div>
         
+        <!-- Statistics Section -->
+        <div class="statistics">
+            <div class="stat-card">
+                <p>Total Lost Items</p>
+                <span id="totalLostItems">0</span>
+            </div>
+            <div class="stat-card">
+                <p>Total Found Items</p>
+                <span id="totalFoundItems">0</span>
+            </div>
+        </div>
+
+        <!-- Recent Activity Section -->
+        <div class="recent-activity">
+            <div class="activity-column">
+                <h3>Recent Lost Items</h3>
+                <ul id="recentLostItems"></ul>
+            </div>
+            <div class="activity-column">
+                <h3>Recent Found Items</h3>
+                <ul id="recentFoundItems"></ul>
+            </div>
+        </div>
     </div>
 
     <script>
-        function toggleMenu() {
-            let sidebar = document.getElementById("sidebar");
-            sidebar.classList.toggle("collapsed");
-        }
-
         document.addEventListener("DOMContentLoaded", function () {
             const fullName = sessionStorage.getItem("loggedInStudentName");
 
+            // Function to filter items by the logged-in user
+            function filterItemsByUser(items) {
+                return items.filter(item => item.reportedBy === fullName);
+            }
+
+            // Get and filter user-specific items
+            const lostItems = filterItemsByUser(JSON.parse(localStorage.getItem("lostItems") || "[]"));
+            const foundItems = filterItemsByUser(JSON.parse(localStorage.getItem("foundItems") || "[]"));
+
+            // Display stats
+            document.getElementById("totalLostItems").textContent = lostItems.length;
+            document.getElementById("totalFoundItems").textContent = foundItems.length;
+
+            // Limit to 5 recent items
+            const recentLostItems = lostItems.slice(-5);
+            const recentFoundItems = foundItems.slice(-5);
+
+            function displayItems(items, listId, isFound) {
+                const list = document.getElementById(listId);
+                list.innerHTML = '';
+                items.forEach(item => {
+                    const li = document.createElement("li");
+                    if (isFound) {
+                        li.innerHTML = `
+                            <strong>Item Name:</strong> ${item.itemName}<br>
+                            <strong>Found At:</strong> ${item.foundAt}<br>
+                            <strong>Date Found:</strong> ${item.dateFound}<br>
+                            <strong>Description:</strong> ${item.description}<br>
+                        `;
+                    } else {
+                        li.innerHTML = `
+                            <strong>Item Name:</strong> ${item.itemName}<br>
+                            <strong>Last Located:</strong> ${item.lastLocated}<br>
+                            <strong>Date Lost:</strong> ${item.dateLost}<br>
+                            <strong>Description:</strong> ${item.description}<br>
+                        `;
+                    }
+                    list.appendChild(li);
+                });
+            }
+
+            displayItems(recentLostItems, "recentLostItems", false);
+            displayItems(recentFoundItems, "recentFoundItems", true);
+
+            // Update footer with student info
             if (fullName) {
-                const footerBox = document.getElementById("nav-footer-titlebox");
                 const title = document.getElementById("nav-footer-title");
                 const subtitle = document.getElementById("nav-footer-subtitle");
-
-                if (footerBox && title && subtitle) {
-                    title.textContent = fullName;
-                    subtitle.textContent = "Student";
-                }
+                title.textContent = fullName;
+                subtitle.textContent = "Student";
             }
         });
 
         document.addEventListener("DOMContentLoaded", function () {
-    
-    const logoutButton = document.getElementById("logout-btn");
+            const logoutButton = document.getElementById("logout-btn");
 
-    if (logoutButton) {
-        logoutButton.addEventListener("click", function () {
-          
-            document.body.classList.add("fade-out");
-
-           
-            setTimeout(function () {
-            
-                localStorage.removeItem("loggedInAdmin");
-
-                const inputs = document.querySelectorAll("input");
-                inputs.forEach(input => {
-                    input.value = "";
+            if (logoutButton) {
+                logoutButton.addEventListener("click", function () {
+                    document.body.classList.add("fade-out");
+                    setTimeout(function () {
+                        sessionStorage.removeItem("loggedInStudentName");
+                        sessionStorage.removeItem("loggedInStudentEmail");
+                        localStorage.removeItem("loggedInAdmin");
+                        window.location.href = "student-login.html";
+                    }, 1000);
                 });
-
-                window.location.href = "student-login.html";
-
-            }, 1000); 
+            }
         });
-    }
-});
-
     </script>
 </body>
 </html>

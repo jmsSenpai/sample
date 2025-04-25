@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Report Item</title>
+    <link rel="stylesheet" href="Styles/Pages/Admin-report-items.css">
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <div id="nav-bar">
+    <input id="nav-toggle" type="checkbox" aria-label="Toggle navigation"/>
+    <div id="nav-header">
+      <div id="nav-logo-container">
+        <a id="nav-title" href="https://codepen.io" target="_blank">
+          <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
+          Lost & Found
+        </a>
+      </div>
+      <label for="nav-toggle"><span id="nav-toggle-burger" aria-hidden="true"></span></label>
+      <hr/>
+    </div>
+    <div id="nav-content">
+      <a href="Admin-dashboard.html"> 
+        <div class="nav-button"><img src="images/dashboard.png" alt="Dashboard icon"><span>Dashboard</span></div>
+      </a>
+      <a href="admin-lost.html"> 
+        <div class="nav-button"><img src="images/lost item.png" alt="Lost items icon"><span>Lost Items</span></div>
+      </a>
+      <a href="admin-Found.html">
+        <div class="nav-button"><img src="images/found item.png" alt="Found items icon"><span>Found Items</span></div>
+      </a>
+      <a href="admin-match.html"> 
+        <div class="nav-button"><img src="images/matched.png" alt="Matched items icon"><span>Matched Items</span></div>
+      </a>
+      <a href="Admin-Report-Item.html">  
+        <div class="nav-button active"><img src="images/item report.png" alt="Report item icon"><span>Report An Item</span></div>
+      </a>
+      <a href="Admin-reports.html">  
+        <div class="nav-button"><img src="images/report.png" alt="Reports icon"><span>Reports</span></div>
+      </a>
+      <a href="admin-accounts.html">  
+        <div class="nav-button"><img src="images/admin acc.png" alt="Accounts icon"><span>Accounts</span></div>
+      </a>
+      <hr/>
+      <div class="nav-button" id="logout-btn">
+        <img src="images/logout.png" alt="Logout icon"><span>Logout</span>
+      </div>
+      <div id="nav-content-highlight"></div>
+    </div>
+    <input id="nav-footer-toggle" type="checkbox" aria-label="Toggle footer"/>
+    <div id="nav-footer">
+      <div id="nav-footer-heading">
+        <div id="nav-footer-titlebox">
+          <a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a>
+          <span id="nav-footer-subtitle">Admin</span>
+        </div>
+        <label for="nav-footer-toggle"><i class="fas fa-caret-up" aria-hidden="true"></i></label>
+      </div>
+      <div id="nav-footer-content">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      </div>
+    </div>
+  </div>
+  <div class="dashboard">
+    <div class="content-header">
+      <h1>Report an Item</h1>
+      <p>Fill in the details below to report a lost or found item for easy tracking.</p>
+    </div>
+
+    <!-- Tabs for switching between Lost and Found forms -->
+    <div class="tab-container">
+      <button class="tab-button active" type="button" onclick="showForm('lost')" aria-selected="true">Report Lost Item</button>
+      <button class="tab-button" type="button" onclick="showForm('found')" aria-selected="false">Report Found Item</button>
+    </div>
+
+    <!-- Lost Item Form -->
+    <form id="lost-item-form" class="item-form" style="display: block;" onsubmit="submitLostForm(event)">
+      <div class="form-section">
+        <h2>Lost Item Details</h2>
+        <div class="input-group">
+          <div class="input-field">
+            <label for="lost-name">Your Name</label>
+            <input type="text" id="lost-name" placeholder="Enter your name" required aria-required="true">
+          </div>
+          <div class="input-field">
+            <label for="lost-email">Your Gmail Address</label>
+            <input type="email" id="lost-email" placeholder="example@gmail.com" pattern="[a-zA-Z0-9._%+-]+@gmail\.com" title="Please enter a valid Gmail address" required aria-required="true">
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-field">
+            <label for="lost-category">Category</label>
+            <select id="lost-category" required aria-required="true">
+              <option value="">Select Category</option>
+              <option value="Personal Belongings">Personal Belongings</option>
+              <option value="Electronics & Gadgets">Electronics & Gadgets</option>
+              <option value="Clothing & Accessories">Clothing & Accessories</option>
+              <option value="Identification & Documents">Identification & Documents</option>
+              <option value="Bags & Luggage">Bags & Luggage</option>
+              <option value="Keys & Security Items">Keys & Security Items</option>
+              <option value="Books & Stationery">Books & Stationery</option>
+              <option value="Sports & Fitness Equipment">Sports & Fitness Equipment</option>
+              <option value="Transportation & Travel Items">Transportation & Travel Items</option>
+              <option value="Miscellaneous Items">Miscellaneous Items</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <label for="lost-itemName">Item Name</label>
+            <input type="text" id="lost-itemName" placeholder="e.g., Black Wallet" required aria-required="true">
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-field">
+            <label for="lost-lastLocated">Last Located</label>
+            <input type="text" id="lost-lastLocated" placeholder="e.g., Library" required aria-required="true">
+          </div>
+          <div class="input-field">
+            <label for="lost-dateLost">Date Lost</label>
+            <input type="date" id="lost-dateLost" required aria-required="true">
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-field">
+            <label for="lost-itemColor">Item Color</label>
+            <input type="color" id="lost-itemColor" value="#ffffff" required aria-required="true" list="white">
+           
+          </div>
+          <div class="input-field">
+            <label for="lost-itemImage">Item Image</label>
+            <input type="file" id="lost-itemImage" accept="image/*" required aria-required="true">
+          </div>
+        </div>
+        <div class="input-field">
+          <label for="lost-description">Description</label>
+          <textarea id="lost-description" placeholder="Provide a brief description of the item" required aria-required="true"></textarea>
+        </div>
+      </div>
+      <button type="submit" class="submit-btn">Submit Lost Item</button>
+    </form>
+
+    <!-- Found Item Form -->
+    <form id="found-item-form" class="item-form" style="display: none;" onsubmit="submitFoundForm(event)">
+      <div class="form-section">
+        <h2>Found Item Details</h2>
+        <div class="input-group">
+          <div class="input-field">
+            <label for="found-name">Your Name</label>
+            <input type="text" id="found-name" placeholder="Enter your name" required aria-required="true">
+          </div>
+          <div class="input-field">
+            <label for="found-category">Category</label>
+            <select id="found-category" required aria-required="true">
+              <option value="">Select Category</option>
+              <option value="Personal Belongings">Personal Belongings</option>
+              <option value="Electronics & Gadgets">Electronics & Gadgets</option>
+              <option value="Clothing & Accessories">Clothing & Accessories</option>
+              <option value="Identification & Documents">Identification & Documents</option>
+              <option value="Bags & Luggage">Bags & Luggage</option>
+              <option value="Keys & Security Items">Keys & Security Items</option>
+              <option value="Books & Stationery">Books & Stationery</option>
+              <option value="Sports & Fitness Equipment">Sports & Fitness Equipment</option>
+              <option value="Transportation & Travel Items">Transportation & Travel Items</option>
+              <option value="Miscellaneous Items">Miscellaneous Items</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-field">
+            <label for="found-itemName">Item Name</label>
+            <input type="text" id="found-itemName" placeholder="e.g., Blue Backpack" required aria-required="true">
+          </div>
+          <div class="input-field">
+            <label for="found-foundAt">Found At</label>
+            <input type="text" id="found-foundAt" placeholder="e.g., Cafeteria" required aria-required="true">
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-field">
+            <label for="found-dateFound">Date Found</label>
+            <input type="date" id="found-dateFound" required aria-required="true">
+          </div>
+          <div class="input-field">
+            <label for="found-itemColor">Item Color</label>
+            <input type="color" id="found-itemColor" value="#ffffff" required aria-required="true" list="white">
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-field">
+            <label for="found-itemImage">Item Image</label>
+            <input type="file" id="found-itemImage" accept="image/*" required aria-required="true">
+          </div>
+        </div>
+        <div class="input-field">
+          <label for="found-description">Description</label>
+          <textarea id="found-description" placeholder="Provide a brief description of the item" required aria-required="true"></textarea>
+        </div>
+      </div>
+      <button type="submit" class="submit-btn">Submit Found Item</button>
+    </form>
+  </div>
+
+  <script>
+    // Tab switching functionality
+    function showForm(formType) {
+      const lostForm = document.getElementById('lost-item-form');
+      const foundForm = document.getElementById('found-item-form');
+      const lostTab = document.querySelector('.tab-button:nth-child(1)');
+      const foundTab = document.querySelector('.tab-button:nth-child(2)');
+
+      if (formType === 'lost') {
+        lostForm.style.display = 'block';
+        foundForm.style.display = 'none';
+        lostTab.classList.add('active');
+        foundTab.classList.remove('active');
+        lostTab.setAttribute('aria-selected', 'true');
+        foundTab.setAttribute('aria-selected', 'false');
+      } else {
+        lostForm.style.display = 'none';
+        foundForm.style.display = 'block';
+        lostTab.classList.remove('active');
+        foundTab.classList.add('active');
+        lostTab.setAttribute('aria-selected', 'false');
+        foundTab.setAttribute('aria-selected', 'true');
+      }
+    }
+
+    
+    document.addEventListener("DOMContentLoaded", function () {
+    
+    const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
+
+
+    if (loggedInAdminUsername) {
+        const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
+        if (adminData && adminData.accountType === 'admin') {
+        
+            const fullName = `${adminData.firstName} `;
+        
+            const navFooterTitle = document.getElementById("nav-footer-title");
+            if (navFooterTitle) {
+                navFooterTitle.textContent = fullName;
+            
+                navFooterTitle.href = "#"; 
+            }
+        }
+    }
+
+    
+    const logoutButton = document.getElementById("logout-btn");
+
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+            document.body.classList.add("fade-out");
+
+            setTimeout(function () {
+                localStorage.removeItem("loggedInAdmin");
+
+                const inputs = document.querySelectorAll("input");
+                inputs.forEach(input => {
+                    input.value = "";
+                });
+
+                window.location.href = "admin-login.html";
+            }, 1000);
+        });
+    }
+});
+    // Submit Lost Item Form
+    function submitLostForm(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('lost-name').value;
+      const email = document.getElementById('lost-email').value;
+      const category = document.getElementById('lost-category').value;
+      const itemName = document.getElementById('lost-itemName').value;
+      const lastLocated = document.getElementById('lost-lastLocated').value;
+      const dateLost = document.getElementById('lost-dateLost').value;
+      const itemColor = document.getElementById('lost-itemColor').value;
+      const description = document.getElementById('lost-description').value;
+      const imageFile = document.getElementById('lost-itemImage').files[0];
+      const reportedBy = sessionStorage.getItem("loggedInStudentName") || "Guest";
+
+      if (!email.match(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)) {
+        showError("Please enter a valid Gmail address.");
+        return;
+      }
+
+      if (!itemColor) {
+        showError("Please select a color.");
+        return;
+      }
+
+      const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+      const idLost = idGenerator();
+
+      if (imageFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imageBase64 = event.target.result;
+          const lostItem = {
+            name,
+            category,
+            itemName,
+            lastLocated,
+            dateLost,
+            itemColor,
+            description,
+            image: imageBase64,
+            idLost,
+            ownerEmail: email,
+            reportedBy
+          };
+
+          lostItems.push(lostItem);
+          localStorage.setItem('lostItems', JSON.stringify(lostItems));
+
+          showSuccess("Lost item submitted successfully!");
+          document.getElementById('lost-item-form').reset();
+          document.getElementById('lost-name').value = sessionStorage.getItem("loggedInStudentName") || "";
+          document.getElementById('lost-email').value = sessionStorage.getItem("loggedInStudentEmail") || "";
+          document.getElementById('lost-itemColor').value = '#ffffff';
+        };
+        reader.readAsDataURL(imageFile);
+      } else {
+        showError('Please upload an image!');
+      }
+    }
+
+    // Submit Found Item Form
+    function submitFoundForm(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('found-name').value;
+      const category = document.getElementById('found-category').value;
+      const itemName = document.getElementById('found-itemName').value;
+      const foundAt = document.getElementById('found-foundAt').value;
+      const dateFound = document.getElementById('found-dateFound').value;
+      const itemColor = document.getElementById('found-itemColor').value;
+      const description = document.getElementById('found-description').value;
+      const imageFile = document.getElementById('found-itemImage').files[0];
+      const reportedBy = sessionStorage.getItem("loggedInStudentName") || "Guest";
+
+      if (!itemColor) {
+        showError("Please select a color.");
+        return;
+      }
+
+      const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+      const idFound = idGenerator();
+
+      if (imageFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imageBase64 = event.target.result;
+          const foundItem = {
+            name,
+            category,
+            itemName,
+            foundAt,
+            dateFound,
+            itemColor,
+            description,
+            image: imageBase64,
+            idFound,
+            reportedBy
+          };
+
+          foundItems.push(foundItem);
+          localStorage.setItem('foundItems', JSON.stringify(foundItems));
+
+          showSuccess("Found item submitted successfully!");
+          document.getElementById('found-item-form').reset();
+          document.getElementById('found-name').value = sessionStorage.getItem("loggedInStudentName") || "";
+          document.getElementById('found-itemColor').value = '#ffffff';
+        };
+        reader.readAsDataURL(imageFile);
+      } else {
+        showError('Please upload an image!');
+      }
+    }
+
+    // Improved ID Generator
+    function idGenerator() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    }
+
+    // User Feedback Functions
+    function showError(message) {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.style.cssText = 'color: red; margin: 10px 0;';
+      errorDiv.textContent = message;
+      const dashboard = document.querySelector('.dashboard');
+      dashboard.insertBefore(errorDiv, dashboard.querySelector('.tab-container'));
+      setTimeout(() => errorDiv.remove(), 3000);
+    }
+
+    function showSuccess(message) {
+      const successDiv = document.createElement('div');
+      successDiv.className = 'success-message';
+      successDiv.style.cssText = 'color: green; margin: 10px 0;';
+      successDiv.textContent = message;
+      const dashboard = document.querySelector('.dashboard');
+      dashboard.insertBefore(successDiv, dashboard.querySelector('.tab-container'));
+      setTimeout(() => successDiv.remove(), 3000);
+    }
+  </script>
+</body>
+</html>

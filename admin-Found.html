@@ -9,30 +9,42 @@
 <body>
     <div id="nav-bar">
         <input id="nav-toggle" type="checkbox"/>
-        <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
-          <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
-          <hr/>
-        </div>
+        <div id="nav-header">
+            <div id="nav-logo-container">
+              <a id="nav-title" href="https://codepen.io" target="_blank">
+                <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
+                Lost & Found
+              </a>
+            </div>
+            <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
+            <hr/>
+          </div>
         <div id="nav-content">
             <a href="Admin-dashboard.html"> 
-                <div class="nav-button " ><img src="images/home.png" alt=""><span>Dashboard</span></div>
+                <div class="nav-button"><img src="images/dashboard.png" alt=""><span>Dashboard</span></div>
             </a>
             <a href="admin-lost.html"> 
-                <div class="nav-button"><img src="images/home.png" alt=""><span>Lost Items</span></div>
+                <div class="nav-button"><img src="images/lost item.png" alt=""><span>Lost Items</span></div>
             </a>
             <a href="admin-Found.html">
-                <div class="nav-button active"><img src="images/home.png" alt=""><span>Found Items</span></div>
+                <div class="nav-button active"><img src="images/found item.png" alt=""><span>Found Items</span></div>
             </a>
             <a href="admin-match.html"> 
-                <div class="nav-button"><img src="images/home.png" alt=""><span>Matched Items</span></div>
+                <div class="nav-button"><img src="images/matched.png" alt=""><span>Matched Items</span></div>
+            </a>
+            <a href="Admin-Report-Item.html">  
+                <div class="nav-button "><img src="images/item report.png" alt=""><span>Report An Item</span></div>
+            </a>
+            <a href="Admin-reports.html">  
+                <div class="nav-button "><img src="images/report.png" alt=""><span>Reports</span></div>
             </a>
             <a href="admin-accounts.html">  
-                <div class="nav-button"><img src="images/home.png" alt=""><span>Accounts</span></div>
+                <div class="nav-button "><img src="images/admin acc.png" alt=""><span>Accounts</span></div>
             </a>
         
           <hr/>
           <div class="nav-button" id="logout-btn">
-            <img src="images/home.png" alt=""><span>Logout</span>
+            <img src="images/logout.png" alt=""><span>Logout</span>
         </div>
           <div id="nav-content-highlight"></div>
         </div>
@@ -54,104 +66,188 @@
         <div class="items-list" id="items-list"></div>
     </div>
 
-  
+    <!-- Modal for viewing item details -->
     <div id="detailsModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+            <span class="close" onclick="closeModal()">×</span>
             <h2>Item Details</h2>
             <img id="modal-image" src="" alt="Item Image" style="max-width: 100%; height: auto;">
             <p><strong>Student Name:</strong> <span id="modal-studentName"></span></p>
             <p><strong>Category:</strong> <span id="modal-category"></span></p>
             <p><strong>Item Name:</strong> <span id="modal-itemName"></span></p>
-            <p><strong>Found at:</strong> <span id="modal-foundAt"></span></p>
+            <p><strong>Found Location:</strong> <span id="modal-foundLocation"></span></p>
             <p><strong>Description:</strong> <span id="modal-description"></span></p>
-            <button onclick="deleteItem()" id="Delete">Delete</button>
+            <p><strong>Color:</strong> <span id="modal-itemColor"></span></p>
+            <p><strong>Date Found:</strong> <span id="modal-dateFound"></span></p>
+            <button onclick="openMatchModal()">Match Item</button>
+            <button onclick="confirmDelete()" id="Delete">Delete</button>
+        </div>
+    </div>
+
+    <!-- Match Modal -->
+    <div id="matchModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeMatchModal()">×</span>
+            <h2>Select Matched Lost Item</h2>
+            <div id="lost-items-list"></div>
+            <button onclick="saveMatch()">Save Match</button>
         </div>
     </div>
 
     <script>
-        function toggleMenu() {
-            let sidebar = document.getElementById("sidebar");
-            sidebar.classList.toggle("collapsed");
+        let foundItemToMatch = null;
+        let selectedLostItemIndex = null;
+    
+        function openMatchModal() {
+            const foundItemIndex = document.getElementById('detailsModal').getAttribute('data-index');
+            const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+            foundItemToMatch = foundItems[foundItemIndex];
+    
+            const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+            const matchedItems = JSON.parse(localStorage.getItem('matchedItems')) || [];
+            const matchedLostIDs = matchedItems.map(match => match.lostID);
+            const unmatchedLostItems = lostItems.filter(item => !matchedLostIDs.includes(item.idLost));
+    
+            const lostItemsList = document.getElementById('lost-items-list');
+            lostItemsList.innerHTML = '';
+    
+            unmatchedLostItems.forEach((item, index) => {
+                const button = document.createElement('button');
+                button.innerText = `${item.itemName} (${item.lastLocated})`;
+                button.onclick = function () {
+                    selectedLostItemIndex = lostItems.findIndex(l => l.idLost === item.idLost);
+                    document.querySelectorAll('#lost-items-list button').forEach(btn => btn.classList.remove('selected'));
+                    button.classList.add('selected');
+                };
+                lostItemsList.appendChild(button);
+            });
+    
+            document.getElementById('matchModal').style.display = 'block';
         }
-
-        function displayFoundItems() {
-        const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-        const itemsList = document.getElementById('items-list');
-        itemsList.innerHTML = "";
-
-        foundItems.forEach((item, index) => {
-            const itemDiv = document.createElement('div');
-            itemDiv.classList.add('item');
-            itemDiv.innerHTML = `
-                <img src="${item.image}" alt="Item Image" style="width: 100px; height: auto;">
-                <p><strong>Description:</strong> ${item.description}</p>
-                <button onclick='showDetails(${index})'>See Details</button>
-                <button onclick='deleteItem(${index})'>Delete</button>
-            `;
-            itemsList.appendChild(itemDiv);
-        });
-    }
-
-    function showDetails(index) {
-        const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-        const item = foundItems[index];
-        
-        document.getElementById('modal-studentName').innerText = item.name;
-        document.getElementById('modal-category').innerText = item.category;
-        document.getElementById('modal-itemName').innerText = item.itemName;
-        document.getElementById('modal-foundAt').innerText = item.foundAt;
-        document.getElementById('modal-description').innerText = item.description;
-        document.getElementById('modal-image').src = item.image || 'images/default-image.png';
-        document.getElementById('detailsModal').style.display = 'block';
-        document.getElementById('detailsModal').setAttribute('data-index', index);
-    }
-
-    function closeModal() {
-        document.getElementById('detailsModal').style.display = 'none';
-    }
-
-    function deleteItem(index) {
-        let foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-        let matchItems = JSON.parse(localStorage.getItem('matchedItems')) || []
-        for(i= 0; i < matchItems.length; i++){
-            if (matchItems[i].foundID == foundItems[index].idFound){
-                matchItems.splice(i, 1)
+    
+        function closeMatchModal() {
+            document.getElementById('matchModal').style.display = 'none';
+            selectedLostItemIndex = null;
+        }
+    
+        function saveMatch() {
+            if (foundItemToMatch && selectedLostItemIndex !== null) {
+                const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+                const selectedLostItem = lostItems[selectedLostItemIndex];
+    
+                const match = {
+                    lostID: selectedLostItem.idLost,
+                    foundID: foundItemToMatch.idFound,
+                    totalPoints: 100,
+                    itemLost: selectedLostItem.itemName.toLowerCase(),
+                    itemFound: foundItemToMatch.itemName.toLowerCase(),
+                    itemLostLocation: selectedLostItem.lastLocated.toLowerCase(),
+                    itemFoundLocation: foundItemToMatch.foundAt.toLowerCase(),
+                    itemLostDate: selectedLostItem.dateLost,
+                    itemFoundDate: foundItemToMatch.dateFound
+                };
+    
+                let matchedItems = JSON.parse(localStorage.getItem('matchedItems')) || [];
+                matchedItems.push(match);
+                localStorage.setItem('matchedItems', JSON.stringify(matchedItems));
+    
+                // Mark found item as hidden
+                let foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+                const itemIndex = foundItems.findIndex(item => item.idFound === foundItemToMatch.idFound);
+                foundItems[itemIndex].isHidden = true;
+                localStorage.setItem('foundItems', JSON.stringify(foundItems));
+    
+                alert(`Match saved: ${foundItemToMatch.itemName} with ${selectedLostItem.itemName}`);
+                closeMatchModal();
+                closeModal();
+                displayFoundItems();
+            } else {
+                alert('Please select a lost item to match.');
             }
         }
-        foundItems.splice(index, 1);
-        localStorage.setItem('foundItems', JSON.stringify(foundItems));
-        displayFoundItems();
-        closeModal();
-    }
-
-    window.onload = displayFoundItems;
-
-    document.addEventListener("DOMContentLoaded", function () {
     
-    const logoutButton = document.getElementById("logout-btn");
-
-    if (logoutButton) {
-        logoutButton.addEventListener("click", function () {
-          
-            document.body.classList.add("fade-out");
-
-           
-            setTimeout(function () {
+        function displayFoundItems() {
+            const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+            const itemsList = document.getElementById('items-list');
+            itemsList.innerHTML = '';
+    
+            foundItems.forEach((item, index) => {
+                // Only display items that are not hidden
+                if (!item.isHidden) {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('item');
+                    itemDiv.innerHTML = `
+                        <img src="${item.image || 'images/default-image.png'}" alt="Item Image" style="width: 100px; height: auto;">
+                        <p><strong>Description:</strong> ${item.description || 'No description'}</p>
+                        <button onclick='showDetails(${index})'>See Details</button>
+                        <button onclick='confirmDelete(${index})'>Delete</button>
+                    `;
+                    itemsList.appendChild(itemDiv);
+                }
+            });
+        }
+    
+        function showDetails(index) {
+            const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+            const item = foundItems[index];
+    
+            document.getElementById('modal-studentName').innerText = item.name || 'N/A';
+            document.getElementById('modal-category').innerText = item.category || 'N/A';
+            document.getElementById('modal-itemName').innerText = item.itemName || 'N/A';
+            document.getElementById('modal-foundLocation').innerText = item.foundAt || 'N/A';
+            document.getElementById('modal-description').innerText = item.description || 'No description';
+            document.getElementById('modal-itemColor').innerText = item.itemColor || 'N/A';
+            document.getElementById('modal-dateFound').innerText = item.dateFound || 'N/A';
+            document.getElementById('modal-image').src = item.image || 'images/default-image.png';
+            document.getElementById('detailsModal').style.display = 'block';
+            document.getElementById('detailsModal').setAttribute('data-index', index);
+        }
+    
+        function closeModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+    
+        function confirmDelete(index) {
+            if (confirm('Are you sure you want to hide this item?')) {
+                let foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+                foundItems[index].isHidden = true;
+                localStorage.setItem('foundItems', JSON.stringify(foundItems));
+                displayFoundItems();
+            }
+        }
+    
+        window.onload = displayFoundItems;
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
             
-                localStorage.removeItem("loggedInAdmin");
-
-                const inputs = document.querySelectorAll("input");
-                inputs.forEach(input => {
-                    input.value = "";
+            if (loggedInAdminUsername) {
+                const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
+                if (adminData && adminData.accountType === 'admin') {
+                    const fullName = `${adminData.firstName} `;
+                    const navFooterTitle = document.getElementById("nav-footer-title");
+                    if (navFooterTitle) {
+                        navFooterTitle.textContent = fullName;
+                        navFooterTitle.href = "#"; 
+                    }
+                }
+            }
+            
+            const logoutButton = document.getElementById("logout-btn");
+            if (logoutButton) {
+                logoutButton.addEventListener("click", function () {
+                    document.body.classList.add("fade-out");
+                    setTimeout(function () {
+                        localStorage.removeItem("loggedInAdmin");
+                        const inputs = document.querySelectorAll("input");
+                        inputs.forEach(input => {
+                            input.value = "";
+                        });
+                        window.location.href = "admin-login.html";
+                    }, 1000);
                 });
-
-                window.location.href = "admin-login.html";
-
-            }, 1000); 
+            }
         });
-    }
-});
     </script>
 </body>
 </html>

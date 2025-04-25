@@ -10,8 +10,8 @@ body {
 	flex-direction: column;
 	font-family: 'Montserrat', sans-serif;
 	height: 100vh;
-	margin: 0; /* Removed extra margin that could cause overflow */
-	overflow: hidden; /* Prevents scrolling */
+	margin: 0;
+	overflow: hidden;
 }
 
 h1 {
@@ -21,7 +21,7 @@ h1 {
 
 button {
 	border-radius: 12px;
-	border: 1px solid;
+	border: 1px solid #852323;
 	background-color: #852323;
 	color: #FFFFFF;
 	font-size: 12px;
@@ -79,7 +79,6 @@ select {
 	font-size: 14px;
 }
 
-/* File upload label and wrapper */
 .file-wrapper,
 .security-wrapper {
 	grid-column: span 2;
@@ -102,7 +101,6 @@ input[type="file"] {
 	margin-bottom: 10px;
 }
 
-/* Make security question and answer on one line */
 .security-wrapper {
 	display: flex;
 	align-items: center;
@@ -119,7 +117,6 @@ input[type="file"] {
 	flex: 2;
 }
 
-/* Container and transitions */
 .container {
 	background-color: #FFFFF0;
 	border-radius: 10px;
@@ -179,7 +176,6 @@ input[type="file"] {
 	}
 }
 
-/* Overlay */
 .overlay-container {
 	position: absolute;
 	top: 0;
@@ -229,7 +225,6 @@ input[type="file"] {
 	transition: transform 0.6s ease-in-out;
 }
 
-/* Sign in inputs */
 #student-email {
 	height: 38px;
 	width: 70%;
@@ -243,7 +238,6 @@ input[type="file"] {
 	transform: translateY(-46px);
 }
 
-/* Adjust "Already have an account?" and "Don't have an account?" */
 .button-row {
 	display: flex;
 	justify-content: center;
@@ -262,7 +256,6 @@ input[type="file"] {
 	margin: 0;
 }
 
-/* Styling for the "Sign Up" and "Sign In" buttons */
 #signUp, #signIn {
 	background: none;
 	border: none;
@@ -316,7 +309,7 @@ input[type="file"] {
 
 .close:hover,
 .close:focus {
-	color: black;
+	color: #000;
 	text-decoration: none;
 }
 
@@ -325,4 +318,88 @@ input[type="file"] {
 	width: 100%;
 	margin: 10px 0;
 	padding: 10px;
+}
+
+/* Styles for message modal */
+#messageModal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.5);
+	animation: fadeIn 0.3s ease-in-out;
+}
+
+#messageModal .modal-content {
+	background-color: #ffffff;
+	margin: 15% auto;
+	padding: 20px;
+	border-radius: 12px;
+	width: 90%;
+	max-width: 400px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+	position: relative;
+	animation: slideIn 0.3s ease-out;
+}
+
+#messageModal.success .modal-content {
+	border-left: 6px solid #28a745;
+	background-color: #e6f4ea;
+}
+
+#messageModal.error .modal-content {
+	border-left: 6px solid #dc3545;
+	background-color: #f8d7da;
+	animation: shake 0.4s ease-in-out;
+}
+
+#messageModal .close {
+	color: #666666;
+	font-size: 24px;
+	position: absolute;
+	top: 10px;
+	right: 15px;
+	transition: color 0.2s ease;
+}
+
+#messageModal .close:hover {
+	color: #000000;
+}
+
+#messageText {
+	font-size: 16px;
+	line-height: 1.5;
+	color: #333333;
+	text-align: center;
+	margin: 20px 0;
+}
+
+#messageModal.success #messageText {
+	color: #155724;
+}
+
+#messageModal.error #messageText {
+	color: #721c24;
+}
+
+/* Animations */
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes slideIn {
+	from { transform: translateY(-50px); opacity: 0; }
+	to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes shake {
+	0%, 100% { transform: translateX(0); }
+	25% { transform: translateX(-10px); }
+	50% { transform: translateX(10px); }
+	75% { transform: translateX(-10px); }
 }

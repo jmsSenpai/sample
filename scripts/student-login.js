@@ -15,8 +15,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageText = document.getElementById("messageText");
     const closeMessageModal = document.getElementById("closeMessageModal");
 
+    const studentEmailInput = document.getElementById('student-email');
+    const studentPassInput = document.getElementById('student-pass');
+
     let attempts = 0;
     let lockedUntil = null;
+    let isSecurityVerified = false;
+
+    function closeModals() {
+        forgotModal.style.display = "none";
+        messageModal.style.display = "none";
+        messageModal.classList.remove('success', 'error');
+        passwordFields.style.display = "none";
+        isSecurityVerified = false;
+        document.getElementById("forgot-email").value = "";
+        document.getElementById("forgot-question").value = "";
+        document.getElementById("forgot-answer").value = "";
+        document.getElementById("new-password").value = "";
+        document.getElementById("reset-confirm-password").value = "";
+    }
+
+    function isAnyModalOpen() {
+        return forgotModal.style.display === "block" || messageModal.style.display === "block";
+    }
 
     document.getElementById("signUp").addEventListener('click', () => {
         document.getElementById('container').classList.add("right-panel-active");
@@ -30,123 +51,115 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         forgotModal.style.display = "block";
         passwordFields.style.display = "none";
-        document.getElementById("forgot-email").value = "";
-        document.getElementById("forgot-answer").value = "";
-        document.getElementById("new-password").value = "";
-        document.getElementById("confirm-password").value = "";
+        isSecurityVerified = false;
         attempts = 0;
     });
 
-    closeModal.addEventListener("click", function () {
-        forgotModal.style.display = "none";
+    closeModal.addEventListener("click", closeModals);
+    closeMessageModal.addEventListener("click", () => {
+        messageModal.style.display = "none";
+        messageModal.classList.remove('success', 'error');
     });
 
     window.addEventListener("click", function (event) {
-        if (event.target == forgotModal) {
-            forgotModal.style.display = "none";
+        if (event.target === forgotModal) {
+            closeModals();
+        } else if (event.target === messageModal) {
+            messageModal.style.display = "none";
+            messageModal.classList.remove('success', 'error');
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && messageModal.style.display === "block") {
+            messageModal.style.display = "none";
+            messageModal.classList.remove('success', 'error');
+        } else if (event.key === "Enter" && forgotModal.style.display === "block") {
+            closeModals();
         }
     });
 
     function showMessage(message, autoClose = false) {
         messageText.innerText = message;
+        const successKeywords = ["successful", "created", "verified"];
+        const isSuccess = successKeywords.some(keyword => message.toLowerCase().includes(keyword));
+        messageModal.classList.remove('success', 'error');
+        messageModal.classList.add(isSuccess ? 'success' : 'error');
         messageModal.style.display = "block";
 
         if (autoClose) {
             setTimeout(function () {
                 messageModal.style.display = "none";
+                messageModal.classList.remove('success', 'error');
             }, 2000);
         }
     }
 
-    closeMessageModal.addEventListener("click", function () {
-        messageModal.style.display = "none";
-    });
-
     resetPasswordBtn.addEventListener("click", function () {
         const username = document.getElementById("forgot-email").value.trim();
-        console.log("Username entered during password reset:", username);
-    
         const question = document.getElementById("forgot-question").value.trim();
         const answer = document.getElementById("forgot-answer").value.trim();
         const newPassword = document.getElementById("new-password").value.trim();
         const confirmPassword = document.getElementById("reset-confirm-password").value.trim();
-
-    
-        
-        if (!username || !question || !answer) {
-            showMessage("Please fill in the required fields.");
-            return;
-        }
-    
-       
-        const studentData = JSON.parse(localStorage.getItem(username));
-        console.log("Current student data from localStorage:", studentData);
-    
         const now = new Date().getTime();
-    
+
         if (lockedUntil && now < lockedUntil) {
             const seconds = Math.ceil((lockedUntil - now) / 1000);
             showMessage(`Too many attempts. Please try again in ${seconds} second(s).`);
             return;
         }
-    
-        if (!studentData) {
-            showMessage("No account found with this username.");
-            return;
-        }
-    
-        if (studentData.securityQuestion === question && studentData.securityAnswer === answer) {
-            passwordFields.style.display = "block"; 
-    
-           
+
+        if (!isSecurityVerified) {
+            if (!username || !question || !answer) {
+                showMessage("Please fill in the required fields.");
+                return;
+            }
+
+            const studentData = JSON.parse(localStorage.getItem(username));
+
+            if (!studentData) {
+                showMessage("No account found with this username.");
+                return;
+            }
+
+            if (studentData.securityQuestion === question && studentData.securityAnswer === answer) {
+                isSecurityVerified = true;
+                passwordFields.style.display = "block";
+                showMessage("Security question verified. Please enter your new password.", true);
+                forgotModal.style.display = "block";
+            } else {
+                attempts++;
+                if (attempts >= 5) {
+                    lockedUntil = now + 60000;
+                    showMessage("Too many failed attempts. Try again in 1 minute.");
+                } else {
+                    showMessage(`Incorrect security answer. Attempts left: ${5 - attempts}`);
+                }
+            }
+        } else {
             if (!newPassword || !confirmPassword) {
                 showMessage("Please enter and confirm your new password.");
                 return;
             }
-    
+
             if (newPassword !== confirmPassword) {
                 showMessage("Passwords do not match.");
                 return;
             }
-    
+
             if (!isValidPassword(newPassword)) {
                 showMessage("Password must contain at least one lowercase letter, one uppercase letter, one number, and be at least 8 characters long.");
                 return;
             }
-    
-           
-            studentData.password = newPassword; 
-            console.log("Password updated. New password:", studentData.password);
-    
-           
-            localStorage.setItem(username, JSON.stringify(studentData)); 
-    
-            
-            const updatedStudentData = JSON.parse(localStorage.getItem(username));
-            console.log("Updated student data:", updatedStudentData); 
-    
-          
-            showMessage("Password reset successful.");
-            forgotModal.style.display = "none";
-            passwordFields.style.display = "none"; s
-            attempts = 0; 
-        } else {
-           
-            attempts++;
-            if (attempts >= 5) {
-                lockedUntil = new Date().getTime() + 60000;
-                showMessage("Too many failed attempts. Try again in 1 minute.");
-                passwordFields.style.display = "none";
-            } else {
-                showMessage(`Incorrect security answer. Attempts left: ${5 - attempts}`);
-                passwordFields.style.display = "none";
-            }
+
+            const studentData = JSON.parse(localStorage.getItem(username));
+            studentData.password = newPassword;
+            localStorage.setItem(username, JSON.stringify(studentData));
+            showMessage("Password reset successful.", true);
+            closeModals();
         }
     });
-    
-    
-    
-    
+
     signUpForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -161,9 +174,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const idFileInput = document.getElementById('student-id');
         const securityQuestion = document.getElementById('security-question').value;
         const securityAnswer = document.getElementById('security-answer').value.trim();
-
-
-        console.log("Student email during registration:", email);
 
         if (!lastName || !firstName || !username || !password || !confirmPassword || !securityAnswer) {
             showMessage("Please fill in all required fields.");
@@ -213,46 +223,65 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     signInForm.addEventListener('submit', function (event) {
-    event.preventDefault();
+        event.preventDefault();
 
-    const username = document.getElementById('student-email').value.trim(); 
-    const password = document.getElementById('student-pass').value;
+        if (isAnyModalOpen()) {
+            showMessage("Please close all open modals first.");
+            return;
+        }
 
-    const studentData = JSON.parse(localStorage.getItem(username)); 
+        const username = studentEmailInput.value.trim();
+        const password = studentPassInput.value;
+        const studentData = JSON.parse(localStorage.getItem(username));
+        const now = new Date().getTime();
 
-    if (studentData) {
-        if (studentData.password === password) {
-            if (studentData.accepted) {
-                const fullName = getFormattedName(studentData);
-                sessionStorage.setItem("loggedInStudentName", fullName);
-        
-               
-                sessionStorage.setItem("loggedInStudentEmail", studentData.email);
-        
-                showMessage("Login successful!", true);
-                setTimeout(function () {
-                    window.location.href = 'student-dashboard.html'; 
-                }, 2000);
+        if (lockedUntil && now < lockedUntil) {
+            const seconds = Math.ceil((lockedUntil - now) / 1000);
+            showMessage(`Too many attempts. Please try again in ${seconds} second(s).`);
+            return;
+        }
+
+        if (studentData) {
+            if (studentData.password === password) {
+                if (studentData.accepted) {
+                    const fullName = getFormattedName(studentData);
+                    sessionStorage.setItem("loggedInStudentName", fullName);
+                    sessionStorage.setItem("loggedInStudentEmail", studentData.email);
+
+                    showMessage("Login successful!", true);
+                    setTimeout(function () {
+                        window.location.href = 'student-dashboard.html';
+                    }, 2000);
+                } else {
+                    showMessage("Your account is not yet accepted by the admin.");
+                }
             } else {
-                showMessage("Your account is not yet accepted by the admin.");
+                showMessage("Incorrect password.");
+                studentPassInput.select();
+                attempts++;
+                if (attempts >= 5) {
+                    lockedUntil = now + 60000;
+                    showMessage("Too many failed attempts. Try again in 1 minute.");
+                }
+                studentPassInput.value = '';
+            }
+        } else {
+            showMessage("No account found with this username.");
+            studentEmailInput.value = '';
+            studentPassInput.value = '';
+            attempts++;
+            if (attempts >= 5) {
+                lockedUntil = now + 60000;
+                showMessage("Too many failed attempts. Try again in 1 minute.");
             }
         }
-         else {
-            showMessage("Incorrect password.");
-        }
-    } else {
-        showMessage("No account found with this username.");
+    });
+
+    function getFormattedName(data) {
+        return `${capitalize(data.firstName)} ${data.middleName ? capitalize(data.middleName) + ' ' : ''}${capitalize(data.lastName)}`.trim();
     }
-});
 
-function getFormattedName(data) {
-    const first = capitalize(data.firstName);
-    
-    return `${first}`.trim();
-}
-
-function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
-
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
 });
