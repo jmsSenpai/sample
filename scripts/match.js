@@ -1,3 +1,9 @@
+//AuthenticationCheck
+if (!localStorage.getItem("loggedInAdmin")) {
+    window.location.href = "admin-login.html";
+}
+
+
 const lostItemlists = JSON.parse(localStorage.getItem('lostItems')) || [];
 const foundItemlists = JSON.parse(localStorage.getItem('foundItems')) || [];
 

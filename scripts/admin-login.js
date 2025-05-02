@@ -1,3 +1,5 @@
+
+
 function isValidPassword(password) {
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     return passwordPattern.test(password);
@@ -34,19 +36,31 @@ document.addEventListener("DOMContentLoaded", function () {
             const securityQuestion = document.getElementById('security-question').value;
             const securityAnswer = document.getElementById('security-answer').value;
 
+            // Check if username already exists in localStorage
+            if (localStorage.getItem(username)) {
+                showMessage("This username is already taken. Please choose a different username.");
+                return;
+            }
+
+            // Validate password
             if (!isValidPassword(password)) {
                 showMessage("Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long.");
                 return;
             }
+
+            // Check if passwords match
             if (password !== confirmPassword) {
                 showMessage("Passwords do not match!");
                 return;
             }
+
+            // Check if security question and answer are provided
             if (!securityQuestion || !securityAnswer) {
                 showMessage("Please select a security question and provide an answer.");
                 return;
             }
 
+            // Create admin account object
             const adminAccount = {
                 lastName,
                 firstName,
@@ -58,17 +72,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 accountType: 'admin'
             };
 
+            // Save to localStorage
             localStorage.setItem(username, JSON.stringify(adminAccount));
             showMessage("Admin account created successfully!", true);
             document.querySelector('.create-account-form').reset();
         });
     }
-
     // Existing loadAdminAccounts function
-    function loadAdminAccounts() {
+   function loadAdminAccounts() {
         const accountsTable = document.querySelector('.accounts-table');
-        if (!accountsTable) return;
+        if (!accountsTable) {
+            console.log('No .accounts-table element found on this page');
+            return;
+        }
 
+        console.log('Loading admin accounts...');
         accountsTable.innerHTML = `
             <div class="table-header">
                 <div class="header-item">Name</div>
@@ -78,11 +96,25 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `;
 
+        let accountCount = 0;
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            const adminData = JSON.parse(localStorage.getItem(key));
+            if (key === 'loggedInAdmin') {
+                console.log(`Skipping non-account key: ${key}`);
+                continue;
+            }
+
+            const rawData = localStorage.getItem(key);
+            let adminData;
+            try {
+                adminData = JSON.parse(rawData);
+            } catch (e) {
+                console.error(`Failed to parse JSON for key "${key}":`, rawData, e);
+                continue;
+            }
 
             if (adminData && adminData.accountType === 'admin') {
+                accountCount++;
                 const row = document.createElement('div');
                 row.className = 'table-row';
 
@@ -100,7 +132,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 accountsTable.appendChild(row);
             }
         }
-
         const deleteButtons = document.querySelectorAll('.delete-btn');
         deleteButtons.forEach(button => {
             button.addEventListener('click', function () {

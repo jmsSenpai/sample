@@ -14,14 +14,20 @@
                 <h1>Sign up</h1>
                 <div class="input-columns">
                     <div class="form-grid">
-                        <input type="text" placeholder="Last Name" id="last-name" />
-                        <input type="text" placeholder="First Name" id="first-name" />
-                        <input type="text" placeholder="Middle Name" id="middle-name" />
-                        <input type="text" placeholder="Grade & Section" id="grade-section" />
-                        <input type="email" placeholder="Email" id="email" />
-                        <input type="text" placeholder="Username" id="username" />
-                        <input type="password" placeholder="Password" id="password" />
-                        <input type="password" placeholder="Confirm Password" id="confirm-password" />
+                        <input type="text" placeholder="Last Name" id="last-name" autocomplete="off" />
+                        <input type="text" placeholder="First Name" id="first-name" autocomplete="off" />
+                        <input type="text" placeholder="Middle Name" id="middle-name" autocomplete="off" />
+                        <input type="text" placeholder="Grade & Section" id="grade-section" autocomplete="off" />
+                        <input type="email" placeholder="Email" id="email" autocomplete="off" />
+                        <input type="text" placeholder="Username" id="username" autocomplete="off" />
+                        <div class="password-wrapper">
+                            <input type="password" placeholder="Password" id="password" autocomplete="off" />
+                            <span class="toggle-password" data-target="password">👁️</span>
+                        </div>
+                        <div class="password-wrapper">
+                            <input type="password" placeholder="Confirm Password" id="confirm-password" autocomplete="off" />
+                            <span class="toggle-password" data-target="confirm-password">👁️</span>
+                        </div>
                 
                         <div class="file-wrapper">
                             <label for="student-id">Upload Student ID</label>
@@ -29,14 +35,14 @@
                         </div>
                 
                         <div class="security-wrapper">
-                             <select id="security-question">
+                            <select id="security-question">
                                 <option value="">Select a question</option>
                                 <option value="pet">What is your pet’s name?</option>
                                 <option value="school">What was the name of your first school?</option>
                                 <option value="city">In what city were you born?</option>
                                 <option value="nickname">What is your childhood nickname?</option>
                             </select>
-                            <input type="text" placeholder="Your Answer" id="security-answer" />
+                            <input type="text" placeholder="Your Answer" id="security-answer" autocomplete="off" />
                         </div>
                     </div>
                 </div>
@@ -49,12 +55,14 @@
             </form>
         </div>
 
-       
         <div class="form-container sign-in-container">
             <form id="signInForm">
                 <h1>Sign in</h1>
-                <input type="text" placeholder="Username" id="student-email" /><br>
-                <input type="password" placeholder="Password" id="student-pass" />
+                <input type="text" placeholder="Username" id="student-email" autocomplete="off" /><br>
+                <div class="password-wrapper">
+                    <input type="password" placeholder="Password" id="student-pass" autocomplete="off" />
+                    <span class="toggle-password" data-target="student-pass">👁️</span>
+                </div>
                 <a href="#" id="forgotLink">Forgot your password?</a><br>
                 <button type="submit">Sign In</button>
                 <div class="button-row">
@@ -64,7 +72,6 @@
             </form>
         </div>
 
-        
         <div class="overlay-container">
             <div class="overlay">
                 <div class="overlay-panel overlay-left"></div>
@@ -75,33 +82,45 @@
 
     <div id="forgotModal" class="modal">
         <div class="modal-content">
-          <span class="close" id="closeModal">&times;</span>
-          <h2>Reset Password</h2>
-          <input type="email" id="forgot-email" placeholder="Email" required />
-          <select id="forgot-question" required>
-            <option value="">Select your question</option>
-            <option value="pet">What is your pet’s name?</option>
-            <option value="school">What was the name of your first school?</option>
-            <option value="city">In what city were you born?</option>
-            <option value="nickname">What is your childhood nickname?</option>
-          </select>
-          <input type="text" id="forgot-answer" placeholder="Your Answer" required />
-          <div id="password-fields" style="display: none;">
-            <input type="password" id="new-password" placeholder="New Password" required autocomplete="new-password" />
-            <input type="password" id="reset-confirm-password" placeholder="Confirm Password" required autocomplete="new-password" />
-
-          </div>
-          <button type="button" id="resetPassword">Reset Password</button>
+            <span class="close" id="closeModal">×</span>
+            <h2>Reset Password</h2>
+            <input type="email" id="forgot-email" placeholder="Email" required autocomplete="off" />
+            <div id="security-fields">
+                <select id="forgot-question" required>
+                    <option value="">Select your question</option>
+                    <option value="pet">What is your pet’s name?</option>
+                    <option value="school">What was the name of your first school?</option>
+                    <option value="city">In what city were you born?</option>
+                    <option value="nickname">What is your childhood nickname?</option>
+                </select>
+                <input type="text" id="forgot-answer" placeholder="Your Answer" required autocomplete="off" />
+            </div>
+            <div id="verification-fields" style="display: none;">
+                <input type="text" id="verification-code" placeholder="Verification Code" required autocomplete="off" />
+                <button type="button" id="resendCode">Resend Code</button>
+            </div>
+            <div id="password-fields" style="display: none;">
+                <div class="password-wrapper">
+                    <input type="password" id="new-password" placeholder="New Password" required autocomplete="off" />
+                    <span class="toggle-password" data-target="new-password">👁️</span>
+                </div>
+                <div class="password-wrapper">
+                    <input type="password" id="reset-confirm-password" placeholder="Confirm Password" required autocomplete="off" />
+                    <span class="toggle-password" data-target="reset-confirm-password">👁️</span>
+                </div>
+            </div>
+            <button type="button" id="resetPassword">Reset Password</button>
         </div>
     </div>
 
     <div id="messageModal" class="modal">
         <div class="modal-content">
-            <span class="close" id="closeMessageModal">&times;</span>
+            <span class="close" id="closeMessageModal">×</span>
             <p id="messageText"></p>
         </div>
     </div>
     
     <script src="scripts/student-login.js"></script>
+   
 </body>
 </html>

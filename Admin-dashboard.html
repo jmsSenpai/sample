@@ -93,6 +93,10 @@
     </div>
 
     <script>
+         if (!localStorage.getItem("loggedInAdmin")) {
+           
+           window.location.href = "admin-login.html";
+       }
         function updateDashboardCounts() {
             const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
             const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];

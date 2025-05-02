@@ -60,95 +60,118 @@
           </div>
         </div>
       </div>
-
-  <div class="accounts-content">
-    <a class="back-btn" href="admin-adminAccount.html">Back</a>
-    <h1 class="title">Create Account</h1>
-    <div class="create-account-form">
-        <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" name="lastName">
-        </div>
-        <div class="form-group">
-            <label for="gmail">Username</label>
-            <input type="text" id="gmail" name="gmail">
-        </div>
-        <div class="form-group">
-            <label for="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName">
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password">
-        </div>
-        <div class="form-group">
-            <label for="middleName">Middle Name</label>
-            <input type="text" id="middleName" name="middleName">
-        </div>
-        <div class="form-group">
-            <label for="confirmPassword">Confirm Password</label>
-            <input type="password" id="confirmPassword" name="confirmPassword">
-        </div>
-        <div class="form-group">
-            <label for="security-question">Security Question</label>
-            <select id="security-question" name="security-question">
-                <option value="">Select a question</option>
-                <option value="pet">What is your pet’s name?</option>
-                <option value="school">What was the name of your first school?</option>
-                <option value="city">In what city were you born?</option>
-                <option value="nickname">What is your childhood nickname?</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="security-answer">Answer</label>
-            <input type="text" id="security-answer" name="security-answer" required>
-        </div>
+      <div class="accounts-content">
+        <a class="back-btn" href="admin-adminAccount.html">Back</a>
+        <h1 class="title">Create Account</h1>
+        <div class="create-account-form">
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName">
+            </div>
+            <div class="form-group">
+                <label for="gmail">Username</label>
+                <input type="text" id="gmail" name="gmail">
+            </div>
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName">
+            </div>
+            <div class="form-group password-group">
+                <label for="password">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password">
+                    <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                        <span class="eye-icon">👁️</span>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="middleName">Middle Name</label>
+                <input type="text" id="middleName" name="middleName">
+            </div>
+            <div class="form-group password-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirmPassword" name="confirmPassword">
+                    <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                        <span class="eye-icon">👁️</span>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="security-question">Security Question</label>
+                <select id="security-question" name="security-question">
+                    <option value="">Select a question</option>
+                    <option value="pet">What is your pet’s name?</option>
+                    <option value="school">What was the name of your first school?</option>
+                    <option value="city">In what city were you born?</option>
+                    <option value="nickname">What is your childhood nickname?</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="security-answer">Answer</label>
+                <input type="text" id="security-answer" name="security-answer" required>
+            </div>
             <button type="submit" class="create-btn">Create</button>
         </div>
-    </div>
-</div>
-
-    <script src="scripts/admin-login.js">
-       document.addEventListener("DOMContentLoaded", function () {
+      </div>
     
-    const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
+      <!-- Modal for messages -->
+      <div id="messageModal" class="modal">
+          <div class="modal-content">
+              <span id="closeMessageModal" class="close">×</span>
+              <p id="messageText"></p>
+          </div>
+      </div>
 
+    <script src="scripts/admin-login.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    
+            const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
 
-    if (loggedInAdminUsername) {
-        const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
-        if (adminData && adminData.accountType === 'admin') {
-        
-            const fullName = `${adminData.firstName} `;
-        
-            const navFooterTitle = document.getElementById("nav-footer-title");
-            if (navFooterTitle) {
-                navFooterTitle.textContent = fullName;
-            
-                navFooterTitle.href = "#"; 
+            if (loggedInAdminUsername) {
+                const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
+                if (adminData && adminData.accountType === 'admin') {
+                    const fullName = `${adminData.firstName} `;
+                    const navFooterTitle = document.getElementById("nav-footer-title");
+                    if (navFooterTitle) {
+                        navFooterTitle.textContent = fullName;
+                        navFooterTitle.href = "#"; 
+                    }
+                }
             }
-        }
-    }
 
-    
-    const logoutButton = document.getElementById("logout-btn");
-
-    if (logoutButton) {
-        logoutButton.addEventListener("click", function () {
-            document.body.classList.add("fade-out");
-
-            setTimeout(function () {
-                localStorage.removeItem("loggedInAdmin");
-
-                const inputs = document.querySelectorAll("input");
-                inputs.forEach(input => {
-                    input.value = "";
+            const logoutButton = document.getElementById("logout-btn");
+            if (logoutButton) {
+                logoutButton.addEventListener("click", function () {
+                    document.body.classList.add("fade-out");
+                    setTimeout(function () {
+                        localStorage.removeItem("loggedInAdmin");
+                        const inputs = document.querySelectorAll("input");
+                        inputs.forEach(input => {
+                            input.value = "";
+                        });
+                        window.location.href = "admin-login.html";
+                    }, 1000);
                 });
+            }
 
-                window.location.href = "admin-login.html";
-            }, 1000);
+            // Password toggle functionality
+            const toggleButtons = document.querySelectorAll('.toggle-password');
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const passwordInput = this.previousElementSibling;
+                    const isPassword = passwordInput.type === 'password';
+                    passwordInput.type = isPassword ? 'text' : 'password';
+                    this.querySelector('.eye-icon').textContent = isPassword ? '👁️‍🗨️' : '👁️';
+                });
+            });
         });
-    }
-});
+
+        if (!localStorage.getItem("loggedInAdmin")) {
+            window.location.href = "admin-login.html";
+        }
     </script>
 </body>
 </html>

@@ -79,6 +79,35 @@ app.post('/send-acceptance-email', (req, res) => {
   });
 });
 
+// Verification Code Email Endpoint
+app.post('/send-verification-code', (req, res) => {
+  const { studentEmail, studentName, verificationCode } = req.body;
+
+  if (!studentEmail || !studentName || !verificationCode) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: studentEmail,
+    subject: 'Password Reset Verification Code',
+    html: `
+      <h1 style="color: darkblue;">Password Reset</h1>
+      <p>Hello ${studentName},</p>
+      <p>Your verification code is: <strong>${verificationCode}</strong></p>
+      <p>This code will expire in 2 minutes.</p>
+      <p>If you did not request a password reset, please ignore this email.</p>
+    `
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return res.status(500).json({ error: 'Failed to send email', details: error.toString() });
+    }
+    res.status(200).json({ message: 'Verification code sent successfully', info: info.response });
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -1,3 +1,8 @@
+if (!localStorage.getItem("loggedInAdmin")) {
+           
+    window.location.href = "admin-login.html";
+}
+
 function toggleMenu() {
     let sidebar = document.getElementById("sidebar");
     sidebar.classList.toggle("collapsed");

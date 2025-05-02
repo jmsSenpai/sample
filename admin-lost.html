@@ -95,6 +95,11 @@
     </div>
 
     <script>
+         if (!localStorage.getItem("loggedInAdmin")) {
+           
+           window.location.href = "admin-login.html";
+       }
+
         let lostItemToMatch = null; // Variable to hold the lost item for matching
         let selectedFoundItemIndex = null; // Variable to hold the selected found item index
     

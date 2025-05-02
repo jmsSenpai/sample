@@ -129,7 +129,7 @@
           </div>
           <div class="input-field">
             <label for="lost-itemImage">Item Image</label>
-            <input type="file" id="lost-itemImage" accept="image/*" required aria-required="true">
+            <input type="file" id="lost-itemImage" accept="image/*">
           </div>
         </div>
         <div class="input-field">
@@ -189,7 +189,7 @@
         <div class="input-group">
           <div class="input-field">
             <label for="found-itemImage">Item Image</label>
-            <input type="file" id="found-itemImage" accept="image/*" required aria-required="true">
+            <input type="file" id="found-itemImage" accept="image/*" >
           </div>
         </div>
         <div class="input-field">
@@ -202,6 +202,12 @@
   </div>
 
   <script>
+    //Authentication check - Token
+    if (!localStorage.getItem("loggedInAdmin")) {
+           
+            window.location.href = "admin-login.html";
+        }
+
     // Tab switching functionality
     function showForm(formType) {
       const lostForm = document.getElementById('lost-item-form');

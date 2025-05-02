@@ -11,6 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const closeModal = document.getElementById('closeModal');
     const resetPasswordBtn = document.getElementById('resetPassword');
     const passwordFields = document.getElementById("password-fields");
+    const verificationFields = document.getElementById("verification-fields");
+    const securityFields = document.getElementById("security-fields");
+    const resendCodeBtn = document.getElementById("resendCode");
     const messageModal = document.getElementById("messageModal");
     const messageText = document.getElementById("messageText");
     const closeMessageModal = document.getElementById("closeMessageModal");
@@ -20,23 +23,68 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let attempts = 0;
     let lockedUntil = null;
-    let isSecurityVerified = false;
+    let currentStage = 'security'; // 'security', 'code', 'password'
+    let verificationCode = null;
+    let codeExpiration = null;
+    let currentUsername = null;
 
     function closeModals() {
         forgotModal.style.display = "none";
         messageModal.style.display = "none";
         messageModal.classList.remove('success', 'error');
+        securityFields.style.display = "block";
         passwordFields.style.display = "none";
-        isSecurityVerified = false;
+        verificationFields.style.display = "none";
+        currentStage = 'security';
+        verificationCode = null;
+        codeExpiration = null;
+        currentUsername = null;
+        attempts = 0;
         document.getElementById("forgot-email").value = "";
         document.getElementById("forgot-question").value = "";
         document.getElementById("forgot-answer").value = "";
+        document.getElementById("verification-code").value = "";
         document.getElementById("new-password").value = "";
         document.getElementById("reset-confirm-password").value = "";
     }
 
     function isAnyModalOpen() {
         return forgotModal.style.display === "block" || messageModal.style.display === "block";
+    }
+
+    function generateVerificationCode() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    async function sendVerificationCode(email, username) {
+        verificationCode = generateVerificationCode();
+        codeExpiration = new Date().getTime() + 120000; // 2 minutes from now
+
+        try {
+            const response = await fetch('http://localhost:3000/send-verification-code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    studentEmail: email,
+                    studentName: username,
+                    verificationCode: verificationCode
+                })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                showMessage("Verification code sent to your email.", true);
+                return true;
+            } else {
+                showMessage(result.error || "Failed to send verification code.");
+                return false;
+            }
+        } catch (error) {
+            showMessage("Error sending verification code.");
+            return false;
+        }
     }
 
     document.getElementById("signUp").addEventListener('click', () => {
@@ -50,12 +98,15 @@ document.addEventListener("DOMContentLoaded", function () {
     forgotLink.addEventListener("click", function (e) {
         e.preventDefault();
         forgotModal.style.display = "block";
+        securityFields.style.display = "block";
         passwordFields.style.display = "none";
-        isSecurityVerified = false;
+        verificationFields.style.display = "none";
+        currentStage = 'security';
         attempts = 0;
     });
 
     closeModal.addEventListener("click", closeModals);
+
     closeMessageModal.addEventListener("click", () => {
         messageModal.style.display = "none";
         messageModal.classList.remove('success', 'error');
@@ -75,13 +126,13 @@ document.addEventListener("DOMContentLoaded", function () {
             messageModal.style.display = "none";
             messageModal.classList.remove('success', 'error');
         } else if (event.key === "Enter" && forgotModal.style.display === "block") {
-            closeModals();
+            resetPasswordBtn.click();
         }
     });
 
     function showMessage(message, autoClose = false) {
         messageText.innerText = message;
-        const successKeywords = ["successful", "created", "verified"];
+        const successKeywords = ["successful", "created", "verified", "sent"];
         const isSuccess = successKeywords.some(keyword => message.toLowerCase().includes(keyword));
         messageModal.classList.remove('success', 'error');
         messageModal.classList.add(isSuccess ? 'success' : 'error');
@@ -95,10 +146,28 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    resetPasswordBtn.addEventListener("click", function () {
+    resendCodeBtn.addEventListener("click", async function () {
+        if (currentStage !== 'code') return;
+
+        const studentData = JSON.parse(localStorage.getItem(currentUsername));
+
+        if (!studentData) {
+            showMessage("No account found with this username.");
+            closeModals();
+            return;
+        }
+
+        const success = await sendVerificationCode(studentData.email, currentUsername);
+        if (success) {
+            verificationFields.style.display = "block";
+        }
+    });
+
+    resetPasswordBtn.addEventListener("click", async function () {
         const username = document.getElementById("forgot-email").value.trim();
         const question = document.getElementById("forgot-question").value.trim();
         const answer = document.getElementById("forgot-answer").value.trim();
+        const inputCode = document.getElementById("verification-code").value.trim();
         const newPassword = document.getElementById("new-password").value.trim();
         const confirmPassword = document.getElementById("reset-confirm-password").value.trim();
         const now = new Date().getTime();
@@ -109,9 +178,9 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (!isSecurityVerified) {
+        if (currentStage === 'security') {
             if (!username || !question || !answer) {
-                showMessage("Please fill in the required fields.");
+                showMessage("Please fill in all required fields.");
                 return;
             }
 
@@ -122,11 +191,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            if (studentData.securityQuestion === question && studentData.securityAnswer === answer) {
-                isSecurityVerified = true;
-                passwordFields.style.display = "block";
-                showMessage("Security question verified. Please enter your new password.", true);
-                forgotModal.style.display = "block";
+            if (studentData.securityQuestion === question && studentData.securityAnswer.toLowerCase() === answer.toLowerCase()) {
+                currentUsername = username;
+                currentStage = 'code';
+                securityFields.style.display = "none";
+                verificationFields.style.display = "block";
+                document.getElementById("forgot-answer").value = "";
+                showMessage("Security question verified. Please check your email for the verification code.", true);
+                const success = await sendVerificationCode(studentData.email, username);
+                if (!success) {
+                    currentStage = 'security';
+                    securityFields.style.display = "block";
+                    verificationFields.style.display = "none";
+                }
             } else {
                 attempts++;
                 if (attempts >= 5) {
@@ -136,7 +213,30 @@ document.addEventListener("DOMContentLoaded", function () {
                     showMessage(`Incorrect security answer. Attempts left: ${5 - attempts}`);
                 }
             }
-        } else {
+        } else if (currentStage === 'code') {
+            if (!inputCode) {
+                showMessage("Please enter the verification code.");
+                return;
+            }
+
+            if (now > codeExpiration) {
+                showMessage("Verification code has expired. Please request a new one.");
+                verificationCode = null;
+                codeExpiration = null;
+                document.getElementById("verification-code").value = "";
+                return;
+            }
+
+            if (inputCode === verificationCode) {
+                currentStage = 'password';
+                verificationFields.style.display = "none";
+                passwordFields.style.display = "block";
+                showMessage("Verification code confirmed. Please enter your new password.", true);
+            } else {
+                showMessage("Invalid verification code.");
+                document.getElementById("verification-code").value = "";
+            }
+        } else if (currentStage === 'password') {
             if (!newPassword || !confirmPassword) {
                 showMessage("Please enter and confirm your new password.");
                 return;
@@ -152,9 +252,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            const studentData = JSON.parse(localStorage.getItem(username));
+            const studentData = JSON.parse(localStorage.getItem(currentUsername));
+            if (!studentData) {
+                showMessage("Account not found. Please start over.");
+                closeModals();
+                return;
+            }
+
             studentData.password = newPassword;
-            localStorage.setItem(username, JSON.stringify(studentData));
+            localStorage.setItem(currentUsername, JSON.stringify(studentData));
             showMessage("Password reset successful.", true);
             closeModals();
         }
@@ -162,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     signUpForm.addEventListener('submit', function (event) {
         event.preventDefault();
-
+    
         const lastName = document.getElementById('last-name').value.trim();
         const firstName = document.getElementById('first-name').value.trim();
         const middleName = document.getElementById('middle-name').value.trim();
@@ -174,32 +280,48 @@ document.addEventListener("DOMContentLoaded", function () {
         const idFileInput = document.getElementById('student-id');
         const securityQuestion = document.getElementById('security-question').value;
         const securityAnswer = document.getElementById('security-answer').value.trim();
-
+    
         if (!lastName || !firstName || !username || !password || !confirmPassword || !securityAnswer) {
             showMessage("Please fill in all required fields.");
             return;
         }
-
+    
         if (password !== confirmPassword) {
             showMessage("Passwords do not match!");
             return;
         }
-
+    
         if (!isValidPassword(password)) {
             showMessage("Password must contain at least one lowercase letter, one uppercase letter, one number, and be at least 8 characters long.");
             return;
         }
-
+    
+        // Check for duplicate username
+        if (localStorage.getItem(username)) {
+            showMessage("This username is already taken. Please choose a different one.");
+            return;
+        }
+    
+        // Check for duplicate email
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const userData = JSON.parse(localStorage.getItem(key));
+            if (userData.email && userData.email.toLowerCase() === email.toLowerCase()) {
+                showMessage("This email is already registered. Please use a different email.");
+                return;
+            }
+        }
+    
         const file = idFileInput.files[0];
         if (!file) {
             showMessage("Please upload your student ID.");
             return;
         }
-
+    
         const reader = new FileReader();
         reader.onload = function (e) {
             const idImage = e.target.result;
-
+    
             const studentData = {
                 lastName,
                 firstName,
@@ -214,7 +336,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 securityQuestion,
                 securityAnswer
             };
-
+    
             localStorage.setItem(username, JSON.stringify(studentData));
             showMessage("Account created! Please wait for admin approval.");
             signUpForm.reset();
@@ -284,4 +406,14 @@ document.addEventListener("DOMContentLoaded", function () {
     function capitalize(str) {
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     }
+});
+
+document.querySelectorAll('.toggle-password').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+        const targetId = toggle.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        toggle.textContent = isPassword ? '🙈' : '👁️';
+    });
 });

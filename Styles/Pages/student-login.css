@@ -403,3 +403,27 @@ input[type="file"] {
 	50% { transform: translateX(10px); }
 	75% { transform: translateX(-10px); }
 }
+
+.password-wrapper {
+	position: relative;
+	width: 100%;
+}
+
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+	padding-right: 40px; /* Space for the eye icon */
+}
+
+.toggle-password {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
+	font-size: 18px;
+	user-select: none;
+}
+
+#security-fields, #verification-fields, #password-fields {
+	margin-bottom: 15px;
+}
