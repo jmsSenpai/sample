@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="Styles/Pages/Admin-Dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div id="nav-bar">
@@ -51,19 +52,10 @@
         <input id="nav-footer-toggle" type="checkbox"/>
         <div id="nav-footer">
             <div id="nav-footer-heading">
-                <div id="nav-footer-avatar">
-                    <img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547"/>
-                </div>
-                <div id="nav-footer-titlebox">
-                    <a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a>
-                    <span id="nav-footer-subtitle">Admin</span>
-                </div>
-                <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
+              <div id="nav-footer-avatar"><img src="images/admin acc.png"/></div>
+              <div id="nav-footer-titlebox"><a id="nav-footer-title" >uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>           
             </div>
-            <div id="nav-footer-content">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            </div>
-        </div>
+          </div>
     </div>
 
     <div class="dashboard">
@@ -90,11 +82,21 @@
                 <span>Admin Account</span>
             </div>
         </div>
+        <div class="analytics-container">
+            <h2>Item Analytics</h2>
+            <div class="charts-container">
+                <div class="chart">
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div class="chart">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
          if (!localStorage.getItem("loggedInAdmin")) {
-           
            window.location.href = "admin-login.html";
        }
         function updateDashboardCounts() {
@@ -127,6 +129,79 @@
             document.getElementById('matched-item-count').textContent = matchedItems.length;
             document.getElementById('student-account-count').textContent = studentCount;
             document.getElementById('admin-account-count').textContent = adminCount;
+
+            // Update charts
+            updateCharts(lostItems.length, foundItems.length, matchedItems.length);
+        }
+
+        function updateCharts(lostCount, foundCount, matchedCount) {
+            // Pie Chart
+            const pieChart = new Chart(document.getElementById('pieChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Lost', 'Found', 'Matched'],
+                    datasets: [{
+                        data: [lostCount, foundCount, matchedCount],
+                        backgroundColor: ['#FF0000', '#00FF00', '#0000FF'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Item Distribution'
+                        }
+                    }
+                }
+            });
+
+            // Bar Chart
+            const barChart = new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Lost', 'Found', 'Matched'],
+                    datasets: [{
+                        label: 'Item Counts',
+                        data: [lostCount, foundCount, matchedCount],
+                        backgroundColor: ['#FF0000', '#00FF00', '#0000FF'],
+                        borderColor: '#000',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Items'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Item Type'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Item Counts by Type'
+                        }
+                    }
+                }
+            });
         }
 
         window.onload = updateDashboardCounts;
@@ -147,31 +222,22 @@
     });
 
     document.addEventListener("DOMContentLoaded", function () {
-    
-    const logoutButton = document.getElementById("logout-btn");
+        const logoutButton = document.getElementById("logout-btn");
 
-    if (logoutButton) {
-        logoutButton.addEventListener("click", function () {
-          
-            document.body.classList.add("fade-out");
-
-           
-            setTimeout(function () {
-            
-                localStorage.removeItem("loggedInAdmin");
-
-                const inputs = document.querySelectorAll("input");
-                inputs.forEach(input => {
-                    input.value = "";
-                });
-
-                window.location.href = "admin-login.html";
-
-            }, 1000); 
-        });
-    }
-});
-
+        if (logoutButton) {
+            logoutButton.addEventListener("click", function () {
+                document.body.classList.add("fade-out");
+                setTimeout(function () {
+                    localStorage.removeItem("loggedInAdmin");
+                    const inputs = document.querySelectorAll("input");
+                    inputs.forEach(input => {
+                        input.value = "";
+                    });
+                    window.location.href = "admin-login.html";
+                }, 1000); 
+            });
+        }
+    });
     </script>
 </body>
 </html>

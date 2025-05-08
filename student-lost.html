@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Lost Item</title>
     <link rel="stylesheet" href="Styles/Pages/student-lost.css">
-    
 </head>
 <body>
     <div id="nav-bar">
         <input id="nav-toggle" type="checkbox"/>
-        <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
-          <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
-          <hr/>
+        <div id="nav-header">
+            <a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
+            <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
+            <hr/>
         </div>
         <div id="nav-content">
             <a href="student-dashboard.html"> 
-                <div class="nav-button " ><img src="images/dashboard.png" alt=""><span>Dashboard</span></div>
+                <div class="nav-button"><img src="images/dashboard.png" alt=""><span>Dashboard</span></div>
             </a>
             <a href="#"> 
                 <div class="nav-button active"><img src="images/lost item.png" alt=""><span>Lost Items</span></div>
@@ -27,23 +27,27 @@
             <a href="Students-Reports.html">
                 <div class="nav-button"><img src="images/report.png" alt=""><span>My Reports</span></div>
             </a>
-          <hr/>
-          <div class="nav-button" id="logout-btn">
-            <img src="images/logout.png" alt=""><span>Logout</span>
-        </div>
-          <div id="nav-content-highlight"></div>
+            <hr/>
+            <div class="nav-button" id="logout-btn">
+                <img src="images/logout.png" alt=""><span>Logout</span>
+            </div>
+            <div id="nav-content-highlight"></div>
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
         <div id="nav-footer">
-          <div id="nav-footer-heading">
-            <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Student</span></div>
-            <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
-          </div>
-          <div id="nav-footer-content">
-            <Lorem>ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Lorem>
-          </div>
+            <div id="nav-footer-heading">
+                <div id="nav-footer-avatar">
+                    <img src="images/student acc.png" alt="User Avatar">
+                </div>
+                <div id="nav-footer-titlebox">
+                    <a id="nav-footer-title" >uahnbu</a>
+                    <span id="nav-footer-subtitle">Student</span>
+                </div>
+                
+            </div>
+        
         </div>
-      </div>
+    </div>
 
     <div class="dashboard">
         <h1>Report a Lost Item</h1>
@@ -51,7 +55,7 @@
         <input type="hidden" id="ownerEmail" value="">
         <form id="lost-item-form" class="found-item-form" onsubmit="submitForm(event)">
             <div class="input-group">
-                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="text" id="name" placeholder="Your Name" readonly required>
                 <select id="category" required>
                     <option value="">Select Category</option>
                     <option value="Personal Belongings">Personal Belongings</option>
@@ -67,24 +71,20 @@
                 </select>
             </div>
             <div class="input-group">
-                <input type="text" id="itemName" placeholder="Name of the Item" required>
-                <input type="text" id="lastLocated" placeholder="Last Located" required>
+                <input type="text" id="itemName" placeholder="Name of the Item" required autocomplete="off">
+                <input type="text" id="lastLocated" placeholder="Last Located" required autocomplete="off">
             </div>
-        
             <div class="input-group">
                 <label for="dateLost">Date Lost</label>
-                <input type="date" id="dateLost" placeholder="Date Lost" required>
-                
+                <input type="date" id="dateLost" placeholder="Date Lost" required autocomplete="off">
                 <label for="itemColor">Item Color</label>
                 <input type="color" id="itemColor" value="rgb(255, 255, 255)" list="white">
             </div>
-        
             <div class="input-group file-group">
                 <label for="itemImage" class="file-label">Image of the Item</label>
-                <input type="file" id="itemImage" class="file-input" accept="image/*" >
+                <input type="file" id="itemImage" class="file-input" accept="image/*">
             </div>
-        
-            <textarea id="description" placeholder="Short description" required></textarea>
+            <textarea id="description" placeholder="Short description" required autocomplete="off"></textarea>
             <button type="submit" class="submit-btn">Submit</button>
         </form>
     </div>
@@ -99,11 +99,6 @@
     </div>
 
     <script>
-        function toggleMenu() {
-            let sidebar = document.getElementById("sidebar");
-            sidebar.classList.toggle("collapsed");
-        }
-
         function showModal() {
             document.getElementById('successModal').style.display = 'flex';
         }
@@ -114,16 +109,24 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             const fullName = sessionStorage.getItem("loggedInStudentName");
+            const nameInput = document.getElementById("name");
 
+            // Redirect to login if not authenticated
+            if (!fullName) {
+                window.location.href = "student-login.html";
+            }
+
+            // Populate the name input field
+            if (fullName && nameInput) {
+                nameInput.value = fullName;
+            }
+
+            // Update footer with user name
             if (fullName) {
-                const footerBox = document.getElementById("nav-footer-titlebox");
                 const title = document.getElementById("nav-footer-title");
                 const subtitle = document.getElementById("nav-footer-subtitle");
-
-                if (footerBox && title && subtitle) {
-                    title.textContent = fullName;
-                    subtitle.textContent = "Student";
-                }
+                title.textContent = fullName;
+                subtitle.textContent = "Student";
             }
         });
 
@@ -138,9 +141,9 @@
             const itemColor = document.getElementById('itemColor').value;
             const description = document.getElementById('description').value;
             const imageFile = document.getElementById('itemImage').files[0];
-
             const ownerEmail = sessionStorage.getItem("loggedInStudentEmail");
             const reportedBy = sessionStorage.getItem("loggedInStudentName");
+
             if (!ownerEmail) {
                 alert("Email not found! Please login again.");
                 return;
@@ -149,33 +152,47 @@
             const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
             const idLost = idGenerator(lostItems);
 
+            const lostItem = {
+                name,
+                category,
+                itemName,
+                lastLocated,
+                dateLost,
+                itemColor,
+                description,
+                image: null,
+                idLost,
+                ownerEmail,
+                reportedBy,
+                status: "Pending"
+            };
+
             if (imageFile) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    const imageBase64 = event.target.result; 
-                    const lostItem = {
-                        name, category, itemName, lastLocated, dateLost, itemColor, description, image: imageBase64, idLost, ownerEmail, reportedBy
-                    };
-
+                    lostItem.image = event.target.result;
                     lostItems.push(lostItem);
                     localStorage.setItem('lostItems', JSON.stringify(lostItems));
-
                     document.getElementById('lost-item-form').reset();
+                    document.getElementById('name').value = sessionStorage.getItem("loggedInStudentName");
                     showModal();
                 };
                 reader.readAsDataURL(imageFile);
             } else {
-                alert('Please upload an image!');
+                lostItems.push(lostItem);
+                localStorage.setItem('lostItems', JSON.stringify(lostItems));
+                document.getElementById('lost-item-form').reset();
+                document.getElementById('name').value = sessionStorage.getItem("loggedInStudentName");
+                showModal();
             }
         }
 
         function idGenerator(lostItems) {
             let id = Math.random() * 100000;
-            
             for (let i = 0; i < lostItems.length; i++) {
                 if (lostItems[i].idLost === id) {
                     id = Math.random() * 100000;
-                    i = 0; 
+                    i = 0;
                 }
             }
             return id;
@@ -183,18 +200,17 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             const logoutButton = document.getElementById("logout-btn");
-
             if (logoutButton) {
                 logoutButton.addEventListener("click", function () {
                     document.body.classList.add("fade-out");
                     setTimeout(function () {
                         localStorage.removeItem("loggedInAdmin");
+                        sessionStorage.removeItem("loggedInStudentName");
+                        sessionStorage.removeItem("loggedInStudentEmail");
                         const inputs = document.querySelectorAll("input");
-                        inputs.forEach(input => {
-                            input.value = "";
-                        });
+                        inputs.forEach(input => input.value = "");
                         window.location.href = "student-login.html";
-                    }, 1000); 
+                    }, 1000);
                 });
             }
         });

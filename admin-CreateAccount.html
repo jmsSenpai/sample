@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accounts</title>
+    <title>Create Admin Account</title>
     <link rel="stylesheet" href="Styles/Pages/admin-CreateAccount.css">
 </head>
 <body>
@@ -33,10 +33,10 @@
                 <div class="nav-button"><img src="images/matched.png" alt=""><span>Matched Items</span></div>
             </a>
             <a href="Admin-Report-Item.html">  
-                <div class="nav-button "><img src="images/item report.png" alt=""><span>Report An Item</span></div>
+                <div class="nav-button"><img src="images/item report.png" alt=""><span>Report An Item</span></div>
             </a>
             <a href="Admin-reports.html">  
-                <div class="nav-button "><img src="images/report.png" alt=""><span>Reports</span></div>
+                <div class="nav-button"><img src="images/report.png" alt=""><span>Reports</span></div>
             </a>
             <a href="admin-accounts.html">  
                 <div class="nav-button active"><img src="images/admin acc.png" alt=""><span>Accounts</span></div>
@@ -45,68 +45,58 @@
           <hr/>
           <div class="nav-button" id="logout-btn">
             <img src="images/logout.png" alt=""><span>Logout</span>
-        </div>
+          </div>
           <div id="nav-content-highlight"></div>
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
         <div id="nav-footer">
-          <div id="nav-footer-heading">
-            <div id="nav-footer-avatar"><img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547"/></div>
-            <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>
-            <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
+            <div id="nav-footer-heading">
+              <div id="nav-footer-avatar"><img src="images/admin acc.png"/></div>
+              <div id="nav-footer-titlebox"><a id="nav-footer-title" >uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>           
+            </div>
           </div>
-          <div id="nav-footer-content">
-            <Lorem>ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Lorem>
-          </div>
-        </div>
       </div>
       <div class="accounts-content">
         <a class="back-btn" href="admin-adminAccount.html">Back</a>
-        <h1 class="title">Create Account</h1>
+        <h1 class="title">Create Admin Account</h1>
         <div class="create-account-form">
             <div class="form-group">
-                <label for="lastName">Last Name</label>
-                <input type="text" id="lastName" name="lastName">
-            </div>
-            <div class="form-group">
-                <label for="gmail">Username</label>
-                <input type="text" id="gmail" name="gmail">
-            </div>
-            <div class="form-group">
                 <label for="firstName">First Name</label>
-                <input type="text" id="firstName" name="firstName">
-            </div>
-            <div class="form-group password-group">
-                <label for="password">Password</label>
-                <div class="password-wrapper">
-                    <input type="password" id="password" name="password">
-                    <button type="button" class="toggle-password" aria-label="Toggle password visibility">
-                        <span class="eye-icon">👁️</span>
-                    </button>
-                </div>
+                <input type="text" id="firstName" name="firstName" required>
             </div>
             <div class="form-group">
                 <label for="middleName">Middle Name</label>
                 <input type="text" id="middleName" name="middleName">
             </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="gmail">Gmail</label>
+                <input type="email" id="gmail" name="gmail" placeholder="example@gmail.com" required>
+            </div>
+            <div class="form-group password-group">
+                <label for="password">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" class="toggle-password" aria-label="Toggle password visibility">Show</button>
+                </div>
+            </div>
             <div class="form-group password-group">
                 <label for="confirmPassword">Confirm Password</label>
                 <div class="password-wrapper">
-                    <input type="password" id="confirmPassword" name="confirmPassword">
-                    <button type="button" class="toggle-password" aria-label="Toggle password visibility">
-                        <span class="eye-icon">👁️</span>
-                    </button>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    <button type="button" class="toggle-password" aria-label="Toggle password visibility">Show</button>
                 </div>
             </div>
             <div class="form-group">
                 <label for="security-question">Security Question</label>
-                <select id="security-question" name="security-question">
-                    <option value="">Select a question</option>
-                    <option value="pet">What is your pet’s name?</option>
-                    <option value="school">What was the name of your first school?</option>
-                    <option value="city">In what city were you born?</option>
-                    <option value="nickname">What is your childhood nickname?</option>
-                </select>
+                <input type="text" id="security-question" name="security-question" placeholder="Enter your security question" required>
             </div>
             <div class="form-group">
                 <label for="security-answer">Answer</label>
@@ -127,17 +117,19 @@
     <script src="scripts/admin-login.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-    
-            const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
+            if (!localStorage.getItem("loggedInAdmin")) {
+                window.location.href = "admin-login.html";
+            }
 
+            const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
             if (loggedInAdminUsername) {
                 const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
                 if (adminData && adminData.accountType === 'admin') {
-                    const fullName = `${adminData.firstName} `;
+                    const fullName = `${adminData.firstName}`;
                     const navFooterTitle = document.getElementById("nav-footer-title");
                     if (navFooterTitle) {
                         navFooterTitle.textContent = fullName;
-                        navFooterTitle.href = "#"; 
+                        navFooterTitle.href = "#";
                     }
                 }
             }
@@ -164,14 +156,10 @@
                     const passwordInput = this.previousElementSibling;
                     const isPassword = passwordInput.type === 'password';
                     passwordInput.type = isPassword ? 'text' : 'password';
-                    this.querySelector('.eye-icon').textContent = isPassword ? '👁️‍🗨️' : '👁️';
+                    this.textContent = isPassword ? 'Hide' : 'Show';
                 });
             });
         });
-
-        if (!localStorage.getItem("loggedInAdmin")) {
-            window.location.href = "admin-login.html";
-        }
     </script>
 </body>
 </html>

@@ -1,8 +1,7 @@
-//AuthenticationCheck
+// Authentication Check
 if (!localStorage.getItem("loggedInAdmin")) {
     window.location.href = "admin-login.html";
 }
-
 
 const lostItemlists = JSON.parse(localStorage.getItem('lostItems')) || [];
 const foundItemlists = JSON.parse(localStorage.getItem('foundItems')) || [];
@@ -23,12 +22,14 @@ function displayMatchedItems() {
         return;
     }
 
-    matchedItems.forEach(match => {
+    matchedItems.forEach((match, index) => {
         const lost = lostItems.find(item => item.idLost === match.lostID);
         const found = foundItems.find(item => item.idFound === match.foundID);
 
-    
-        if (!lost || !found) return;
+        if (!lost || !found) {
+            console.warn(`Match at index ${index} skipped: Lost item (ID: ${match.lostID}) or Found item (ID: ${match.foundID}) not found.`);
+            return;
+        }
 
         const itemDiv = document.createElement("div");
         itemDiv.classList.add("matched-item");
@@ -38,11 +39,11 @@ function displayMatchedItems() {
                 <div class="item-label">Lost Image</div>
             </div>
             <div class="item-info">
-                <strong>Match Score:</strong> ${match.totalPoints}/100<br>
+                <strong>Match Score:</strong> ${match.manual ? 'Custom' : `${match.totalPoints}/100`}<br>
                 <strong>Lost:</strong> ${lost.itemName} - ${lost.description || "No description"}<br>
                 <strong>Found:</strong> ${found.itemName} - ${found.description || "No description"}<br>
                 <button class="view-button" onclick="openModal(${match.lostID}, ${match.foundID})">View Match</button>
-                <button class="match-button" data-lostid="${lost.idLost}">Send Match Email</button>
+                <button class="match-button" data-lostid="${lost.idLost}" data-foundid="${found.idFound}">Send Match Email</button>
             </div>
             <div class="item-section">
                 <img src="${found.image || 'images/default-image.png'}" alt="Found Image" onclick="previewImage('${found.image || 'images/default-image.png'}')">
@@ -55,10 +56,12 @@ function displayMatchedItems() {
     const matchButtons = document.querySelectorAll('.match-button');
     matchButtons.forEach(button => {
         button.addEventListener('click', function () {
-            const lostID = this.getAttribute('data-lostid');
-            const lostItem = lostItems.find(item => item.idLost === Number(lostID));
+            const lostID = Number(this.getAttribute('data-lostid'));
+            const foundID = Number(this.getAttribute('data-foundid'));
+            const lostItem = lostItems.find(item => item.idLost === lostID);
+            const foundItem = foundItems.find(item => item.idFound === foundID);
 
-            if (lostItem && lostItem.ownerEmail) {
+            if (lostItem && lostItem.ownerEmail && foundItem) {
                 fetch('http://localhost:3000/send-matched-email', {
                     method: 'POST',
                     headers: {
@@ -72,15 +75,37 @@ function displayMatchedItems() {
                 })
                     .then(response => response.text())
                     .then(data => {
-                        alert('Match email sent successfully!');
+                        // Update status of lost and found items to "Matched"
+                        const lostIndex = lostItems.findIndex(item => item.idLost === lostID);
+                        const foundIndex = foundItems.findIndex(item => item.idFound === foundID);
+                        
+                        if (lostIndex !== -1) {
+                            lostItems[lostIndex].status = "Matched";
+                        } else {
+                            console.warn(`Lost item ${lostID} not found for status update`);
+                        }
+                        if (foundIndex !== -1) {
+                            foundItems[foundIndex].status = "Matched";
+                        } else {
+                            console.warn(`Found item ${foundID} not found for status update`);
+                        }
+
+                        // Save updated items back to localStorage
+                        localStorage.setItem('lostItems', JSON.stringify(lostItems));
+                        localStorage.setItem('foundItems', JSON.stringify(foundItems));
+
+                        alert('Match email sent successfully and status updated to Matched!');
                         console.log('Email response:', data);
+
+                        // Refresh the matched items display
+                        displayMatchedItems();
                     })
                     .catch(error => {
                         console.error('Email error:', error);
                         alert('Failed to send match email.');
                     });
             } else {
-                alert("Email for the lost item is not available.");
+                alert("Email for the lost item or found item data is not available.");
             }
         });
     });
@@ -136,12 +161,19 @@ function closeModal() {
 function previewImage(src) {
     const modal = document.getElementById("imageModal");
     const img = document.getElementById("previewImg");
-    img.src = src;
-    modal.style.display = "block";
+    if (modal && img) {
+        img.src = src;
+        modal.style.display = "block";
+    } else {
+        console.error("Image modal or preview image element not found.");
+    }
 }
 
 function closeImageModal() {
-    document.getElementById("imageModal").style.display = "none";
+    const modal = document.getElementById("imageModal");
+    if (modal) {
+        modal.style.display = "none";
+    }
 }
 
 function match(lostItemlist, foundItemlist) {
@@ -160,7 +192,7 @@ function match(lostItemlist, foundItemlist) {
             let itemLostCategory = lostItemlist[i].category;
             let itemFoundCategory = foundItemlist[index].category;
             const itemLostDate = new Date(lostItemlist[i].dateLost);
-            const itemFoundDate = new Date(lostItemlist[index].dateFound);
+            const itemFoundDate = new Date(foundItemlist[index].dateFound);
             let itemLostColor = lostItemlist[i].itemColor;
             let itemFoundColor = foundItemlist[index].itemColor;
 
@@ -177,7 +209,6 @@ function match(lostItemlist, foundItemlist) {
             let alreadyExists = localStorageMatch.some(m => m.lostID === lostID && m.foundID === foundID);
             if (alreadyExists) totalPoints = 0;
 
-         
             if (totalPoints >= 70) {
                 const matched = { 
                     lostID, 
@@ -188,13 +219,12 @@ function match(lostItemlist, foundItemlist) {
                     itemLostLocation, 
                     itemFoundLocation, 
                     itemLostDate, 
-                    itemFoundDate 
+                    itemFoundDate,
+                    manual: false
                 };
                 
                 localStorageMatch.push(matched);
                 localStorage.setItem('matchedItems', JSON.stringify(localStorageMatch));
-
-                displayMatchedItems();
             }
         }
     }
@@ -246,42 +276,31 @@ function pointsColor(lostColor, foundColor) {
     return 0;
 }
 
-
 document.addEventListener("DOMContentLoaded", function () {
-   
     const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
-
 
     if (loggedInAdminUsername) {
         const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
         if (adminData && adminData.accountType === 'admin') {
-          
             const fullName = `${adminData.firstName}`;
-    
             const navFooterTitle = document.getElementById("nav-footer-title");
             if (navFooterTitle) {
                 navFooterTitle.textContent = fullName;
-              
                 navFooterTitle.href = "#"; 
             }
         }
     }
 
-  
     const logoutButton = document.getElementById("logout-btn");
-
     if (logoutButton) {
         logoutButton.addEventListener("click", function () {
             document.body.classList.add("fade-out");
-
             setTimeout(function () {
                 localStorage.removeItem("loggedInAdmin");
-
                 const inputs = document.querySelectorAll("input");
                 inputs.forEach(input => {
                     input.value = "";
                 });
-
                 window.location.href = "admin-login.html";
             }, 1000);
         });

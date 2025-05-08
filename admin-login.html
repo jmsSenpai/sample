@@ -10,86 +10,54 @@
   <div class="container" id="container">
     <div class="form-container sign-in-container">
       <form id="signInForm">
-          <h1>Sign in</h1>
-          <input type="text" placeholder="Username" id="admin-email" autocomplete="off" /><br>
-          <div class="password-wrapper">
-            <input type="password" placeholder="Password" id="admin-pass" autocomplete="off" aria-describedby="toggle-admin-pass-desc" />
-            <span class="toggle-password" data-target="admin-pass" role="button" aria-label="Toggle password visibility" aria-controls="admin-pass">👁️</span>
-            <span id="toggle-admin-pass-desc" class="sr-only">Click to show or hide password</span>
+        <h1>Sign in</h1>
+        <input type="text" placeholder="Username" id="admin-email" autocomplete="off" /><br>
+        <div class="password-wrapper">
+          <input type="password" placeholder="Password" id="admin-pass" autocomplete="off" aria-describedby="toggle-admin-pass-desc" />
+          <span class="toggle-password" data-target="admin-pass" role="button" aria-label="Show password" aria-controls="admin-pass">Show</span>
+          <span id="toggle-admin-pass-desc" class="sr-only">Click to show or hide password</span>
         </div><br>
-          <a href="#" id="forgotLink">Forgot your password?</a><br>
-          <button type="submit">Sign In</button>
+        <a href="#" id="forgotLink">Forgot your password?</a><br>
+        <button type="submit">Sign In</button>
       </form>
     </div>
     <div class="overlay-container">
       <div class="overlay">
-          <div class="overlay-panel overlay-left"></div>
-          <div class="overlay-panel overlay-right"></div>
+        <div class="overlay-panel overlay-left"></div>
+        <div class="overlay-panel overlay-right"></div>
       </div>
     </div>
   </div>
 
-  <div id="forgotModal Practices and Procedures for Password Reset" class="modal">
+  <div id="forgotModal" class="modal">
     <div class="modal-content">
-      <span class="close" id="closeModal">×</span>
-      <h2>Reset Password</h2>
-      <input type="email" id="forgot-email" placeholder="Email" required autocomplete="off" />
-      <select id="forgot-question" required>
-        <option value="">Select your question</option>
-        <option value="pet">What is your pet’s name?</option>
-        <option value="school">What was the name of your first school?</option>
-        <option value="city">In what city were you born?</option>
-        <option value="nickname">What is your childhood nickname?</option>
-      </select>
-      <input type="text" id="forgot-answer" placeholder="Your Answer" required autocomplete="off" />
+      <span id="closeModal" class="close">×</span>
+      <div id="security-fields">
+        <input type="text" id="forgot-email" placeholder="Username" />
+        <button id="getOtpBtn">Get OTP</button>
+        <button id="securityQuestionBtn">Security Question</button>
+        <input type="text" id="forgot-question" placeholder="Enter your security question" style="display: none;" />
+        <input type="text" id="forgot-answer" placeholder="Answer" style="display: none;" />
+      </div>
       <div id="verification-fields" style="display: none;">
-        <input type="text" id="verification-code" placeholder="Enter Verification Code" required autocomplete="off" />
-        <p id="code-timer">Code expires in: 2:00</p>
-        <button type="button" id="resend-code">Resend Code</button>
+        <input type="text" id="verification-code" placeholder="Enter Verification Code" />
+        <button id="resendCode">Resend Code</button>
       </div>
       <div id="password-fields" style="display: none;">
-        <div class="password-wrapper">
-          <input type="password" id="new-password" placeholder="New Password" required autocomplete="off" aria-describedby="toggle-new-password-desc" />
-          <span class="toggle-password" data-target="new-password" role="button" aria-label="Toggle new password visibility" aria-controls="new-password">👁️</span>
-          <span id="toggle-new-password-desc" class="sr-only">Click to show or hide new password</span>
-        </div>
-        <div class="password-wrapper">
-          <input type="password" id="reset-confirm-password" placeholder="Confirm Password" required autocomplete="off" aria-describedby="toggle-reset-confirm-password-desc" />
-          <span class="toggle-password" data-target="reset-confirm-password" role="button" aria-label="Toggle confirm password visibility" aria-controls="reset-confirm-password">👁️</span>
-          <span id="toggle-reset-confirm-password-desc" class="sr-only">Click to show or hide confirm password</span>
-        </div>
+        <input type="password" id="new-password" placeholder="New Password" />
+        <input type="password" id="reset-confirm-password" placeholder="Confirm Password" />
       </div>
-      <button type="button" id="resetPassword">Reset Password</button>
+      <button id="resetPassword">Submit</button>
     </div>
   </div>
-
+  
   <div id="messageModal" class="modal">
     <div class="modal-content">
-      <span class="close" id="closeMessageModal">×</span>
+      <span id="closeMessageModal" class="close">×</span>
       <p id="messageText"></p>
     </div>
   </div>
 
+  <script src="scripts/admin-login.js"></script>
 </body>
-<script src="scripts/admin-login.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.toggle-password').forEach(toggle => {
-          toggle.addEventListener('click', () => {
-              const targetId = toggle.getAttribute('data-target');
-              const input = document.getElementById(targetId);
-  
-              if (!input) {
-                  console.error(`Input with ID ${targetId} not found`);
-                  return;
-              }
-  
-              const isPassword = input.type === 'password';
-              input.type = isPassword ? 'text' : 'password';
-              toggle.textContent = isPassword ? '🙈' : '👁️';
-              toggle.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-          });
-      });
-  });
-</script>
 </html>

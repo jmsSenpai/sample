@@ -34,13 +34,17 @@
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
         <div id="nav-footer">
-          <div id="nav-footer-heading">
-            <div id="nav-footer-titlebox"><a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a><span id="nav-footer-subtitle">Student</span></div>
-            <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
-          </div>
-          <div id="nav-footer-content">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </div>
+            <div id="nav-footer-heading">
+                <div id="nav-footer-avatar">
+                    <img src="images/student acc.png" alt="User Avatar">
+                </div>
+                <div id="nav-footer-titlebox">
+                    <a id="nav-footer-title" >uahnbu</a>
+                    <span id="nav-footer-subtitle">Student</span>
+                </div>
+                
+            </div>
+        
         </div>
     </div>
 
@@ -147,6 +151,13 @@
                 });
             }
         });
+
+        
+        if (!sessionStorage.getItem("loggedInStudentEmail")) {
+            alert("Please Login As Student")
+           
+           window.location.href = "student-login.html";
+       }
     </script>
 </body>
 </html>

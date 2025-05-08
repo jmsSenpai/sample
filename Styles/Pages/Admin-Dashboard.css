@@ -1,27 +1,35 @@
+/* Reset and Base Styles */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-
 :root {
-  --background: #fffff0;
+  --background: #FDFDFD;
   --navbar-width: 256px;
   --navbar-width-min: 80px;
   --navbar-dark-primary: maroon;
-  --navbar-dark-secondary: Khaki;
+  --navbar-dark-secondary: Gold;
   --navbar-light-primary: #f5f6fa;
   --navbar-light-secondary: #FAF9F6;
+  --primary-color: #2b6cb0;
+  --secondary-color: #4a5568;
+  --accent-color: #38a169;
+  --background-light: #f7fafc;
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --border-color: #e2e8f0;
 }
 
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  overflow-x: hidden; 
-  box-sizing: border-box;
-  background-color: #FFFFF0;
+  overflow-x: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--background-light);
+  color: var(--text-primary);
 }
 
 img {
@@ -30,7 +38,9 @@ img {
   display: block;
 }
 
-
+/* ----------------------------------- */
+/* Navbar Styles */
+/* ----------------------------------- */
 #nav-toggle:checked ~ #nav-header {
   width: calc(var(--navbar-width-min) - 16px);
 }
@@ -73,7 +83,7 @@ img {
 }
 
 #nav-bar {
-  position: fixed; 
+  position: fixed;
   height: 100vh;
   background: var(--navbar-dark-primary);
   border-top-right-radius: 16px;
@@ -84,7 +94,7 @@ img {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   overflow: hidden;
   user-select: none;
-  z-index: 1000; 
+  z-index: 1000;
 }
 
 #nav-bar hr {
@@ -113,7 +123,9 @@ img {
   border-radius: 16px;
   z-index: 2;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  padding: 15px 0;
   transition: width 0.2s;
 }
 #nav-header hr {
@@ -122,8 +134,29 @@ img {
 }
 
 #nav-title {
-  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.2em;
+  text-decoration: none;
+  color: inherit;
   transition: opacity 1s;
+}
+
+#nav-logo-container {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+#nav-logo {
+  width: 60px;
+  height: auto;
+  margin-right: 1px;
+  vertical-align: middle;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  padding: 3px;
 }
 
 label[for=nav-toggle] {
@@ -244,10 +277,10 @@ label[for=nav-toggle] {
   color: var(--navbar-dark-primary);
 }
 
-
 .nav-button img {
   width: 24px;
   height: 24px;
+  object-fit: contain;
   margin-right: 10px;
 }
 
@@ -341,13 +374,9 @@ label[for=nav-footer-toggle] {
   background-color: #D62929;
 }
 
-.nav-button img {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-  margin-right: 10px;
+#logout-btn {
+  cursor: pointer;
 }
-
 
 .dashboard {
   margin-left: 260px;
@@ -355,8 +384,6 @@ label[for=nav-footer-toggle] {
   box-sizing: border-box;
   max-width: calc(100% - 260px);
 }
-
-
 
 .cards-container {
   display: flex;
@@ -389,7 +416,6 @@ label[for=nav-footer-toggle] {
   color: green;
 }
 
-
 .menu-toggle {
   display: flex;
   flex-direction: column;
@@ -408,6 +434,34 @@ label[for=nav-footer-toggle] {
   transition: 0.3s;
 }
 
+.analytics-container {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.charts-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.chart {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
 @media screen and (max-width: 768px) {
   #nav-bar {
@@ -421,8 +475,16 @@ label[for=nav-footer-toggle] {
   .dashboard {
       margin-left: var(--navbar-width-min);
   }
-}
 
+  .charts-container {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .chart {
+      max-width: 100%;
+  }
+}
 
 @keyframes fadeOut {
   0% { opacity: 1; }
@@ -431,41 +493,4 @@ label[for=nav-footer-toggle] {
 
 .fade-out {
   animation: fadeOut 1s forwards;
-}
-
-
-#logout-btn {
-  cursor: pointer;
-}
-
-#nav-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center horizontally */
-  padding: 15px 0; /* Add some vertical padding */
-}
-
-#nav-logo-container {
-  display: flex;
-  justify-content: center; 
-  text-align: center;
-}
-
-#nav-logo {
-  width: 60px; /* Adjust size as needed */
-  height: auto;
-  margin-right: 1px; /* Space between logo and text */
-  vertical-align: middle; /* Align with text */
-  border: 2px solid #ffffff; /* White outline around the logo */
-  border-radius: 50%; /* Optional: rounded corners for the outline */
-  background-color: #f0f0f0; 
-  padding: 3px; /* Space between image and outline */
-}
-
-#nav-title {
-  display: flex;
-  align-items: center; /* Vertically align logo and text */
-  text-decoration: none; /* Remove underline from link */
-  color: inherit; /* Match navbar text color */
-  font-size: 1.2em; /* Adjust text size as needed */
 }
