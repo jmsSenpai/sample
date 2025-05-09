@@ -3,87 +3,670 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading Screen</title>
+    <title>Datamex College of Saint Adeline - Lost & Found System</title>
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            background: #f6f5f7;
+            color: #1a202c;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
-        .loading-screen {
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Loading Page */
+        .loader-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: white;
+            background: linear-gradient(to right, #EACCC4, #852323);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.8s ease-out;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
         }
+
+        .loader-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            border: 8px solid #FFFFF0;
+            border-top: 8px solid #852323;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        .loader-text {
+            color: #ffffff;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Header */
+        header {
+            background: maroon;
+            color: #FAF9F6;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
         .logo {
-            width: 600px;
-            height: 300px;
-            margin-bottom: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            border: 2px solid #ffffff;
+            padding: 3px;
+            background-color: #f0f0f0;
         }
-        .loading-bar {
-            width: 120px;
-            height: 6px;
-            background: #ddd;
-            position: relative;
-            overflow: hidden;
-            border-radius: 6px;
+
+        .logo-text {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: bold;
         }
-        .loading-bar::before {
-            content: "";
-            position: absolute;
-            width: 50%;
-            height: 100%;
-            background: #ff0000;
-            animation: loading 1.5s infinite;
+
+        nav {
+            display: flex;
+            align-items: center;
         }
-        @keyframes loading {
-            0% { left: -50%; }
-            100% { left: 100%; }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
         }
-        .main-content {
+
+        nav ul li a {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: gold;
+        }
+
+        .burger {
             display: none;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 20px;
+        }
+
+        .burger div {
+            background: #FAF9F6;
+            height: 3px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .burger.active div:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .burger.active div:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger.active div:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: url(images/DatamexBG.png) no-repeat center center/cover;
+            color: #ffffff;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 2rem 1rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(234, 204, 196, 0.7), rgba(133, 35, 35, 0.7));
+            z-index: 1;
+        }
+
+        .hero > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero .tagline {
+            font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            background-color: #852323;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .cta-button:hover {
+            background-color: #6b1c1c;
+            transform: scale(1.05);
+        }
+
+        /* Features Section */
+        .features {
+            padding: clamp(2rem, 8vw, 4rem) 1rem;
+            background: #FFFFF0;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: bold;
+            margin-bottom: 2rem;
+            color: #1a202c;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #852323;
+        }
+
+        .feature-card p {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: #4a5568;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: clamp(2rem, 8vw, 4rem) 1rem;
+            background: #f6f5f7;
+            text-align: center;
+        }
+
+        .testimonials h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: bold;
+            margin-bottom: 2rem;
+            color: #1a202c;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .testimonial-card p {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-card h4 {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+            color: #852323;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: clamp(2rem, 8vw, 4rem) 1rem;
+            background: #f6f5f7;
+        }
+
+        .contact h2 {
+            text-align: center;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: bold;
+            margin-bottom: 2rem;
+            color: #1a202c;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-form label {
+            display: block;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: 500;
+            margin: 0.5rem 0;
+            color: #333;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(246, 187, 142, 0.4);
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+        }
+
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .contact-form button {
+            width: 100%;
+            background-color: #852323;
+            color: #ffffff;
+            padding: 0.75rem;
+            border-radius: 12px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .contact-form button:hover {
+            background-color: #6b1c1c;
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            background: maroon;
+            color: #FAF9F6;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-section h3 {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            color: #FAF9F6;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .footer-section a:hover {
+            color: gold;
+        }
+
+        .footer-bottom {
+            margin-top: 2rem;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .burger {
+                display: flex;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: maroon;
+                padding: 1rem;
+                text-align: center;
+                z-index: 999;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 0.5rem 0;
+            }
+
+            .container {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .features-grid,
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-form {
+                padding: 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: clamp(2rem, 5vw, 3rem);
+            }
+
+            .hero .tagline {
+                font-size: clamp(1rem, 3vw, 1.4rem);
+            }
+
+            .hero p {
+                font-size: clamp(1rem, 3vw, 1.2rem);
+            }
+
+            .footer-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: clamp(1.8rem, 4vw, 2.5rem);
+            }
+
+            .hero .tagline {
+                font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            }
+
+            .hero p {
+                font-size: clamp(0.9rem, 2.5vw, 1rem);
+            }
+
+            .cta-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .features h2,
+            .testimonials h2,
+            .contact h2 {
+                font-size: 1.5rem;
+            }
+
+            .feature-card h3,
+            .testimonial-card h4 {
+                font-size: 1.2rem;
+            }
+
+            .contact-form {
+                padding: 1rem;
+            }
+
+            .loader {
+                width: 50px;
+                height: 50px;
+                border-width: 6px;
+            }
+
+            .loader-text {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="loading-screen" id="loadingScreen">
-        <img src="images/full logo.png" alt="Logo" class="logo">
-        <div class="loading-bar"></div>
+    <!-- Loading Page -->
+    <div class="loader-container" id="loader">
+        <div class="loader"></div>
+        <p class="loader-text">Loading Datamex Lost & Found...</p>
     </div>
-    
-    <div class="main-content" id="mainContent">
-        <h1>Welcome to the Main Page</h1>
-        <p>Content is now loaded!</p>
-    </div>
-    
+
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo-container">
+                <img src="images/client-logo.png" alt="Datamex Logo" class="logo">
+                <span class="logo-text">Datamex College of Saint Adeline</span>
+            </div>
+            <nav>
+                <div class="burger" id="burger">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <ul id="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="student-login.html">Student Login</a></li>
+                    <li><a href="admin-login.html">Admin Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <h1>Online Lost & Found System</h1>
+        <p class="tagline">Recover Your Belongings with Ease and Security</p>
+        <p>Streamline the process of reporting and retrieving lost items at Datamex College of Saint Adeline with our user-friendly, secure digital platform.</p>
+        <div class="cta-buttons">
+            <a href="student-login.html" class="cta-button">Student Login</a>
+            <a href="admin-login.html" class="cta-button">Admin Login</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <h2>Key Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>Easy Item Reporting</h3>
+                <p>Students can report lost or found items with detailed descriptions and image uploads for quick identification.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Real-Time Notifications</h3>
+                <p>Receive email alerts when the admin is verified your lost item is matched or found, ensuring timely recovery.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Secure Admin Verification</h3>
+                <p>Admins verify claims to ensure items are returned to their rightful owners, enhancing security.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Track Your Reports</h3>
+                <p>Access a personal list of your submitted reports to monitor status and updates effortlessly.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <h2>Contact Us</h2>
+        <div class="contact-form">
+            <form>
+                <label for="name">Name</label>
+                <input type="text" id="name" placeholder="Your name" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Your email" required>
+                <label for="message">Message</label>
+                <textarea id="message" placeholder="Your message..." required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About</h3>
+                <p>The Online Lost & Found System at Datamex College of Saint Adeline simplifies item recovery with a secure, user-friendly platform.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: support@datamex.edu.ph</p>
+                <p>Phone: (02) 1234-5678</p>
+                <p>Address: Caloocan City, Philippines</p>
+            </div>
+            <div class="footer-section">
+                <h3>Links</h3>
+                <a href="#home">Home</a>
+                <a href="#features">Features</a>
+                <a href="#contact">Contact</a>
+                <a href="student-login.html">Student Login</a>
+                <a href="admin-login.html">Admin Login</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="privacy.html">Privacy Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Datamex College of Saint Adeline - Lost & Found System. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script>
-        window.addEventListener("load", function() {
-            const loadingScreen = document.getElementById("loadingScreen");
-            const mainContent = document.getElementById("mainContent");
-            loadingScreen.style.opacity = "0";
+        // Loading Page
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
             setTimeout(() => {
-                loadingScreen.style.display = "none";
-                mainContent.style.display = "block";
-            }, 800);
+                loader.classList.add('hidden');
+            }, 1000); // Delay for 1 second to ensure visibility
+        });
+
+        // Burger Menu Toggle
+        const burger = document.getElementById('burger');
+        const navMenu = document.getElementById('nav-menu');
+
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                burger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
         });
     </script>
 </body>

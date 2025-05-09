@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Datamex Lost & Found System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #f6f5f7;
+            color: #1a202c;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Header */
+        header {
+            background: maroon;
+            color: #FAF9F6;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            border: 2px solid #ffffff;
+            padding: 3px;
+            background-color: #f0f0f0;
+        }
+
+        .logo-text {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav ul li a {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: gold;
+        }
+
+        .burger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 20px;
+        }
+
+        .burger div {
+            background: #FAF9F6;
+            height: 3px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .burger.active div:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .burger.active div:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger.active div:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* Privacy Section */
+        .privacy {
+            padding: clamp(2rem, 8vw, 4rem) 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .privacy h1 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: bold;
+            color: #1a202c;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .privacy h2 {
+            font-size: clamp(1.4rem, 3vw, 1.8rem);
+            font-weight: 600;
+            color: #852323;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .privacy p {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+
+        .privacy ul {
+            list-style: disc;
+            margin: 1rem 0 1rem 2rem;
+        }
+
+        .privacy ul li {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: maroon;
+            color: #FAF9F6;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-section h3 {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            color: #FAF9F6;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .footer-section a:hover {
+            color: gold;
+        }
+
+        .footer-bottom {
+            margin-top: 2rem;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .burger {
+                display: flex;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: maroon;
+                padding: 1rem;
+                text-align: center;
+                z-index: 999;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 0.5rem 0;
+            }
+
+            .container {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .privacy {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .privacy h1 {
+                font-size: 1.5rem;
+            }
+
+            .privacy h2 {
+                font-size: 1.3rem;
+            }
+
+            .privacy p,
+            .privacy ul li {
+                font-size: 0.9rem;
+            }
+
+            .footer-section h3 {
+                font-size: 1.2rem;
+            }
+
+            .footer-section p,
+            .footer-section a {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo-container">
+                <img src="images/client-logo.png" alt="Datamex Logo" class="logo">
+                <span class="logo-text">Datamex College of Saint Adeline</span>
+            </div>
+            <nav>
+                <div class="burger" id="burger">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <ul id="nav-menu">
+                  <li><a href="loading_screen.html#home">Home</a></li>
+                  <li><a href="loading_screen.html#features">Features</a></li>
+                  <li><a href="loading_screen.html#contact">Contact</a></li>
+                  <li><a href="student-login.html">Student Login</a></li>
+                  <li><a href="admin-login.html">Admin Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Privacy Section -->
+    <section class="privacy">
+        <h1>Privacy Policy</h1>
+        <p>The Datamex College of Saint Adeline Online Lost & Found System is committed to protecting the privacy of its users. This Privacy Policy outlines how we collect, use, store, and protect your personal information in accordance with the system’s operations and the principles of data confidentiality.</p>
+
+        <h2>1. Information We Collect</h2>
+        <p>We collect the following information to facilitate the reporting and retrieval of lost and found items:</p>
+        <ul>
+            <li><strong>Personal Information</strong>: Name, school ID, and registered email address provided during user registration.</li>
+            <li><strong>Item Reports</strong>: Details such as item name, description, category, location, date, and optional images submitted when reporting lost or found items.</li>
+            <li><strong>System Usage Data</strong>: Log of reports submitted and status updates for tracking purposes.</li>
+        </ul>
+
+        <h2>2. How We Use Your Information</h2>
+        <p>Your information is used solely for the purpose of operating the Online Lost & Found System:</p>
+        <ul>
+            <li>To process and match lost and found item reports.</li>
+            <li>To send email notifications regarding report statuses or matched items.</li>
+            <li>To verify user identity and ownership claims through administrative processes.</li>
+            <li>To maintain a record of reports for reference and analytics, accessible only by authorized administrators.</li>
+        </ul>
+
+        <h2>3. Data Storage and Security</h2>
+        <p>All data is stored in local storage on the system’s server, managed by Datamex College of Saint Adeline.</p>
+        <ul>
+            <li>Access to user data is restricted to authorized administrators responsible for system management.</li>
+            <li>While local storage is used, we implement measures to protect data integrity, such as secure access controls.</li>
+            <li>Users are responsible for maintaining the confidentiality of their account credentials to prevent unauthorized access.</li>
+        </ul>
+
+        <h2>4. Data Sharing</h2>
+        <p>We do not share your personal information with third parties, except as required for system operations:</p>
+        <ul>
+            <li>Data may be shared with school administrators to verify claims or manage reports.</li>
+            <li>No data is shared externally or with other institutions, as the system is limited to Datamex College of Saint Adeline, Caloocan.</li>
+        </ul>
+
+        <h2>5. User Rights</h2>
+        <p>As a user, you have the following rights regarding your data:</p>
+        <ul>
+            <li><strong>Access</strong>: You can view your submitted reports and account details through your personal dashboard.</li>
+            <li><strong>Correction</strong>: Contact the system administrator to correct inaccurate information in your reports.</li>
+            <li><strong>Deletion</strong>: Request the removal of your data after a report is resolved, subject to administrative approval.</li>
+        </ul>
+
+        <h2>6. Limitations</h2>
+        <p>The system’s use of local storage may limit scalability and data retention capabilities:</p>
+        <ul>
+            <li>Data is stored temporarily and may be archived or deleted after a set period, as determined by school policy.</li>
+            <li>The system does not support cloud-based storage or external integrations, ensuring data remains within the school’s control.</li>
+        </ul>
+
+        <h2>7. Changes to Privacy Policy</h2>
+        <p>Datamex College of Saint Adeline reserves the right to update this Privacy Policy. Users will be notified of significant changes via email or system announcements.</p>
+
+        <h2>8. Contact</h2>
+        <p>For questions, concerns, or requests regarding your data, please contact the system administrator at <a href="mailto:support@datamex.edu.ph">support@datamex.edu.ph</a>.</p>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About</h3>
+                <p>The Online Lost & Found System at Datamex College of Saint Adeline simplifies item recovery with a secure, user-friendly platform.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: support@datamex.edu.ph</p>
+                <p>Phone: (02) 1234-5678</p>
+                <p>Address: Caloocan City, Philippines</p>
+            </div>
+            <div class="footer-section">
+                <h3>Links</h3>
+                <a href="loading_screen.html#home">Home</a>
+                <a href="loading_screen.html#features">Features</a>
+                <a href="loading_screen.html#contact">Contact</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="privacy.html">Privacy Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Datamex College of Saint Adeline - Lost & Found System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Burger Menu Toggle
+        const burger = document.getElementById('burger');
+        const navMenu = document.getElementById('nav-menu');
+
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                burger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

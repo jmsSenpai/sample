@@ -26,12 +26,14 @@ document.addEventListener("DOMContentLoaded", function () {
     let verificationCode = null;
     let codeExpiration = null;
     let currentUsername = null;
+    let lastEmailSent = null;
 
     function showMessage(message, autoClose = false) {
         if (messageText && messageModal) {
             messageText.innerText = message;
             const successKeywords = ["successful", "created", "verified", "sent"];
             const isSuccess = successKeywords.some(keyword => message.toLowerCase().includes(keyword));
+            console.log(`Showing message: "${message}", isSuccess: ${isSuccess}`);
             messageModal.classList.remove('success', 'error');
             messageModal.classList.add(isSuccess ? 'success' : 'error');
             messageModal.style.display = "block";
@@ -56,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
         verificationCode = null;
         codeExpiration = null;
         currentUsername = null;
+        lastEmailSent = null;
         attempts = 0;
         const inputs = [
             "forgot-email",
@@ -90,6 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(`Sending verification code to ${email} for username ${username}`);
         verificationCode = generateVerificationCode();
         codeExpiration = new Date().getTime() + 120000;
+        lastEmailSent = new Date().getTime();
 
         try {
             const response = await fetch('http://localhost:3000/send-verification-code', {
@@ -196,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 currentStage = 'password';
                 verificationFields.style.display = "none";
                 passwordFields.style.display = "block";
-                showMessage("Verification code confirmed. Please enter your new password.", true);
+                showMessage("Verification code verified. Please enter your new password.", true);
             } else {
                 showMessage("Invalid verification code.");
                 document.getElementById("verification-code").value = "";
@@ -231,10 +235,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Event Listeners
     if (signUpForm) {
         signUpForm.addEventListener('submit', function (event) {
             event.preventDefault();
+            console.log("Sign-up form submitted");
             const lastName = document.getElementById('last-name').value.trim();
             const firstName = document.getElementById('first-name').value.trim();
             const middleName = document.getElementById('middle-name').value.trim();
@@ -249,6 +253,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!lastName || !firstName || !username || !password || !confirmPassword || !securityQuestion || !securityAnswer) {
                 showMessage("Please fill in all required fields, including security question and answer.");
+                return;
+            }
+
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                showMessage("Please enter a valid email address.");
                 return;
             }
 
@@ -309,8 +319,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 showMessage("Account created! Please wait for admin approval.", true);
                 signUpForm.reset();
             };
+            reader.onerror = function (e) {
+                console.error("FileReader error:", e);
+                showMessage("Error reading student ID file. Please try again.");
+            };
             reader.readAsDataURL(file);
         });
+    } else {
+        console.error("Sign-up form not found");
     }
 
     if (signInForm) {
@@ -401,6 +417,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            if (lastEmailSent && now < lastEmailSent + 120000) {
+                const seconds = Math.ceil((lastEmailSent + 120000 - now) / 1000);
+                showMessage(`Please wait ${seconds} second(s) before requesting another code.`);
+                return;
+            }
+
             if (!username) {
                 showMessage("Please enter your username.");
                 return;
@@ -421,6 +443,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 currentStage = 'initial';
                 securityFields.style.display = "block";
                 verificationFields.style.display = "none";
+                lastEmailSent = null;
             }
         });
     } else {
@@ -465,6 +488,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (resendCodeBtn) {
         resendCodeBtn.addEventListener("click", async function () {
             if (currentStage !== 'code') return;
+            const now = new Date().getTime();
+
+            if (lastEmailSent && now < lastEmailSent + 120000) {
+                const seconds = Math.ceil((lastEmailSent + 120000 - now) / 1000);
+                showMessage(`Please wait ${seconds} second(s) before requesting another code.`);
+                return;
+            }
+
             const studentData = JSON.parse(localStorage.getItem(currentUsername));
             if (!studentData) {
                 showMessage("No account found with this username.");
@@ -474,6 +505,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const success = await sendVerificationCode(studentData.email, currentUsername);
             if (success) {
                 verificationFields.style.display = "block";
+            } else {
+                lastEmailSent = null;
             }
         });
     } else {
@@ -497,31 +530,50 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Close Message Modal button not found");
     }
 
+    // Prevent clicks on message modal content from closing the modal
+    const messageModalContent = messageModal ? messageModal.querySelector('.modal-content') : null;
+    if (messageModalContent) {
+        messageModalContent.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+    } else {
+        console.error("Message modal content not found");
+    }
+
+    // Window click event for forgotModal only
     window.addEventListener("click", function (event) {
-        if (event.target === forgotModal) {
+        if (event.target === !forgotModal) {
             closeModals();
-        } else if (event.target === messageModal) {
-            messageModal.style.display = "none";
-            messageModal.classList.remove('success', 'error');
         }
     });
 
+    // Modified keydown event to remove messageModal closure
     document.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" && messageModal && messageModal.style.display === "block") {
-            messageModal.style.display = "none";
-            messageModal.classList.remove('success', 'error');
-        } else if (event.key === "Enter" && forgotModal && forgotModal.style.display === "block") {
+        if (event.key === "Enter" && forgotModal && forgotModal.style.display === "block") {
             if (resetPasswordBtn) resetPasswordBtn.click();
         }
     });
 
-    document.getElementById("signUp").addEventListener('click', () => {
-        document.getElementById('container').classList.add("right-panel-active");
-    });
+    // Sign Up and Sign In panel toggle
+    const signUpButton = document.getElementById("signUp");
+    if (signUpButton) {
+        signUpButton.addEventListener('click', () => {
+            console.log("Sign Up button clicked");
+            document.getElementById('container').classList.add("right-panel-active");
+        });
+    } else {
+        console.error("Sign Up button not found");
+    }
 
-    document.getElementById("signIn").addEventListener('click', () => {
-        document.getElementById('container').classList.remove("right-panel-active");
-    });
+    const signInButton = document.getElementById("signIn");
+    if (signInButton) {
+        signInButton.addEventListener('click', () => {
+            console.log("Sign In button clicked");
+            document.getElementById('container').classList.remove("right-panel-active");
+        });
+    } else {
+        console.error("Sign In button not found");
+    }
 
     function getFormattedName(data) {
         return `${capitalize(data.firstName)} ${data.middleName ? capitalize(data.middleName) + ' ' : ''}${capitalize(data.lastName)}`.trim();
