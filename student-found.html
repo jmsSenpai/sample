@@ -10,7 +10,9 @@
     <div id="nav-bar">
         <input id="nav-toggle" type="checkbox"/>
         <div id="nav-header">
-            <a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen"></i>Lost & Found</a>
+            <a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen">
+                <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
+            </i>Lost & Found</a>
             <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
             <hr/>
         </div>
@@ -131,54 +133,58 @@
         });
 
         function submitForm(event) {
-            event.preventDefault();
+    event.preventDefault();
 
-            const name = document.getElementById('name').value;
-            const category = document.getElementById('category').value;
-            const itemName = document.getElementById('itemName').value;
-            const foundAt = document.getElementById('foundAt').value;
-            const dateFound = document.getElementById('dateFound').value;
-            const itemColor = document.getElementById('itemColor').value;
-            const description = document.getElementById('description').value;
-            const imageFile = document.getElementById('itemImage').files[0];
-            const reportedBy = sessionStorage.getItem("loggedInStudentName");
+    const name = document.getElementById('name').value;
+    const category = document.getElementById('category').value;
+    const itemName = document.getElementById('itemName').value;
+    const foundAt = document.getElementById('foundAt').value;
+    const dateFound = document.getElementById('dateFound').value;
+    // Capture current time
+    const now = new Date();
+    const timeReported = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // e.g., "02:30 PM"
+    const itemColor = document.getElementById('itemColor').value;
+    const description = document.getElementById('description').value;
+    const imageFile = document.getElementById('itemImage').files[0];
+    const reportedBy = sessionStorage.getItem("loggedInStudentName");
 
-            const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-            const idFound = idGenerator(foundItems);
+    const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+    const idFound = idGenerator(foundItems);
 
-            const foundItem = {
-                name,
-                category,
-                itemName,
-                foundAt,
-                dateFound,
-                itemColor,
-                description,
-                image: null,
-                idFound,
-                reportedBy,
-                status: "Pending"
-            };
+    const foundItem = {
+        name,
+        category,
+        itemName,
+        foundAt,
+        dateFound,
+        timeReported, // Add to object
+        itemColor,
+        description,
+        image: null,
+        idFound,
+        reportedBy,
+        status: "Pending"
+    };
 
-            if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    foundItem.image = event.target.result;
-                    foundItems.push(foundItem);
-                    localStorage.setItem('foundItems', JSON.stringify(foundItems));
-                    document.getElementById('found-item-form').reset();
-                    document.getElementById('name').value = sessionStorage.getItem("loggedInStudentName");
-                    showModal();
-                };
-                reader.readAsDataURL(imageFile);
-            } else {
-                foundItems.push(foundItem);
-                localStorage.setItem('foundItems', JSON.stringify(foundItems));
-                document.getElementById('found-item-form').reset();
-                document.getElementById('name').value = sessionStorage.getItem("loggedInStudentName");
-                showModal();
-            }
-        }
+    if (imageFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            foundItem.image = event.target.result;
+            foundItems.push(foundItem);
+            localStorage.setItem('foundItems', JSON.stringify(foundItems));
+            document.getElementById('found-item-form').reset();
+            document.getElementById('name').value = sessionStorage.getItem("loggedInStudentName");
+            showModal();
+        };
+        reader.readAsDataURL(imageFile);
+    } else {
+        foundItems.push(foundItem);
+        localStorage.setItem('foundItems', JSON.stringify(foundItems));
+        document.getElementById('found-item-form').reset();
+        document.getElementById('name').value = sessionStorage.getItem("loggedInStudentName");
+        showModal();
+    }
+}
 
         function idGenerator(foundItems) {
             let id = Math.random() * 100000;

@@ -118,8 +118,7 @@
         <div class="input-group">
           <div class="input-field">
             <label for="lost-itemColor">Item Color</label>
-            <input type="color" id="lost-itemColor" value="#ffffff" required aria-required="true" list="white">
-           
+            <input type="color" id="lost-itemColor" value="#ffffff" required aria-required="true">
           </div>
           <div class="input-field">
             <label for="lost-itemImage">Item Image</label>
@@ -130,6 +129,8 @@
           <label for="lost-description">Description</label>
           <textarea id="lost-description" placeholder="Provide a brief description of the item" required aria-required="true"></textarea>
         </div>
+        <!-- Hidden input for timeReported -->
+        <input type="hidden" id="lost-timeReported" name="timeReported">
       </div>
       <button type="submit" class="submit-btn">Submit Lost Item</button>
     </form>
@@ -177,30 +178,31 @@
           </div>
           <div class="input-field">
             <label for="found-itemColor">Item Color</label>
-            <input type="color" id="found-itemColor" value="#ffffff" required aria-required="true" list="white">
+            <input type="color" id="found-itemColor" value="#ffffff" required aria-required="true">
           </div>
         </div>
         <div class="input-group">
           <div class="input-field">
             <label for="found-itemImage">Item Image</label>
-            <input type="file" id="found-itemImage" accept="image/*" >
+            <input type="file" id="found-itemImage" accept="image/*">
           </div>
         </div>
         <div class="input-field">
           <label for="found-description">Description</label>
           <textarea id="found-description" placeholder="Provide a brief description of the item" required aria-required="true"></textarea>
         </div>
+        <!-- Hidden input for timeReported -->
+        <input type="hidden" id="found-timeReported" name="timeReported">
       </div>
       <button type="submit" class="submit-btn">Submit Found Item</button>
     </form>
   </div>
 
   <script>
-    //Authentication check - Token
+    // Authentication check - Token
     if (!localStorage.getItem("loggedInAdmin")) {
-           
-            window.location.href = "admin-login.html";
-        }
+      window.location.href = "admin-login.html";
+    }
 
     // Tab switching functionality
     function showForm(formType) {
@@ -226,47 +228,47 @@
       }
     }
 
-    
     document.addEventListener("DOMContentLoaded", function () {
-    
-    const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
+      const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
 
-
-    if (loggedInAdminUsername) {
+      if (loggedInAdminUsername) {
         const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
         if (adminData && adminData.accountType === 'admin') {
-        
-            const fullName = `${adminData.firstName} `;
-        
-            const navFooterTitle = document.getElementById("nav-footer-title");
-            if (navFooterTitle) {
-                navFooterTitle.textContent = fullName;
-            
-                navFooterTitle.href = "#"; 
-            }
+          const fullName = `${adminData.firstName}`;
+          const navFooterTitle = document.getElementById("nav-footer-title");
+          if (navFooterTitle) {
+            navFooterTitle.textContent = fullName;
+            navFooterTitle.href = "#";
+          }
         }
-    }
+      }
 
-    
-    const logoutButton = document.getElementById("logout-btn");
-
-    if (logoutButton) {
+      const logoutButton = document.getElementById("logout-btn");
+      if (logoutButton) {
         logoutButton.addEventListener("click", function () {
-            document.body.classList.add("fade-out");
-
-            setTimeout(function () {
-                localStorage.removeItem("loggedInAdmin");
-
-                const inputs = document.querySelectorAll("input");
-                inputs.forEach(input => {
-                    input.value = "";
-                });
-
-                window.location.href = "admin-login.html";
-            }, 1000);
+          document.body.classList.add("fade-out");
+          setTimeout(function () {
+            localStorage.removeItem("loggedInAdmin");
+            const inputs = document.querySelectorAll("input");
+            inputs.forEach(input => {
+              input.value = "";
+            });
+            window.location.href = "admin-login.html";
+          }, 1000);
         });
+      }
+    });
+
+    // Format time as HH:MM AM/PM
+    function formatTime(date) {
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const formattedHours = hours % 12 || 12;
+      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+      return `${formattedHours}:${formattedMinutes} ${ampm}`;
     }
-});
+
     // Submit Lost Item Form
     function submitLostForm(event) {
       event.preventDefault();
@@ -280,7 +282,11 @@
       const itemColor = document.getElementById('lost-itemColor').value;
       const description = document.getElementById('lost-description').value;
       const imageFile = document.getElementById('lost-itemImage').files[0];
-      const reportedBy = sessionStorage.getItem("loggedInStudentName") || "Guest";
+      const reportedBy = localStorage.getItem("loggedInAdmin") || "Admin";
+      const timeReported = formatTime(new Date()); // Capture current time
+
+      // Set hidden input value
+      document.getElementById('lost-timeReported').value = timeReported;
 
       if (!email.match(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)) {
         showError("Please enter a valid Gmail address.");
@@ -310,7 +316,9 @@
             image: imageBase64,
             idLost,
             ownerEmail: email,
-            reportedBy
+            reportedBy,
+            timeReported, // Include timeReported
+            status: "Pending" // Add default status
           };
 
           lostItems.push(lostItem);
@@ -318,8 +326,8 @@
 
           showSuccess("Lost item submitted successfully!");
           document.getElementById('lost-item-form').reset();
-          document.getElementById('lost-name').value = sessionStorage.getItem("loggedInStudentName") || "";
-          document.getElementById('lost-email').value = sessionStorage.getItem("loggedInStudentEmail") || "";
+          document.getElementById('lost-name').value = localStorage.getItem("loggedInAdmin") || "";
+          document.getElementById('lost-email').value = "";
           document.getElementById('lost-itemColor').value = '#ffffff';
         };
         reader.readAsDataURL(imageFile);
@@ -340,7 +348,11 @@
       const itemColor = document.getElementById('found-itemColor').value;
       const description = document.getElementById('found-description').value;
       const imageFile = document.getElementById('found-itemImage').files[0];
-      const reportedBy = sessionStorage.getItem("loggedInStudentName") || "Guest";
+      const reportedBy = localStorage.getItem("loggedInAdmin") || "Admin";
+      const timeReported = formatTime(new Date()); // Capture current time
+
+      // Set hidden input value
+      document.getElementById('found-timeReported').value = timeReported;
 
       if (!itemColor) {
         showError("Please select a color.");
@@ -364,7 +376,9 @@
             description,
             image: imageBase64,
             idFound,
-            reportedBy
+            reportedBy,
+            timeReported, // Include timeReported
+            status: "Pending" // Add default status
           };
 
           foundItems.push(foundItem);
@@ -372,7 +386,7 @@
 
           showSuccess("Found item submitted successfully!");
           document.getElementById('found-item-form').reset();
-          document.getElementById('found-name').value = sessionStorage.getItem("loggedInStudentName") || "";
+          document.getElementById('found-name').value = localStorage.getItem("loggedInAdmin") || "";
           document.getElementById('found-itemColor').value = '#ffffff';
         };
         reader.readAsDataURL(imageFile);

@@ -568,7 +568,7 @@ label[for=nav-footer-toggle] {
   background: #2f855a;
 }
 
-#found-items-list button {
+#lost-items-list button {
   display: block;
   width: 100%;
   text-align: left;
@@ -583,8 +583,8 @@ label[for=nav-footer-toggle] {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-#found-items-list button.selected,
-#found-items-list button:hover {
+#lost-items-list button.selected,
+#lost-items-list button:hover {
   background: var(--primary-color);
   color: #ffffff;
   border-color: var(--primary-color);
@@ -636,4 +636,13 @@ label[for=nav-footer-toggle] {
 
 #logout-btn {
   cursor: pointer;
+}
+
+.color-rectangle {
+  display: inline-block;
+  width: 50px;
+  height: 20px;
+  border: 1px solid #000;
+  vertical-align: middle;
+  margin-left: 10px;
 }

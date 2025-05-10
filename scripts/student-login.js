@@ -250,33 +250,33 @@ document.addEventListener("DOMContentLoaded", function () {
             const idFileInput = document.getElementById('student-id');
             const securityQuestion = document.getElementById('security-question').value.trim();
             const securityAnswer = document.getElementById('security-answer').value.trim();
-
+    
             if (!lastName || !firstName || !username || !password || !confirmPassword || !securityQuestion || !securityAnswer) {
                 showMessage("Please fill in all required fields, including security question and answer.");
                 return;
             }
-
+    
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailPattern.test(email)) {
                 showMessage("Please enter a valid email address.");
                 return;
             }
-
+    
             if (password !== confirmPassword) {
                 showMessage("Passwords do not match!");
                 return;
             }
-
+    
             if (!isValidPassword(password)) {
                 showMessage("Password must contain at least one lowercase letter, one uppercase letter, one number, and be at least 8 characters long.");
                 return;
             }
-
+    
             if (localStorage.getItem(username)) {
                 showMessage("This username is already taken. Please choose a different one.");
                 return;
             }
-
+    
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 const storedData = localStorage.getItem(key);
@@ -291,13 +291,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     continue;
                 }
             }
-
+    
             const file = idFileInput.files[0];
             if (!file) {
                 showMessage("Please upload your student ID.");
                 return;
             }
-
+    
             const reader = new FileReader();
             reader.onload = function (e) {
                 const idImage = e.target.result;
@@ -318,6 +318,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 localStorage.setItem(username, JSON.stringify(studentData));
                 showMessage("Account created! Please wait for admin approval.", true);
                 signUpForm.reset();
+               
+                setTimeout(() => {
+                    document.getElementById('container').classList.remove("right-panel-active");
+                }, 2000);
             };
             reader.onerror = function (e) {
                 console.error("FileReader error:", e);

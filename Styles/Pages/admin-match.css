@@ -638,3 +638,12 @@ label[for=nav-footer-toggle] {
   color: inherit; /* Match navbar text color */
   font-size: 1.2em; /* Adjust text size as needed */
 }
+
+.color-rectangle {
+  display: inline-block;
+  width: 50px;
+  height: 20px;
+  border: 1px solid #000;
+  vertical-align: middle;
+  margin-left: 10px;
+}

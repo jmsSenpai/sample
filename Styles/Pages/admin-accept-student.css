@@ -729,3 +729,16 @@ label[for=nav-footer-toggle] {
   color: inherit; /* Match navbar text color */
   font-size: 1.2em; /* Adjust text size as needed */
 }
+
+.reject-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 5px;
+}
+.reject-btn:hover {
+  background-color: #c82333;
+}

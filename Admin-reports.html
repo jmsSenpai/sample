@@ -108,78 +108,82 @@
         </div>
     </div>
 
-    <!-- View Lost Item Modal -->
-    <div id="viewLostItemModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('viewLostItemModal')">×</span>
-            <h2>Lost Item Details</h2>
-            <img id="viewLostImage" style="max-width:100%; max-height:200px;" onclick="previewImage(this.src)">
-            <p><strong>Name:</strong> <span id="viewLostName"></span></p>
-            <p><strong>Category:</strong> <span id="viewLostCategory"></span></p>
-            <p><strong>Last Located:</strong> <span id="viewLostLastLocated"></span></p>
-            <p><strong>Date Lost:</strong> <span id="viewLostDateLost"></span></p>
-            <p><strong>Color:</strong> <span id="viewLostColor"></span></p>
-            <p><strong>Description:</strong> <span id="viewLostDescription"></span></p>
-            <p><strong>Reported By:</strong> <span id="viewLostReportedBy"></span></p>
-            <p><strong>Status:</strong> <span id="viewLostStatus"></span></p>
-            <button class="action-button" onclick="printLostItem()">Print Report</button>
-        </div>
+  <!-- View Lost Item Modal -->
+<div id="viewLostItemModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('viewLostItemModal')">×</span>
+        <h2>Lost Item Details</h2>
+        <img id="viewLostImage" style="max-width:100%; max-height:200px;" onclick="previewImage(this.src)">
+        <p><strong>Name:</strong> <span id="viewLostName"></span></p>
+        <p><strong>Category:</strong> <span id="viewLostCategory"></span></p>
+        <p><strong>Last Located:</strong> <span id="viewLostLastLocated"></span></p>
+        <p><strong>Date Lost:</strong> <span id="viewLostDateLost"></span></p>
+        <p><strong>Time Reported:</strong> <span id="viewLostTimeReported"></span></p> <!-- New field -->
+        <p><strong>Color:</strong> <span id="viewLostColor"></span></p>
+        <p><strong>Description:</strong> <span id="viewLostDescription"></span></p>
+        <p><strong>Reported By:</strong> <span id="viewLostReportedBy"></span></p>
+        <p><strong>Status:</strong> <span id="viewLostStatus"></span></p>
+        <button class="action-button" onclick="printLostItem()">Print Report</button>
     </div>
+</div>
 
-    <!-- View Found Item Modal -->
-    <div id="viewFoundItemModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('viewFoundItemModal')">×</span>
-            <h2>Found Item Details</h2>
-            <img id="viewFoundImage" style="max-width:100%; max-height:200px;" onclick="previewImage(this.src)">
-            <p><strong>Name:</strong> <span id="viewFoundName"></span></p>
-            <p><strong>Category:</strong> <span id="viewFoundCategory"></span></p>
-            <p><strong>Found At:</strong> <span id="viewFoundFoundAt"></span></p>
-            <p><strong>Date Found:</strong> <span id="viewFoundDateFound"></span></p>
-            <p><strong>Color:</strong> <span id="viewFoundColor"></span></p>
-            <p><strong>Description:</strong> <span id="viewFoundDescription"></span></p>
-            <p><strong>Reported By:</strong> <span id="viewFoundReportedBy"></span></p>
-            <p><strong>Status:</strong> <span id="viewFoundStatus"></span></p>
-            <button class="action-button" onclick="printFoundItem()">Print Report</button>
-        </div>
+<!-- View Found Item Modal -->
+<div id="viewFoundItemModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('viewFoundItemModal')">×</span>
+        <h2>Found Item Details</h2>
+        <img id="viewFoundImage" style="max-width:100%; max-height:200px;" onclick="previewImage(this.src)">
+        <p><strong>Name:</strong> <span id="viewFoundName"></span></p>
+        <p><strong>Category:</strong> <span id="viewFoundCategory"></span></p>
+        <p><strong>Found At:</strong> <span id="viewFoundFoundAt"></span></p>
+        <p><strong>Date Found:</strong> <span id="viewFoundDateFound"></span></p>
+        <p><strong>Time Reported:</strong> <span id="viewFoundTimeReported"></span></p> <!-- New field -->
+        <p><strong>Color:</strong> <span id="viewFoundColor"></span></p>
+        <p><strong>Description:</strong> <span id="viewFoundDescription"></span></p>
+        <p><strong>Reported By:</strong> <span id="viewFoundReportedBy"></span></p>
+        <p><strong>Status:</strong> <span id="viewFoundStatus"></span></p>
+        <button class="action-button" onclick="printFoundItem()">Print Report</button>
     </div>
+</div>
 
-    <!-- View Matched Item Modal -->
-    <div id="viewMatchModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('viewMatchModal')">×</span>
-            <h2>Matched Item Details</h2>
-            <div class="modal-images">
-                <div>
-                    <img id="viewMatchLostImage" style="max-width:200px; height:auto;" onclick="previewImage(this.src)">
-                    <p>Lost Image</p>
-                </div>
-                <div>
-                    <img id="viewMatchFoundImage" style="max-width:200px; height:auto;" onclick="previewImage(this.src)">
-                    <p>Found Image</p>
-                </div>
+<!-- View Matched Item Modal -->
+<div id="viewMatchModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('viewMatchModal')">×</span>
+        <h2>Matched Item Details</h2>
+        <div class="modal-images">
+            <div>
+                <img id="viewMatchLostImage" style="max-width:200px; height:auto;" onclick="previewImage(this.src)">
+                <p>Lost Image</p>
             </div>
-            <div class="modal-details">
-                <p><strong>Match Score:</strong> <span id="viewMatchScore"></span></p>
-                <p><strong>Lost Item:</strong> <span id="viewMatchLostName"></span></p>
-                <p><strong>Lost Description:</strong> <span id="viewMatchLostDescription"></span></p>
-                <p><strong>Lost Category:</strong> <span id="viewMatchLostCategory"></span></p>
-                <p><strong>Lost Color:</strong> <span id="viewMatchLostColor"></span></p>
-                <p><strong>Last Seen At:</strong> <span id="viewMatchLostLocation"></span></p>
-                <p><strong>Date Lost:</strong> <span id="viewMatchLostDate"></span></p>
-                <p><strong>Lost Reported By:</strong> <span id="viewMatchLostReportedBy"></span></p>
-                <hr>
-                <p><strong>Found Item:</strong> <span id="viewMatchFoundName"></span></p>
-                <p><strong>Found Description:</strong> <span id="viewMatchFoundDescription"></span></p>
-                <p><strong>Found Category:</strong> <span id="viewMatchFoundCategory"></span></p>
-                <p><strong>Found Color:</strong> <span id="viewMatchFoundColor"></span></p>
-                <p><strong>Found At:</strong> <span id="viewMatchFoundLocation"></span></p>
-                <p><strong>Date Found:</strong> <span id="viewMatchFoundDate"></span></p>
-                <p><strong>Found Reported By:</strong> <span id="viewMatchFoundReportedBy"></span></p>
-                <button class="action-button" onclick="printMatchedItem()">Print Report</button>
+            <div>
+                <img id="viewMatchFoundImage" style="max-width:200px; height:auto;" onclick="previewImage(this.src)">
+                <p>Found Image</p>
             </div>
         </div>
+        <div class="modal-details">
+            <p><strong>Match Score:</strong> <span id="viewMatchScore"></span></p>
+            <p><strong>Lost Item:</strong> <span id="viewMatchLostName"></span></p>
+            <p><strong>Lost Description:</strong> <span id="viewMatchLostDescription"></span></p>
+            <p><strong>Lost Category:</strong> <span id="viewMatchLostCategory"></span></p>
+            <p><strong>Lost Color:</strong> <span id="viewMatchLostColor"></span></p>
+            <p><strong>Last Seen At:</strong> <span id="viewMatchLostLocation"></span></p>
+            <p><strong>Date Lost:</strong> <span id="viewMatchLostDate"></span></p>
+            <p><strong>Lost Time Reported:</strong> <span id="viewMatchLostTimeReported"></span></p> <!-- New field -->
+            <p><strong>Lost Reported By:</strong> <span id="viewMatchLostReportedBy"></span></p>
+            <hr>
+            <p><strong>Found Item:</strong> <span id="viewMatchFoundName"></span></p>
+            <p><strong>Found Description:</strong> <span id="viewMatchFoundDescription"></span></p>
+            <p><strong>Found Category:</strong> <span id="viewMatchFoundCategory"></span></p>
+            <p><strong>Found Color:</strong> <span id="viewMatchFoundColor"></span></p>
+            <p><strong>Found At:</strong> <span id="viewMatchFoundLocation"></span></p>
+            <p><strong>Date Found:</strong> <span id="viewMatchFoundDate"></span></p>
+            <p><strong>Found Time Reported:</strong> <span id="viewMatchFoundTimeReported"></span></p> <!-- New field -->
+            <p><strong>Found Reported By:</strong> <span id="viewMatchFoundReportedBy"></span></p>
+            <button class="action-button" onclick="printMatchedItem()">Print Report</button>
+        </div>
     </div>
+</div>
 
     <!-- Image Preview Modal -->
     <div id="imageModal" class="modal" style="display:none;">

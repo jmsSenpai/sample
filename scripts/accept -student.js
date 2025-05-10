@@ -1,10 +1,9 @@
 if (!localStorage.getItem("loggedInAdmin")) {
-           
     window.location.href = "admin-login.html";
 }
 
 function toggleMenu() {
-    let sidebar = document.getElementById("sidebar");
+    let sidebar = document.getElementById("nav-bar");
     sidebar.classList.toggle("collapsed");
 }
 
@@ -51,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Modal close button listener
     document.addEventListener('click', function (event) {
-        if (event.target.id === 'close-modal') {
+        if (event.target.id === 'close-modal' || event.target.id === 'close-modal-footer') {
             document.getElementById('student-modal').style.display = 'none';
         }
     });
@@ -69,10 +68,9 @@ function loadStudentAccounts() {
             studentData = JSON.parse(localStorage.getItem(key));
         } catch (error) {
             console.error(`Failed to parse localStorage item for key "${key}":`, error);
-            continue; // Skip invalid entries
+            continue;
         }
 
-        // Check if studentData is an object and has the expected accountType
         if (studentData && typeof studentData === 'object' && studentData.accountType === 'student') {
             const row = document.createElement('div');
             row.className = 'table-row';
@@ -83,9 +81,9 @@ function loadStudentAccounts() {
                 <div class="row-item">${studentData.gradeSection || 'N/A'}</div>
                 <div class="row-item">${key}</div>
                 <div class="row-item actions">
-                    ${studentData.accepted ? '' : '<button class="accept-btn">Accept</button>'}
-                    <button class="delete-btn">Delete</button>
-                    <button class="details-btn">See More Details</button>
+                    ${studentData.accepted ? '' : `<button class="accept-btn" data-username="${key}">Accept</button>`}
+                    ${studentData.accepted ? `<button class="delete-btn" data-username="${key}">Delete</button>` : `<button class="reject-btn" data-username="${key}">Reject</button>`}
+                    <button class="details-btn" data-username="${key}">See More Details</button>
                 </div>
             `;
 
@@ -94,48 +92,80 @@ function loadStudentAccounts() {
     }
 
     const acceptButtons = document.querySelectorAll('.accept-btn');
+    const rejectButtons = document.querySelectorAll('.reject-btn');
     const deleteButtons = document.querySelectorAll('.delete-btn');
     const detailsButtons = document.querySelectorAll('.details-btn');
 
     acceptButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const row = this.closest('.table-row');
-            const username = row.getAttribute('data-username');
+        button.addEventListener('click', async function () {
+            const username = this.getAttribute('data-username');
             const studentData = JSON.parse(localStorage.getItem(username));
 
             if (studentData) {
-                studentData.accepted = true;
-                localStorage.setItem(username, JSON.stringify(studentData));
+                try {
+                    const response = await fetch('http://localhost:3000/send-acceptance-email', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            studentEmail: studentData.email,
+                            studentName: `${studentData.firstName} ${studentData.lastName}`
+                        })
+                    });
 
-                fetch('http://localhost:3000/send-acceptance-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        studentEmail: studentData.email,
-                        studentName: `${studentData.firstName} ${studentData.lastName}`
-                    })
-                })
-                .then(response => response.text())
-                .then(data => {
-                    console.log('Email sent successfully:', data);
-                    alert('Acceptance email sent!');
-                })
-                .catch(error => {
-                    console.error('Error sending email:', error);
-                    alert('Failed to send acceptance email.');
-                });
+                    if (response.ok) {
+                        studentData.accepted = true;
+                        localStorage.setItem(username, JSON.stringify(studentData));
+                        alert('Student accepted and email sent successfully!');
+                        loadStudentAccounts();
+                    } else {
+                        alert('Failed to send acceptance email. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error sending acceptance email:', error);
+                    alert('Error sending acceptance email. Please try again.');
+                }
+            }
+        });
+    });
 
-                loadStudentAccounts();
+    rejectButtons.forEach(button => {
+        button.addEventListener('click', async function () {
+            const username = this.getAttribute('data-username');
+            const studentData = JSON.parse(localStorage.getItem(username));
+
+            if (studentData) {
+                try {
+                    const response = await fetch('http://localhost:3000/send-rejection-email', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            studentEmail: studentData.email,
+                            studentName: `${studentData.firstName} ${studentData.lastName}`
+                        })
+                    });
+
+                    if (response.ok) {
+                        localStorage.removeItem(username);
+                        alert('Student account rejected and email sent successfully.');
+                        loadStudentAccounts();
+                    } else {
+                        alert('Failed to send rejection email. Account not deleted.');
+                    }
+                } catch (error) {
+                    console.error('Error sending rejection email:', error);
+                    alert('Error sending rejection email. Account not deleted.');
+                }
             }
         });
     });
 
     deleteButtons.forEach(button => {
         button.addEventListener('click', function () {
-            const row = this.closest('.table-row');
-            const username = row.getAttribute('data-username');
+            const username = this.getAttribute('data-username');
             localStorage.removeItem(username);
             alert(`Student account with username ${username} has been deleted.`);
             loadStudentAccounts();
@@ -144,8 +174,7 @@ function loadStudentAccounts() {
 
     detailsButtons.forEach(button => {
         button.addEventListener('click', function () {
-            const row = this.closest('.table-row');
-            const username = row.getAttribute('data-username');
+            const username = this.getAttribute('data-username');
             let studentData;
 
             try {
@@ -167,7 +196,6 @@ function loadStudentAccounts() {
 }
 
 function showModal(studentData) {
-    console.log('Showing modal with data:', studentData);
     const modal = document.getElementById('student-modal');
     const modalContent = document.getElementById('modal-content');
 
@@ -176,14 +204,12 @@ function showModal(studentData) {
         return;
     }
 
-    // Populate modal fields
     document.getElementById('modal-name').textContent = `${studentData.firstName || 'N/A'} ${studentData.middleName ? studentData.middleName + ' ' : ''}${studentData.lastName || 'N/A'}`;
     document.getElementById('modal-email').textContent = studentData.email || 'N/A';
     document.getElementById('modal-grade-section').textContent = studentData.gradeSection || 'N/A';
     document.getElementById('modal-username').textContent = studentData.username || 'N/A';
     document.getElementById('modal-other-info').textContent = studentData.otherInfo || 'N/A';
 
-    // Handle student ID image
     const idImageContainer = document.getElementById('modal-id-image');
     if (studentData.idImage) {
         idImageContainer.innerHTML = `<img src="${studentData.idImage}" alt="Student ID" />`;
@@ -191,28 +217,8 @@ function showModal(studentData) {
         idImageContainer.innerHTML = '<p>No ID image available</p>';
     }
 
-    console.log('Modal content set, displaying modal');
     modal.style.display = 'flex';
 }
-document.addEventListener("DOMContentLoaded", function () {
-    
-    const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
-
-
-    if (loggedInAdminUsername) {
-        const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
-        if (adminData && adminData.accountType === 'admin') {
-        
-            const fullName = `${adminData.firstName} `;
-        
-            const navFooterTitle = document.getElementById("nav-footer-title");
-            if (navFooterTitle) {
-                navFooterTitle.textContent = fullName;
-            
-                navFooterTitle.href = "#"; 
-            }
-        }
-    }
 
     
     const logoutButton = document.getElementById("logout-btn");
@@ -233,4 +239,3 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 1000);
         });
     }
-});

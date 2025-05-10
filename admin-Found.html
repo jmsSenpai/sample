@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Found Items</title>
     <link rel="stylesheet" href="Styles/Pages/admin-found.css"> 
-    <!-- Add Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+   
 </head>
 <body>
-    <!-- Navbar (unchanged) -->
     <div id="nav-bar">
         <input id="nav-toggle" type="checkbox"/>
         <div id="nav-header">
@@ -59,31 +57,32 @@
           </div>
     </div>
 
-    <!-- Found Items Section -->
+  
     <div class="found-items">
         <h1 class="title">Found Items</h1>
         <div class="items-list" id="items-list" role="list"></div>
     </div>
 
-   <!-- Modal for Viewing Item Details -->
-<div id="detailsModal" class="modal" role="dialog" aria-modal="true" aria-label="Item Details">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()" aria-label="Close Modal" tabindex="0">×</span>
-        <h2>Item Details</h2>
-        <img id="modal-image" src="" alt="Item Image">
-        <p><strong>Student Name:</strong> <span id="modal-studentName"></span></p>
-        <p><strong>Category:</strong> <span id="modal-category"></span></p>
-        <p><strong>Item Name:</strong> <span id="modal-itemName"></span></p>
-        <p><strong>Found Location:</strong> <span id="modal-foundLocation"></span></p>
-        <p><strong>Description:</strong> <span id="modal-description"></span></p>
-        <p><strong>Color:</strong> <span id="modal-itemColor"></span></p>
-        <p><strong>Date Found:</strong> <span id="modal-dateFound"></span></p>
-        <p><strong>Status:</strong> <span id="modal-status"></span></p>
-        <div class="button-group">
-            <button class="match" onclick="openMatchModal()" aria-label="Match Item">Match Item</button>
+  
+    <div id="detailsModal" class="modal" role="dialog" aria-modal="true" aria-label="Item Details">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()" aria-label="Close Modal" tabindex="0">×</span>
+            <h2>Item Details</h2>
+            <img id="modal-image" src="" alt="Item Image">
+            <p><strong>Student Name:</strong> <span id="modal-studentName"></span></p>
+            <p><strong>Category:</strong> <span id="modal-category"></span></p>
+            <p><strong>Item Name:</strong> <span id="modal-itemName"></span></p>
+            <p><strong>Found Location:</strong> <span id="modal-foundLocation"></span></p>
+            <p><strong>Description:</strong> <span id="modal-description"></span></p>
+            <p><strong>Color:</strong> <div id="modal-itemColor" class="color-rectangle"></div></p>
+            <p><strong>Date Found:</strong> <span id="modal-dateFound"></span></p>
+            <p><strong>Time Reported:</strong> <span id="modal-timeReported"></span></p> <!-- New field -->
+            <p><strong>Status:</strong> <span id="modal-status"></span></p>
+            <div class="button-group">
+                <button class="match" onclick="openMatchModal()" aria-label="Match Item">Match Item</button>
+            </div>
         </div>
     </div>
-</div>
 
 <!-- Match Modal (unchanged, included for completeness) -->
 <div id="matchModal" class="modal" role="dialog" aria-modal="true" aria-label="Match Item Selection">
@@ -169,44 +168,47 @@
         }
 
         function displayFoundItems() {
-            const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-            const itemsList = document.getElementById('items-list');
-            itemsList.innerHTML = '';
+    const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+    const itemsList = document.getElementById('items-list');
+    itemsList.innerHTML = '';
 
-            foundItems.forEach((item, index) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.classList.add('item');
-                itemDiv.innerHTML = `
-                    <img src="${item.image || 'images/default-image.png'}" alt="Item Image">
-                    <div class="item-content">
-                        <p><strong>Reported By:</strong> ${item.name || 'N/A'}</p>
-                        <p><strong>Description:</strong> ${item.description || 'No description'}</p>
-                        <p><strong>Status:</strong> ${item.status || 'Pending'}</p>
-                    </div>
-                    <div class="button-group">
-                        <button class="see-details" onclick="showDetails(${index})">See Details</button>
-                    </div>
-                `;
-                itemsList.appendChild(itemDiv);
-            });
-        }
+    foundItems.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('item');
+        itemDiv.innerHTML = `
+            <img src="${item.image || 'images/default-image.png'}" alt="Item Image">
+            <div class="item-content">
+                <p><strong>Reported By:</strong> ${item.name || 'N/A'}</p>
+                <p><strong>Description:</strong> ${item.description || 'No description'}</p>
+                <p><strong>Time Reported:</strong> ${item.timeReported || 'N/A'}</p> <!-- New field -->
+                <p><strong>Status:</strong> ${item.status || 'Pending'}</p>
+            </div>
+            <div class="button-group">
+                <button class="see-details" onclick="showDetails(${index})">See Details</button>
+            </div>
+        `;
+        itemsList.appendChild(itemDiv);
+    });
+}
 
-        function showDetails(index) {
-            const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-            const item = foundItems[index];
+function showDetails(index) {
+    const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+    const item = foundItems[index];
 
-            document.getElementById('modal-studentName').innerText = item.name || 'N/A';
-            document.getElementById('modal-category').innerText = item.category || 'N/A';
-            document.getElementById('modal-itemName').innerText = item.itemName || 'N/A';
-            document.getElementById('modal-foundLocation').innerText = item.foundAt || 'N/A';
-            document.getElementById('modal-description').innerText = item.description || 'No description';
-            document.getElementById('modal-itemColor').innerText = item.itemColor || 'N/A';
-            document.getElementById('modal-dateFound').innerText = item.dateFound || 'N/A';
-            document.getElementById('modal-image').src = item.image || 'images/default-image.png';
-            document.getElementById('modal-status').innerText = item.status || 'Pending';
-            document.getElementById('detailsModal').style.display = 'block';
-            document.getElementById('detailsModal').setAttribute('data-index', index);
-        }
+    document.getElementById('modal-studentName').innerText = item.name || 'N/A';
+    document.getElementById('modal-category').innerText = item.category || 'N/A';
+    document.getElementById('modal-itemName').innerText = item.itemName || 'N/A';
+    document.getElementById('modal-foundLocation').innerText = item.foundAt || 'N/A';
+    document.getElementById('modal-description').innerText = item.description || 'No description';
+    const colorDiv = document.getElementById('modal-itemColor');
+    colorDiv.style.backgroundColor = item.itemColor || '#ccc';
+    document.getElementById('modal-dateFound').innerText = item.dateFound || 'N/A';
+    document.getElementById('modal-timeReported').innerText = item.timeReported || 'N/A'; // New field
+    document.getElementById('modal-image').src = item.image || 'images/default-image.png';
+    document.getElementById('modal-status').innerText = item.status || 'Pending';
+    document.getElementById('detailsModal').style.display = 'block';
+    document.getElementById('detailsModal').setAttribute('data-index', index);
+}
 
         function closeModal() {
             document.getElementById('detailsModal').style.display = 'none';

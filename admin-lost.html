@@ -59,13 +59,13 @@
           </div>
     </div>
 
-    <!-- Lost Items Section -->
+ 
     <div class="found-items">
         <h1 class="title">Lost Items</h1>
         <div class="items-list" id="items-list" role="list"></div>
     </div>
 
-    <!-- Modal for Viewing Item Details -->
+   
     <div id="detailsModal" class="modal" role="dialog" aria-modal="true" aria-label="Item Details">
         <div class="modal-content">
             <span class="close" onclick="closeModal()" aria-label="Close Modal" tabindex="0">×</span>
@@ -76,16 +76,16 @@
             <p><strong>Item Name:</strong> <span id="modal-itemName"></span></p>
             <p><strong>Last Located:</strong> <span id="modal-lastLocated"></span></p>
             <p><strong>Description:</strong> <span id="modal-description"></span></p>
-            <p><strong>Color:</strong> <span id="modal-itemColor"></span></p>
+            <p><strong>Color:</strong> <div id="modal-itemColor" class="color-rectangle"></div></p>
             <p><strong>Date Lost:</strong> <span id="modal-dateLost"></span></p>
+            <p><strong>Time Reported:</strong> <span id="modal-timeReported"></span></p> <!-- New field -->
             <p><strong>Status:</strong> <span id="modal-status"></span></p>
             <div class="button-group">
                 <button class="match" onclick="openMatchModal()" aria-label="Match Item">Match Item</button>
             </div>
         </div>
     </div>
-
-    <!-- Match Modal -->
+   
     <div id="matchModal" class="modal" role="dialog" aria-modal="true" aria-label="Match Item Selection">
         <div class="modal-content">
             <span class="close" onclick="closeMatchModal()" aria-label="Close Modal" tabindex="0">×</span>
@@ -169,44 +169,47 @@
         }
 
         function displayLostItems() {
-            const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
-            const itemsList = document.getElementById('items-list');
-            itemsList.innerHTML = '';
+    const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+    const itemsList = document.getElementById('items-list');
+    itemsList.innerHTML = '';
 
-            lostItems.forEach((item, index) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.classList.add('item');
-                itemDiv.innerHTML = `
-                    <img src="${item.image || 'images/default-image.png'}" alt="Item Image">
-                    <div class="item-content">
-                        <p><strong>Reported By:</strong> ${item.name || 'N/A'}</p>
-                        <p><strong>Description:</strong> ${item.description || 'No description'}</p>
-                        <p><strong>Status:</strong> ${item.status || 'Pending'}</p>
-                    </div>
-                    <div class="button-group">
-                        <button class="see-details" onclick="showDetails(${index})">See Details</button>
-                    </div>
-                `;
-                itemsList.appendChild(itemDiv);
-            });
-        }
+    lostItems.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('item');
+        itemDiv.innerHTML = `
+            <img src="${item.image || 'images/default-image.png'}" alt="Item Image">
+            <div class="item-content">
+                <p><strong>Reported By:</strong> ${item.name || 'N/A'}</p>
+                <p><strong>Description:</strong> ${item.description || 'No description'}</p>
+                <p><strong>Time Reported:</strong> ${item.timeReported || 'N/A'}</p> <!-- New field -->
+                <p><strong>Status:</strong> ${item.status || 'Pending'}</p>
+            </div>
+            <div class="button-group">
+                <button class="see-details" onclick="showDetails(${index})">See Details</button>
+            </div>
+        `;
+        itemsList.appendChild(itemDiv);
+    });
+}
 
-        function showDetails(index) {
-            const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
-            const item = lostItems[index];
+function showDetails(index) {
+    const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+    const item = lostItems[index];
 
-            document.getElementById('modal-studentName').innerText = item.name || 'N/A';
-            document.getElementById('modal-category').innerText = item.category || 'N/A';
-            document.getElementById('modal-itemName').innerText = item.itemName || 'N/A';
-            document.getElementById('modal-lastLocated').innerText = item.lastLocated || 'N/A';
-            document.getElementById('modal-description').innerText = item.description || 'No description';
-            document.getElementById('modal-itemColor').innerText = item.itemColor || 'N/A';
-            document.getElementById('modal-dateLost').innerText = item.dateLost || 'N/A';
-            document.getElementById('modal-image').src = item.image || 'images/default-image.png';
-            document.getElementById('modal-status').innerText = item.status || 'Pending';
-            document.getElementById('detailsModal').style.display = 'block';
-            document.getElementById('detailsModal').setAttribute('data-index', index);
-        }
+    document.getElementById('modal-studentName').innerText = item.name || 'N/A';
+    document.getElementById('modal-category').innerText = item.category || 'N/A';
+    document.getElementById('modal-itemName').innerText = item.itemName || 'N/A';
+    document.getElementById('modal-lastLocated').innerText = item.lastLocated || 'N/A';
+    document.getElementById('modal-description').innerText = item.description || 'No description';
+    const colorDiv = document.getElementById('modal-itemColor');
+    colorDiv.style.backgroundColor = item.itemColor || '#ccc';
+    document.getElementById('modal-dateLost').innerText = item.dateLost || 'N/A';
+    document.getElementById('modal-timeReported').innerText = item.timeReported || 'N/A'; // New field
+    document.getElementById('modal-image').src = item.image || 'images/default-image.png';
+    document.getElementById('modal-status').innerText = item.status || 'Pending';
+    document.getElementById('detailsModal').style.display = 'block';
+    document.getElementById('detailsModal').setAttribute('data-index', index);
+}
 
         function closeModal() {
             document.getElementById('detailsModal').style.display = 'none';

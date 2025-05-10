@@ -656,3 +656,35 @@ input[readonly] {
     font-size: 1rem;
   }
 }
+
+#nav-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 0; 
+}
+
+#nav-logo-container {
+  display: flex;
+  justify-content: center; 
+  text-align: center;
+}
+
+#nav-logo {
+  width: 70px; 
+  height: auto;
+  margin-right: 5px; 
+  vertical-align: left;
+  border: 2px solid #ffffff;
+  border-radius: 50%; 
+  background-color: #f0f0f0; 
+
+}
+
+#nav-title {
+  display: flex;
+  align-items: center;
+  text-decoration: none; 
+  color: inherit; 
+  font-size: 1.2em; 
+}

@@ -40,8 +40,8 @@ function displayMatchedItems() {
             </div>
             <div class="item-info">
                 <strong>Match Score:</strong> ${match.manual ? 'Custom' : `${match.totalPoints}/100`}<br>
-                <strong>Lost:</strong> ${lost.itemName} - ${lost.description || "No description"}<br>
-                <strong>Found:</strong> ${found.itemName} - ${found.description || "No description"}<br>
+                <strong>Lost:</strong> ${lost.itemName} - ${lost.description || "No description"} (Reported: ${lost.timeReported || 'N/A'})<br>
+                <strong>Found:</strong> ${found.itemName} - ${found.description || "No description"} (Reported: ${found.timeReported || 'N/A'})<br>
                 <button class="view-button" onclick="openModal(${match.lostID}, ${match.foundID})">View Match</button>
                 <button class="match-button" data-lostid="${lost.idLost}" data-foundid="${found.idFound}">Send Match Email</button>
             </div>
@@ -139,16 +139,18 @@ function openModal(lostID, foundID) {
             <p><strong>Lost Item:</strong> ${lost.itemName}</p>
             <p><strong>Description:</strong> ${lost.description || "No description"}</p>
             <p><strong>Category:</strong> ${lost.category || "N/A"}</p>
-            <p><strong>Color:</strong> <span style="color:${lost.itemColor}">${lost.itemColor || "N/A"}</span></p>
+            <p><strong>Color:</strong> <div class="color-rectangle" style="background-color: ${lost.itemColor || '#ccc'};"></div></p>
             <p><strong>Last Seen At:</strong> ${lost.lastLocated || "N/A"}</p>
             <p><strong>Date Lost:</strong> ${lost.dateLost || "N/A"}</p>
+            <p><strong>Time Reported:</strong> ${lost.timeReported || "N/A"}</p>
             <hr>
             <p><strong>Found Item:</strong> ${found.itemName}</p>
             <p><strong>Description:</strong> ${found.description || "No description"}</p>
             <p><strong>Category:</strong> ${found.category || "N/A"}</p>
-            <p><strong>Color:</strong> <span style="color:${found.itemColor}">${found.itemColor || "N/A"}</span></p>
+            <p><strong>Color:</strong> <div class="color-rectangle" style="background-color: ${found.itemColor || '#ccc'};"></div></p>
             <p><strong>Found At:</strong> ${found.foundAt || "N/A"}</p>
             <p><strong>Date Found:</strong> ${found.dateFound || "N/A"}</p>
+            <p><strong>Time Reported:</strong> ${found.timeReported || "N/A"}</p>
         </div>
     `;
     document.getElementById("matchModal").style.display = "block";
