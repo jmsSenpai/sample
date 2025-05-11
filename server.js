@@ -10,7 +10,7 @@ const PORT = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Create transporter once, reuse it
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -19,7 +19,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Verify transporter configuration
 transporter.verify((error, success) => {
   if (error) {
     console.error('Transporter verification failed:', error);
@@ -28,12 +27,10 @@ transporter.verify((error, success) => {
   }
 });
 
-// Test route
 app.get('/', (req, res) => {
   res.send('Server is running');
 });
 
-// Match Email Endpoint
 app.post('/send-matched-email', (req, res) => {
   const { studentEmail, studentName, itemName } = req.body;
   console.log('Received match email request:', { studentEmail, studentName, itemName });

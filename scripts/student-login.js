@@ -1,8 +1,3 @@
-function isValidPassword(password) {
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    return passwordPattern.test(password);
-}
-
 document.addEventListener("DOMContentLoaded", function () {
     const signUpForm = document.querySelector('#signUpForm');
     const signInForm = document.querySelector('#signInForm');
@@ -14,9 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const verificationFields = document.getElementById("verification-fields");
     const securityFields = document.getElementById("security-fields");
     const resendCodeBtn = document.getElementById("resendCode");
-    const messageModal = document.getElementById("messageModal");
-    const messageText = document.getElementById("messageText");
-    const closeMessageModal = document.getElementById("closeMessageModal");
     const studentEmailInput = document.getElementById('student-email');
     const studentPassInput = document.getElementById('student-pass');
 
@@ -29,28 +21,24 @@ document.addEventListener("DOMContentLoaded", function () {
     let lastEmailSent = null;
 
     function showMessage(message, autoClose = false) {
-        if (messageText && messageModal) {
-            messageText.innerText = message;
-            const successKeywords = ["successful", "created", "verified", "sent"];
-            const isSuccess = successKeywords.some(keyword => message.toLowerCase().includes(keyword));
-            console.log(`Showing message: "${message}", isSuccess: ${isSuccess}`);
-            messageModal.classList.remove('success', 'error');
-            messageModal.classList.add(isSuccess ? 'success' : 'error');
-            messageModal.style.display = "block";
-            if (autoClose) {
-                setTimeout(() => {
-                    messageModal.style.display = "none";
-                    messageModal.classList.remove('success', 'error');
-                }, 2000);
+        const successKeywords = ["successful", "created", "verified", "sent"];
+        const isSuccess = successKeywords.some(keyword => message.toLowerCase().includes(keyword));
+        console.log(`Showing message: "${message}", isSuccess: ${isSuccess}`);
+        Swal.fire({
+            text: message,
+            icon: isSuccess ? 'success' : 'error',
+            showConfirmButton: !autoClose,
+            timer: autoClose ? 2000 : undefined,
+            timerProgressBar: autoClose,
+            customClass: {
+                popup: isSuccess ? 'swal-success' : 'swal-error'
             }
-        } else {
-            console.error("Message modal or text element not found");
-        }
+        });
     }
 
     function closeModals() {
         if (forgotModal) forgotModal.style.display = "none";
-        if (messageModal) messageModal.style.display = "none";
+        Swal.close();
         if (securityFields) securityFields.style.display = "block";
         if (verificationFields) verificationFields.style.display = "none";
         if (passwordFields) passwordFields.style.display = "none";
@@ -81,8 +69,13 @@ document.addEventListener("DOMContentLoaded", function () {
     function isAnyModalOpen() {
         return (
             (forgotModal && forgotModal.style.display === "block") ||
-            (messageModal && messageModal.style.display === "block")
+            Swal.isVisible()
         );
+    }
+
+    function isValidPassword(password) {
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        return passwordPattern.test(password);
     }
 
     function generateVerificationCode() {
@@ -250,33 +243,33 @@ document.addEventListener("DOMContentLoaded", function () {
             const idFileInput = document.getElementById('student-id');
             const securityQuestion = document.getElementById('security-question').value.trim();
             const securityAnswer = document.getElementById('security-answer').value.trim();
-    
+
             if (!lastName || !firstName || !username || !password || !confirmPassword || !securityQuestion || !securityAnswer) {
                 showMessage("Please fill in all required fields, including security question and answer.");
                 return;
             }
-    
+
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailPattern.test(email)) {
                 showMessage("Please enter a valid email address.");
                 return;
             }
-    
+
             if (password !== confirmPassword) {
                 showMessage("Passwords do not match!");
                 return;
             }
-    
+
             if (!isValidPassword(password)) {
                 showMessage("Password must contain at least one lowercase letter, one uppercase letter, one number, and be at least 8 characters long.");
                 return;
             }
-    
+
             if (localStorage.getItem(username)) {
                 showMessage("This username is already taken. Please choose a different one.");
                 return;
             }
-    
+
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 const storedData = localStorage.getItem(key);
@@ -291,13 +284,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     continue;
                 }
             }
-    
+
             const file = idFileInput.files[0];
             if (!file) {
                 showMessage("Please upload your student ID.");
                 return;
             }
-    
+
             const reader = new FileReader();
             reader.onload = function (e) {
                 const idImage = e.target.result;
@@ -318,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 localStorage.setItem(username, JSON.stringify(studentData));
                 showMessage("Account created! Please wait for admin approval.", true);
                 signUpForm.reset();
-               
+
                 setTimeout(() => {
                     document.getElementById('container').classList.remove("right-panel-active");
                 }, 2000);
@@ -337,7 +330,7 @@ document.addEventListener("DOMContentLoaded", function () {
         signInForm.addEventListener('submit', function (event) {
             event.preventDefault();
             if (isAnyModalOpen()) {
-                showMessage("Please close all open modals first.");
+                showMessage("Please close all open modals or alerts first.");
                 return;
             }
 
@@ -523,30 +516,9 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Close Modal button not found");
     }
 
-    if (closeMessageModal) {
-        closeMessageModal.addEventListener("click", () => {
-            if (messageModal) {
-                messageModal.style.display = "none";
-                messageModal.classList.remove('success', 'error');
-            }
-        });
-    } else {
-        console.error("Close Message Modal button not found");
-    }
-
-    // Prevent clicks on message modal content from closing the modal
-    const messageModalContent = messageModal ? messageModal.querySelector('.modal-content') : null;
-    if (messageModalContent) {
-        messageModalContent.addEventListener('click', (event) => {
-            event.stopPropagation();
-        });
-    } else {
-        console.error("Message modal content not found");
-    }
-
     // Window click event for forgotModal only
     window.addEventListener("click", function (event) {
-        if (event.target === !forgotModal) {
+        if (event.target === forgotModal) {
             closeModals();
         }
     });

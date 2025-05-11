@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Lost Item</title>
     <link rel="stylesheet" href="Styles/Pages/student-lost.css">
+    <!-- Include SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
     <div id="nav-bar">
@@ -31,8 +33,7 @@
             </a>
             <hr/>
             <div class="nav-button" id="logout-btn">
-                <img src="images/logout.png" alt=""><span>Logout</span>
-            </div>
+                <img src="images/logout.png" alt=""><span>Logout</span></div>
             <div id="nav-content-highlight"></div>
         </div>
         <input id="nav-footer-toggle" type="checkbox"/>
@@ -45,9 +46,7 @@
                     <a id="nav-footer-title" >uahnbu</a>
                     <span id="nav-footer-subtitle">Student</span>
                 </div>
-                
             </div>
-        
         </div>
     </div>
 
@@ -91,135 +90,8 @@
         </form>
     </div>
 
-    <!-- Modal -->
-    <div id="successModal" class="modal">
-        <div class="modal-content">
-            <h2>Item Successfully Submitted</h2>
-            <p>Please wait for an email notification if someone has found your item.</p>
-            <button class="modal-close" onclick="closeModal()">OK</button>
-        </div>
-    </div>
-
-    <script>
-        function showModal() {
-            document.getElementById('successModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('successModal').style.display = 'none';
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const fullName = sessionStorage.getItem("loggedInStudentName");
-            const nameInput = document.getElementById("name");
-
-            // Redirect to login if not authenticated
-            if (!fullName) {
-                window.location.href = "student-login.html";
-            }
-
-            // Populate the name input field
-            if (fullName && nameInput) {
-                nameInput.value = fullName;
-            }
-
-            // Update footer with user name
-            if (fullName) {
-                const title = document.getElementById("nav-footer-title");
-                const subtitle = document.getElementById("nav-footer-subtitle");
-                title.textContent = fullName;
-                subtitle.textContent = "Student";
-            }
-        });
-
-        function submitForm(event) {
-    event.preventDefault();
-
-    const name = document.getElementById('name').value;
-    const category = document.getElementById('category').value;
-    const itemName = document.getElementById('itemName').value;
-    const lastLocated = document.getElementById('lastLocated').value;
-    const dateLost = document.getElementById('dateLost').value;
-    // Capture current time
-    const now = new Date();
-    const timeReported = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // e.g., "02:30 PM"
-    const itemColor = document.getElementById('itemColor').value;
-    const description = document.getElementById('description').value;
-    const imageFile = document.getElementById('itemImage').files[0];
-    const ownerEmail = sessionStorage.getItem("loggedInStudentEmail");
-    const reportedBy = sessionStorage.getItem("loggedInStudentName");
-
-    if (!ownerEmail) {
-        alert("Email not found! Please login again.");
-        return;
-    }
-
-    const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
-    const idLost = idGenerator(lostItems);
-
-    const lostItem = {
-        name,
-        category,
-        itemName,
-        lastLocated,
-        dateLost,
-        timeReported, // Add to object
-        itemColor,
-        description,
-        image: null,
-        idLost,
-        ownerEmail,
-        reportedBy,
-        status: "Pending"
-    };
-
-    if (imageFile) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            lostItem.image = event.target.result;
-            lostItems.push(lostItem);
-            localStorage.setItem('lostItems', JSON.stringify(lostItems));
-            document.getElementById('lost-item-form').reset();
-            document.getElementById('name').value = sessionStorage.getItem("loggedInStudentName");
-            showModal();
-        };
-        reader.readAsDataURL(imageFile);
-    } else {
-        lostItems.push(lostItem);
-        localStorage.setItem('lostItems', JSON.stringify(lostItems));
-        document.getElementById('lost-item-form').reset();
-        document.getElementById('name').value = sessionStorage.getItem("loggedInStudentName");
-        showModal();
-    }
-}
-
-        function idGenerator(lostItems) {
-            let id = Math.random() * 100000;
-            for (let i = 0; i < lostItems.length; i++) {
-                if (lostItems[i].idLost === id) {
-                    id = Math.random() * 100000;
-                    i = 0;
-                }
-            }
-            return id;
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const logoutButton = document.getElementById("logout-btn");
-            if (logoutButton) {
-                logoutButton.addEventListener("click", function () {
-                    document.body.classList.add("fade-out");
-                    setTimeout(function () {
-                        localStorage.removeItem("loggedInAdmin");
-                        sessionStorage.removeItem("loggedInStudentName");
-                        sessionStorage.removeItem("loggedInStudentEmail");
-                        const inputs = document.querySelectorAll("input");
-                        inputs.forEach(input => input.value = "");
-                        window.location.href = "student-login.html";
-                    }, 1000);
-                });
-            }
-        });
-    </script>
+    <!-- Include SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="scripts/student-lost.js"></script>
 </body>
 </html>

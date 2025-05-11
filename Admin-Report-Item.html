@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="Styles/Pages/Admin-report-items.css">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Add SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
   <div id="nav-bar">
@@ -199,227 +201,240 @@
   </div>
 
   <script>
-    // Authentication check - Token
-    if (!localStorage.getItem("loggedInAdmin")) {
-      window.location.href = "admin-login.html";
-    }
+   // Authentication check - Token
+if (!localStorage.getItem("loggedInAdmin")) {
+  window.location.href = "admin-login.html";
+}
 
-    // Tab switching functionality
-    function showForm(formType) {
-      const lostForm = document.getElementById('lost-item-form');
-      const foundForm = document.getElementById('found-item-form');
-      const lostTab = document.querySelector('.tab-button:nth-child(1)');
-      const foundTab = document.querySelector('.tab-button:nth-child(2)');
+// Tab switching functionality
+function showForm(formType) {
+  const lostForm = document.getElementById('lost-item-form');
+  const foundForm = document.getElementById('found-item-form');
+  const lostTab = document.querySelector('.tab-button:nth-child(1)');
+  const foundTab = document.querySelector('.tab-button:nth-child(2)');
 
-      if (formType === 'lost') {
-        lostForm.style.display = 'block';
-        foundForm.style.display = 'none';
-        lostTab.classList.add('active');
-        foundTab.classList.remove('active');
-        lostTab.setAttribute('aria-selected', 'true');
-        foundTab.setAttribute('aria-selected', 'false');
-      } else {
-        lostForm.style.display = 'none';
-        foundForm.style.display = 'block';
-        lostTab.classList.remove('active');
-        foundTab.classList.add('active');
-        lostTab.setAttribute('aria-selected', 'false');
-        foundTab.setAttribute('aria-selected', 'true');
+  if (formType === 'lost') {
+    lostForm.style.display = 'block';
+    foundForm.style.display = 'none';
+    lostTab.classList.add('active');
+    foundTab.classList.remove('active');
+    lostTab.setAttribute('aria-selected', 'true');
+    foundTab.setAttribute('aria-selected', 'false');
+  } else {
+    lostForm.style.display = 'none';
+    foundForm.style.display = 'block';
+    lostTab.classList.remove('active');
+    foundTab.classList.add('active');
+    lostTab.setAttribute('aria-selected', 'false');
+    foundTab.setAttribute('aria-selected', 'true');
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
+
+  if (loggedInAdminUsername) {
+    const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
+    if (adminData && adminData.accountType === 'admin') {
+      const fullName = `${adminData.firstName}`;
+      const navFooterTitle = document.getElementById("nav-footer-title");
+      if (navFooterTitle) {
+        navFooterTitle.textContent = fullName;
+        navFooterTitle.href = "#";
       }
     }
+  }
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
-
-      if (loggedInAdminUsername) {
-        const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
-        if (adminData && adminData.accountType === 'admin') {
-          const fullName = `${adminData.firstName}`;
-          const navFooterTitle = document.getElementById("nav-footer-title");
-          if (navFooterTitle) {
-            navFooterTitle.textContent = fullName;
-            navFooterTitle.href = "#";
-          }
-        }
-      }
-
-      const logoutButton = document.getElementById("logout-btn");
-      if (logoutButton) {
-        logoutButton.addEventListener("click", function () {
-          document.body.classList.add("fade-out");
-          setTimeout(function () {
-            localStorage.removeItem("loggedInAdmin");
-            const inputs = document.querySelectorAll("input");
-            inputs.forEach(input => {
-              input.value = "";
-            });
-            window.location.href = "admin-login.html";
-          }, 1000);
+  const logoutButton = document.getElementById("logout-btn");
+  if (logoutButton) {
+    logoutButton.addEventListener("click", function () {
+      document.body.classList.add("fade-out");
+      setTimeout(function () {
+        localStorage.removeItem("loggedInAdmin");
+        const inputs = document.querySelectorAll("input");
+        inputs.forEach(input => {
+          input.value = "";
         });
-      }
+        window.location.href = "admin-login.html";
+      }, 1000);
     });
+  }
+});
 
-    // Format time as HH:MM AM/PM
-    function formatTime(date) {
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      const formattedHours = hours % 12 || 12;
-      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-      return `${formattedHours}:${formattedMinutes} ${ampm}`;
-    }
+// Format time as HH:MM AM/PM
+function formatTime(date) {
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const formattedHours = hours % 12 || 12;
+  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+  return `${formattedHours}:${formattedMinutes} ${ampm}`;
+}
 
-    // Submit Lost Item Form
-    function submitLostForm(event) {
-      event.preventDefault();
+// Submit Lost Item Form
+function submitLostForm(event) {
+  event.preventDefault();
 
-      const name = document.getElementById('lost-name').value;
-      const email = document.getElementById('lost-email').value;
-      const category = document.getElementById('lost-category').value;
-      const itemName = document.getElementById('lost-itemName').value;
-      const lastLocated = document.getElementById('lost-lastLocated').value;
-      const dateLost = document.getElementById('lost-dateLost').value;
-      const itemColor = document.getElementById('lost-itemColor').value;
-      const description = document.getElementById('lost-description').value;
-      const imageFile = document.getElementById('lost-itemImage').files[0];
-      const reportedBy = localStorage.getItem("loggedInAdmin") || "Admin";
-      const timeReported = formatTime(new Date()); // Capture current time
+  const name = document.getElementById('lost-name').value;
+  const email = document.getElementById('lost-email').value;
+  const category = document.getElementById('lost-category').value;
+  const itemName = document.getElementById('lost-itemName').value;
+  const lastLocated = document.getElementById('lost-lastLocated').value;
+  const dateLost = document.getElementById('lost-dateLost').value;
+  const itemColor = document.getElementById('lost-itemColor').value;
+  const description = document.getElementById('lost-description').value;
+  const imageFile = document.getElementById('lost-itemImage').files[0];
+  const reportedBy = localStorage.getItem("loggedInAdmin") || "Admin";
+  const timeReported = formatTime(new Date());
 
-      // Set hidden input value
-      document.getElementById('lost-timeReported').value = timeReported;
+  document.getElementById('lost-timeReported').value = timeReported;
 
-      if (!email.match(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)) {
-        showError("Please enter a valid Gmail address.");
-        return;
-      }
+  if (!email.match(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid Email',
+      text: 'Please enter a valid Gmail address.',
+    });
+    return;
+  }
 
-      if (!itemColor) {
-        showError("Please select a color.");
-        return;
-      }
+  if (!itemColor) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Missing Color',
+      text: 'Please select a color.',
+    });
+    return;
+  }
 
-      const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
-      const idLost = idGenerator();
+  const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+  const reports = JSON.parse(localStorage.getItem('reports')) || [];
+  const idLost = idGenerator();
 
-      if (imageFile) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          const imageBase64 = event.target.result;
-          const lostItem = {
-            name,
-            category,
-            itemName,
-            lastLocated,
-            dateLost,
-            itemColor,
-            description,
-            image: imageBase64,
-            idLost,
-            ownerEmail: email,
-            reportedBy,
-            timeReported, // Include timeReported
-            status: "Pending" // Add default status
-          };
+  if (imageFile) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const imageBase64 = event.target.result;
+      const lostItem = {
+        name,
+        category,
+        itemName,
+        lastLocated,
+        dateLost,
+        itemColor,
+        description,
+        image: imageBase64,
+        idLost,
+        ownerEmail: email,
+        reportedBy,
+        timeReported,
+        status: "Pending",
+        type: "Lost"
+      };
 
-          lostItems.push(lostItem);
-          localStorage.setItem('lostItems', JSON.stringify(lostItems));
+      lostItems.push(lostItem);
+      reports.push(lostItem);
+      localStorage.setItem('lostItems', JSON.stringify(lostItems));
+      localStorage.setItem('reports', JSON.stringify(reports));
 
-          showSuccess("Lost item submitted successfully!");
-          document.getElementById('lost-item-form').reset();
-          document.getElementById('lost-name').value = localStorage.getItem("loggedInAdmin") || "";
-          document.getElementById('lost-email').value = "";
-          document.getElementById('lost-itemColor').value = '#ffffff';
-        };
-        reader.readAsDataURL(imageFile);
-      } else {
-        showError('Please upload an image!');
-      }
-    }
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Lost item submitted successfully!',
+      });
+      document.getElementById('lost-item-form').reset();
+      document.getElementById('lost-name').value = localStorage.getItem("loggedInAdmin") || "";
+      document.getElementById('lost-email').value = "";
+      document.getElementById('lost-itemColor').value = '#ffffff';
+    };
+    reader.readAsDataURL(imageFile);
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Missing Image',
+      text: 'Please upload an image!',
+    });
+  }
+}
 
-    // Submit Found Item Form
-    function submitFoundForm(event) {
-      event.preventDefault();
+// Submit Found Item Form
+function submitFoundForm(event) {
+  event.preventDefault();
 
-      const name = document.getElementById('found-name').value;
-      const category = document.getElementById('found-category').value;
-      const itemName = document.getElementById('found-itemName').value;
-      const foundAt = document.getElementById('found-foundAt').value;
-      const dateFound = document.getElementById('found-dateFound').value;
-      const itemColor = document.getElementById('found-itemColor').value;
-      const description = document.getElementById('found-description').value;
-      const imageFile = document.getElementById('found-itemImage').files[0];
-      const reportedBy = localStorage.getItem("loggedInAdmin") || "Admin";
-      const timeReported = formatTime(new Date()); // Capture current time
+  const name = document.getElementById('found-name').value;
+  const category = document.getElementById('found-category').value;
+  const itemName = document.getElementById('found-itemName').value;
+  const foundAt = document.getElementById('found-foundAt').value;
+  const dateFound = document.getElementById('found-dateFound').value;
+  const itemColor = document.getElementById('found-itemColor').value;
+  const description = document.getElementById('found-description').value;
+  const imageFile = document.getElementById('found-itemImage').files[0];
+  const reportedBy = localStorage.getItem("loggedInAdmin") || "Admin";
+  const timeReported = formatTime(new Date());
 
-      // Set hidden input value
-      document.getElementById('found-timeReported').value = timeReported;
+  document.getElementById('found-timeReported').value = timeReported;
 
-      if (!itemColor) {
-        showError("Please select a color.");
-        return;
-      }
+  if (!itemColor) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Missing Color',
+      text: 'Please select a color.',
+    });
+    return;
+  }
 
-      const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-      const idFound = idGenerator();
+  const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+  const reports = JSON.parse(localStorage.getItem('reports')) || [];
+  const idFound = idGenerator();
 
-      if (imageFile) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          const imageBase64 = event.target.result;
-          const foundItem = {
-            name,
-            category,
-            itemName,
-            foundAt,
-            dateFound,
-            itemColor,
-            description,
-            image: imageBase64,
-            idFound,
-            reportedBy,
-            timeReported, // Include timeReported
-            status: "Pending" // Add default status
-          };
+  if (imageFile) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const imageBase64 = event.target.result;
+      const foundItem = {
+        name,
+        category,
+        itemName,
+        foundAt,
+        dateFound,
+        itemColor,
+        description,
+        image: imageBase64,
+        idFound,
+        reportedBy,
+        timeReported,
+        status: "Pending",
+        type: "Found"
+      };
 
-          foundItems.push(foundItem);
-          localStorage.setItem('foundItems', JSON.stringify(foundItems));
+      foundItems.push(foundItem);
+      reports.push(foundItem);
+      localStorage.setItem('foundItems', JSON.stringify(foundItems));
+      localStorage.setItem('reports', JSON.stringify(reports));
 
-          showSuccess("Found item submitted successfully!");
-          document.getElementById('found-item-form').reset();
-          document.getElementById('found-name').value = localStorage.getItem("loggedInAdmin") || "";
-          document.getElementById('found-itemColor').value = '#ffffff';
-        };
-        reader.readAsDataURL(imageFile);
-      } else {
-        showError('Please upload an image!');
-      }
-    }
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Found item submitted successfully!',
+      });
+      document.getElementById('found-item-form').reset();
+      document.getElementById('found-name').value = localStorage.getItem("loggedInAdmin") || "";
+      document.getElementById('found-itemColor').value = '#ffffff';
+    };
+    reader.readAsDataURL(imageFile);
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Missing Image',
+      text: 'Please upload an image!',
+    });
+  }
+}
 
-    // Improved ID Generator
-    function idGenerator() {
-      return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
-    }
-
-    // User Feedback Functions
-    function showError(message) {
-      const errorDiv = document.createElement('div');
-      errorDiv.className = 'error-message';
-      errorDiv.style.cssText = 'color: red; margin: 10px 0;';
-      errorDiv.textContent = message;
-      const dashboard = document.querySelector('.dashboard');
-      dashboard.insertBefore(errorDiv, dashboard.querySelector('.tab-container'));
-      setTimeout(() => errorDiv.remove(), 3000);
-    }
-
-    function showSuccess(message) {
-      const successDiv = document.createElement('div');
-      successDiv.className = 'success-message';
-      successDiv.style.cssText = 'color: green; margin: 10px 0;';
-      successDiv.textContent = message;
-      const dashboard = document.querySelector('.dashboard');
-      dashboard.insertBefore(successDiv, dashboard.querySelector('.tab-container'));
-      setTimeout(() => successDiv.remove(), 3000);
-    }
+// Improved ID Generator
+function idGenerator() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+}
   </script>
 </body>
 </html>

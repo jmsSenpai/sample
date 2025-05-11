@@ -56,7 +56,7 @@
             <p>Welcome to the Lost and Found System</p>
         </div>
         
-        <!-- Statistics Section -->
+      
         <div class="statistics">
             <div class="stat-card">
                 <p>Total Lost Items</p>
@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <!-- Recent Activity Section -->
+       
         <div class="recent-activity">
             <div class="activity-column">
                 <h3>Recent Lost Items</h3>
@@ -85,20 +85,19 @@
         document.addEventListener("DOMContentLoaded", function () {
             const fullName = sessionStorage.getItem("loggedInStudentName");
 
-            // Function to filter items by the logged-in user
             function filterItemsByUser(items) {
                 return items.filter(item => item.reportedBy === fullName);
             }
 
-            // Get and filter user-specific items
+          
             const lostItems = filterItemsByUser(JSON.parse(localStorage.getItem("lostItems") || "[]"));
             const foundItems = filterItemsByUser(JSON.parse(localStorage.getItem("foundItems") || "[]"));
 
-            // Display stats
+       
             document.getElementById("totalLostItems").textContent = lostItems.length;
             document.getElementById("totalFoundItems").textContent = foundItems.length;
 
-            // Limit to 5 recent items
+          
             const recentLostItems = lostItems.slice(-5);
             const recentFoundItems = foundItems.slice(-5);
 
@@ -129,7 +128,7 @@
             displayItems(recentLostItems, "recentLostItems", false);
             displayItems(recentFoundItems, "recentFoundItems", true);
 
-            // Update footer with student info
+        
             if (fullName) {
                 const title = document.getElementById("nav-footer-title");
                 const subtitle = document.getElementById("nav-footer-subtitle");

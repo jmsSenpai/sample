@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="Styles/Pages/student-login.css">
     <title>Student Login</title>
+   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
     <div class="container" id="container">
@@ -32,7 +34,7 @@
                             <input type="file" id="student-id" />
                         </div>
                         <div class="security-wrapper">
-                            <input type="text" id="security-question" placeholder="Enter your security question" autocomplete="off" />
+                            <input type="text" id="security-question" placeholder="security question" autocomplete="off" />
                             <input type="text" placeholder="Your Answer" id="security-answer" autocomplete="off" />
                         </div>
                     </div>
@@ -95,12 +97,8 @@
             <button type="button" id="resetPassword">Submit</button>
         </div>
     </div>
-    <div id="messageModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeMessageModal">×</span>
-            <p id="messageText"></p>
-        </div>
-    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="scripts/student-login.js"></script>
 </body>
 </html>

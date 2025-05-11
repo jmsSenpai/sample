@@ -320,90 +320,6 @@ input[type="file"] {
 	padding: 10px;
 }
 
-/* Styles for message modal */
-#messageModal {
-	display: none;
-	position: fixed;
-	z-index: 1000;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-	background-color: rgba(0, 0, 0, 0.5);
-	animation: fadeIn 0.3s ease-in-out;
-}
-
-#messageModal .modal-content {
-	background-color: #ffffff;
-	margin: 15% auto;
-	padding: 20px;
-	border-radius: 12px;
-	width: 90%;
-	max-width: 400px;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-	position: relative;
-	animation: slideIn 0.3s ease-out;
-}
-
-#messageModal.success .modal-content {
-	border-left: 6px solid #28a745;
-	background-color: #e6f4ea;
-}
-
-#messageModal.error .modal-content {
-	border-left: 6px solid #dc3545;
-	background-color: #f8d7da;
-	animation: shake 0.4s ease-in-out;
-}
-
-#messageModal .close {
-	color: #666666;
-	font-size: 24px;
-	position: absolute;
-	top: 10px;
-	right: 15px;
-	transition: color 0.2s ease;
-}
-
-#messageModal .close:hover {
-	color: #000000;
-}
-
-#messageText {
-	font-size: 16px;
-	line-height: 1.5;
-	color: #333333;
-	text-align: center;
-	margin: 20px 0;
-}
-
-#messageModal.success #messageText {
-	color: #155724;
-}
-
-#messageModal.error #messageText {
-	color: #721c24;
-}
-
-/* Animations */
-@keyframes fadeIn {
-	from { opacity: 0; }
-	to { opacity: 1; }
-}
-
-@keyframes slideIn {
-	from { transform: translateY(-50px); opacity: 0; }
-	to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes shake {
-	0%, 100% { transform: translateX(0); }
-	25% { transform: translateX(-10px); }
-	50% { transform: translateX(10px); }
-	75% { transform: translateX(-10px); }
-}
-
 .password-wrapper {
 	position: relative;
 	width: 100%;
@@ -429,23 +345,23 @@ input[type="file"] {
 }
 
 .password-wrapper {
-    position: relative;
-    width: 100%;
+	position: relative;
+	width: 100%;
 }
 
 .password-wrapper input {
-    width: 100%;
-    padding: 8px;
-    padding-right: 60px; /* Space for the toggle text */
+	width: 100%;
+	padding: 8px;
+	padding-right: 60px; /* Space for the toggle text */
 }
 
 .toggle-password {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 14px;
-    color: #333;
-    user-select: none;
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
+	font-size: 14px;
+	color: #333;
+	user-select: none;
 }

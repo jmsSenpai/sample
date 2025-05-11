@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Lost Items</title>
     <link rel="stylesheet" href="Styles/Pages/admin-lost.css">
-    <!-- Add Google Fonts for modern typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
-    <!-- Navbar (unchanged) -->
     <div id="nav-bar">
         <input id="nav-toggle" type="checkbox"/>
         <div id="nav-header">
@@ -56,16 +55,14 @@
               <div id="nav-footer-avatar"><img src="images/admin acc.png"/></div>
               <div id="nav-footer-titlebox"><a id="nav-footer-title" >uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>           
             </div>
-          </div>
+        </div>
     </div>
 
- 
     <div class="found-items">
         <h1 class="title">Lost Items</h1>
         <div class="items-list" id="items-list" role="list"></div>
     </div>
 
-   
     <div id="detailsModal" class="modal" role="dialog" aria-modal="true" aria-label="Item Details">
         <div class="modal-content">
             <span class="close" onclick="closeModal()" aria-label="Close Modal" tabindex="0">×</span>
@@ -78,14 +75,14 @@
             <p><strong>Description:</strong> <span id="modal-description"></span></p>
             <p><strong>Color:</strong> <div id="modal-itemColor" class="color-rectangle"></div></p>
             <p><strong>Date Lost:</strong> <span id="modal-dateLost"></span></p>
-            <p><strong>Time Reported:</strong> <span id="modal-timeReported"></span></p> <!-- New field -->
+            <p><strong>Time Reported:</strong> <span id="modal-timeReported"></span></p>
             <p><strong>Status:</strong> <span id="modal-status"></span></p>
             <div class="button-group">
                 <button class="match" onclick="openMatchModal()" aria-label="Match Item">Match Item</button>
             </div>
         </div>
     </div>
-   
+
     <div id="matchModal" class="modal" role="dialog" aria-modal="true" aria-label="Match Item Selection">
         <div class="modal-content">
             <span class="close" onclick="closeMatchModal()" aria-label="Close Modal" tabindex="0">×</span>
@@ -97,156 +94,7 @@
         </div>
     </div>
 
-    <script>
-        if (!localStorage.getItem("loggedInAdmin")) {
-            window.location.href = "admin-login.html";
-        }
-
-        let lostItemToMatch = null;
-        let selectedFoundItemIndex = null;
-
-        function openMatchModal() {
-            const lostItemIndex = document.getElementById('detailsModal').getAttribute('data-index');
-            const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
-            lostItemToMatch = lostItems[lostItemIndex];
-
-            const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-            const matchedItems = JSON.parse(localStorage.getItem('matchedItems')) || [];
-            const matchedFoundIDs = matchedItems.map(match => match.foundID);
-            const unmatchedFoundItems = foundItems.filter(item => !matchedFoundIDs.includes(item.idFound));
-
-            const foundItemsList = document.getElementById('found-items-list');
-            foundItemsList.innerHTML = '';
-
-            unmatchedFoundItems.forEach((item, index) => {
-                const button = document.createElement('button');
-                button.innerText = `${item.itemName} (${item.foundAt})`;
-                button.onclick = function () {
-                    selectedFoundItemIndex = foundItems.findIndex(f => f.idFound === item.idFound);
-                    document.querySelectorAll('#found-items-list button').forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
-                };
-                foundItemsList.appendChild(button);
-            });
-
-            document.getElementById('matchModal').style.display = 'block';
-        }
-
-        function closeMatchModal() {
-            document.getElementById('matchModal').style.display = 'none';
-            selectedFoundItemIndex = null;
-        }
-
-        function saveMatch() {
-            if (lostItemToMatch && selectedFoundItemIndex !== null) {
-                const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-                const selectedFoundItem = foundItems[selectedFoundItemIndex];
-
-                const match = {
-                    lostID: lostItemToMatch.idLost,
-                    foundID: selectedFoundItem.idFound,
-                    totalPoints: "Custom",
-                    itemLost: lostItemToMatch.itemName.toLowerCase(),
-                    itemFound: selectedFoundItem.itemName.toLowerCase(),
-                    itemLostLocation: lostItemToMatch.lastLocated.toLowerCase(),
-                    itemFoundLocation: selectedFoundItem.foundAt.toLowerCase(),
-                    itemLostDate: lostItemToMatch.dateLost,
-                    itemFoundDate: selectedFoundItem.dateFound,
-                    manual: true
-                };
-
-                let matchedItems = JSON.parse(localStorage.getItem('matchedItems')) || [];
-                matchedItems.push(match);
-                localStorage.setItem('matchedItems', JSON.stringify(matchedItems));
-
-                alert(`Match saved: ${lostItemToMatch.itemName} with ${selectedFoundItem.itemName} (Score: Custom)`);
-                closeMatchModal();
-                closeModal();
-                displayLostItems();
-            } else {
-                alert('Please select a found item to match.');
-            }
-        }
-
-        function displayLostItems() {
-    const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
-    const itemsList = document.getElementById('items-list');
-    itemsList.innerHTML = '';
-
-    lostItems.forEach((item, index) => {
-        const itemDiv = document.createElement('div');
-        itemDiv.classList.add('item');
-        itemDiv.innerHTML = `
-            <img src="${item.image || 'images/default-image.png'}" alt="Item Image">
-            <div class="item-content">
-                <p><strong>Reported By:</strong> ${item.name || 'N/A'}</p>
-                <p><strong>Description:</strong> ${item.description || 'No description'}</p>
-                <p><strong>Time Reported:</strong> ${item.timeReported || 'N/A'}</p> <!-- New field -->
-                <p><strong>Status:</strong> ${item.status || 'Pending'}</p>
-            </div>
-            <div class="button-group">
-                <button class="see-details" onclick="showDetails(${index})">See Details</button>
-            </div>
-        `;
-        itemsList.appendChild(itemDiv);
-    });
-}
-
-function showDetails(index) {
-    const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
-    const item = lostItems[index];
-
-    document.getElementById('modal-studentName').innerText = item.name || 'N/A';
-    document.getElementById('modal-category').innerText = item.category || 'N/A';
-    document.getElementById('modal-itemName').innerText = item.itemName || 'N/A';
-    document.getElementById('modal-lastLocated').innerText = item.lastLocated || 'N/A';
-    document.getElementById('modal-description').innerText = item.description || 'No description';
-    const colorDiv = document.getElementById('modal-itemColor');
-    colorDiv.style.backgroundColor = item.itemColor || '#ccc';
-    document.getElementById('modal-dateLost').innerText = item.dateLost || 'N/A';
-    document.getElementById('modal-timeReported').innerText = item.timeReported || 'N/A'; // New field
-    document.getElementById('modal-image').src = item.image || 'images/default-image.png';
-    document.getElementById('modal-status').innerText = item.status || 'Pending';
-    document.getElementById('detailsModal').style.display = 'block';
-    document.getElementById('detailsModal').setAttribute('data-index', index);
-}
-
-        function closeModal() {
-            document.getElementById('detailsModal').style.display = 'none';
-        }
-
-        window.onload = displayLostItems;
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
-
-            if (loggedInAdminUsername) {
-                const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
-                if (adminData && adminData.accountType === 'admin') {
-                    const fullName = `${adminData.firstName} `;
-                    const navFooterTitle = document.getElementById("nav-footer-title");
-                    if (navFooterTitle) {
-                        navFooterTitle.textContent = fullName;
-                        navFooterTitle.href = "#";
-                    }
-                }
-            }
-
-            const logoutButton = document.getElementById("logout-btn");
-            if (logoutButton) {
-                logoutButton.addEventListener("click", function () {
-                    document.body.classList.add("fade-out");
-                    setTimeout(function () {
-                        localStorage.removeItem("loggedInAdmin");
-                        const inputs = document.querySelectorAll("input");
-                        inputs.forEach(input => {
-                            input.value = "";
-                        });
-                        window.location.href = "admin-login.html";
-                    }, 1000);
-                });
-            }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="scripts/admin-lost.js"></script>
 </body>
 </html>
