@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
     <link rel="stylesheet" href="Styles/Pages/student-dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div id="nav-bar">
         <input id="nav-toggle" type="checkbox"/>
-        <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen">
+        <div id="nav-header"><a id="nav-title" ><i class="fab fa-codepen">
             <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
         </i>Lost & Found</a>
           <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
@@ -142,13 +143,26 @@
 
             if (logoutButton) {
                 logoutButton.addEventListener("click", function () {
-                    document.body.classList.add("fade-out");
-                    setTimeout(function () {
-                        sessionStorage.removeItem("loggedInStudentName");
-                        sessionStorage.removeItem("loggedInStudentEmail");
-                        localStorage.removeItem("loggedInAdmin");
-                        window.location.href = "student-login.html";
-                    }, 1000);
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "Do you want to logout?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, logout!',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.body.classList.add("fade-out");
+                            setTimeout(function () {
+                                sessionStorage.removeItem("loggedInStudentName");
+                                sessionStorage.removeItem("loggedInStudentEmail");
+                                localStorage.removeItem("loggedInAdmin");
+                                window.location.href = "student-login.html";
+                            }, 1000);
+                        }
+                    });
                 });
             }
         });

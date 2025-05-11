@@ -15,7 +15,7 @@
     <input id="nav-toggle" type="checkbox" aria-label="Toggle navigation"/>
     <div id="nav-header">
       <div id="nav-logo-container">
-        <a id="nav-title" href="https://codepen.io" target="_blank">
+        <a id="nav-title" >
           <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
           Lost & Found
         </a>
@@ -120,10 +120,10 @@
         <div class="input-group">
           <div class="input-field">
             <label for="lost-itemColor">Item Color</label>
-            <input type="color" id="lost-itemColor" value="#ffffff" required aria-required="true">
+            <input type="color" id="lost-itemColor" value="#ffffff" required aria-required="true" list="white">
           </div>
           <div class="input-field">
-            <label for="lost-itemImage">Item Image</label>
+            <label for="lost-itemImage">Item Image(Max 5MB, Image Only)</label>
             <input type="file" id="lost-itemImage" accept="image/*">
           </div>
         </div>
@@ -180,12 +180,12 @@
           </div>
           <div class="input-field">
             <label for="found-itemColor">Item Color</label>
-            <input type="color" id="found-itemColor" value="#ffffff" required aria-required="true">
+            <input type="color" id="found-itemColor" value="#ffffff" required aria-required="true" list="white">
           </div>
         </div>
         <div class="input-group">
           <div class="input-field">
-            <label for="found-itemImage">Item Image</label>
+            <label for="found-itemImage">Item Image(Max 5MB, Image Only)</label>
             <input type="file" id="found-itemImage" accept="image/*">
           </div>
         </div>
@@ -231,34 +231,54 @@ function showForm(formType) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
-
-  if (loggedInAdminUsername) {
-    const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
-    if (adminData && adminData.accountType === 'admin') {
-      const fullName = `${adminData.firstName}`;
-      const navFooterTitle = document.getElementById("nav-footer-title");
-      if (navFooterTitle) {
-        navFooterTitle.textContent = fullName;
-        navFooterTitle.href = "#";
-      }
-    }
-  }
-
-  const logoutButton = document.getElementById("logout-btn");
-  if (logoutButton) {
-    logoutButton.addEventListener("click", function () {
-      document.body.classList.add("fade-out");
-      setTimeout(function () {
-        localStorage.removeItem("loggedInAdmin");
-        const inputs = document.querySelectorAll("input");
-        inputs.forEach(input => {
-          input.value = "";
+    const loggedInAdmin = localStorage.getItem("loggedInAdmin");
+    if (!loggedInAdmin) {
+        Swal.fire({
+            title: 'Unauthorized Access',
+            text: 'Please log in as an admin.',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            customClass: {
+                popup: 'swal-error'
+            }
+        }).then(() => {
+            window.location.href = "admin-login.html";
         });
-        window.location.href = "admin-login.html";
-      }, 1000);
-    });
-  }
+        return;
+    }
+
+    const lostNameInput = document.getElementById('lost-name');
+    const foundNameInput = document.getElementById('found-name');
+    if (lostNameInput) lostNameInput.value = loggedInAdmin;
+    if (foundNameInput) foundNameInput.value = loggedInAdmin;
+
+    const logoutButton = document.getElementById("logout-btn");
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to logout?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, logout!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.body.classList.add("fade-out");
+                    setTimeout(function () {
+                        localStorage.removeItem("loggedInAdmin");
+                        const inputs = document.querySelectorAll("input");
+                        inputs.forEach(input => {
+                            input.value = "";
+                        });
+                        window.location.href = "admin-login.html";
+                    }, 1000);
+                }
+            });
+        });
+    }
 });
 
 // Format time as HH:MM AM/PM
@@ -273,167 +293,174 @@ function formatTime(date) {
 
 // Submit Lost Item Form
 function submitLostForm(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const name = document.getElementById('lost-name').value;
-  const email = document.getElementById('lost-email').value;
-  const category = document.getElementById('lost-category').value;
-  const itemName = document.getElementById('lost-itemName').value;
-  const lastLocated = document.getElementById('lost-lastLocated').value;
-  const dateLost = document.getElementById('lost-dateLost').value;
-  const itemColor = document.getElementById('lost-itemColor').value;
-  const description = document.getElementById('lost-description').value;
-  const imageFile = document.getElementById('lost-itemImage').files[0];
-  const reportedBy = localStorage.getItem("loggedInAdmin") || "Admin";
-  const timeReported = formatTime(new Date());
+    const name = document.getElementById('lost-name').value;
+    const email = document.getElementById('lost-email').value;
+    const category = document.getElementById('lost-category').value;
+    const itemName = document.getElementById('lost-itemName').value;
+    const lastLocated = document.getElementById('lost-lastLocated').value;
+    const dateLost = document.getElementById('lost-dateLost').value;
+    const itemColor = document.getElementById('lost-itemColor').value;
+    const description = document.getElementById('lost-description').value;
+    const imageFile = document.getElementById('lost-itemImage').files[0];
+    const reportedBy = localStorage.getItem("loggedInAdmin") || "Admin";
+    const now = new Date();
+    const timeReported = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  document.getElementById('lost-timeReported').value = timeReported;
+    if (!email.match(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Email',
+            text: 'Please enter a valid Gmail address (e.g., example@gmail.com).',
+        });
+        return;
+    }
 
-  if (!email.match(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Invalid Email',
-      text: 'Please enter a valid Gmail address.',
-    });
-    return;
-  }
+    if (!itemColor) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Missing Color',
+            text: 'Please select a color.',
+        });
+        return;
+    }
 
-  if (!itemColor) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Missing Color',
-      text: 'Please select a color.',
-    });
-    return;
-  }
+    if (!imageFile) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Missing Image',
+            text: 'Please upload an image!',
+        });
+        return;
+    }
 
-  const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
-  const reports = JSON.parse(localStorage.getItem('reports')) || [];
-  const idLost = idGenerator();
+    const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+    const reports = JSON.parse(localStorage.getItem('reports')) || [];
+    const idLost = idGenerator(lostItems, 'idLost');
 
-  if (imageFile) {
     const reader = new FileReader();
     reader.onload = function(event) {
-      const imageBase64 = event.target.result;
-      const lostItem = {
-        name,
-        category,
-        itemName,
-        lastLocated,
-        dateLost,
-        itemColor,
-        description,
-        image: imageBase64,
-        idLost,
-        ownerEmail: email,
-        reportedBy,
-        timeReported,
-        status: "Pending",
-        type: "Lost"
-      };
+        const imageBase64 = event.target.result;
+        const lostItem = {
+            name,
+            category,
+            itemName,
+            lastLocated,
+            dateLost,
+            itemColor,
+            description,
+            image: imageBase64,
+            idLost,
+            ownerEmail: email.trim(),
+            reportedBy,
+            timeReported,
+            status: "Pending",
+            type: "Lost",
+            isVisible: true
+        };
 
-      lostItems.push(lostItem);
-      reports.push(lostItem);
-      localStorage.setItem('lostItems', JSON.stringify(lostItems));
-      localStorage.setItem('reports', JSON.stringify(reports));
+        lostItems.push(lostItem);
+        reports.push(lostItem);
+        localStorage.setItem('lostItems', JSON.stringify(lostItems));
+        localStorage.setItem('reports', JSON.stringify(reports));
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Lost item submitted successfully!',
-      });
-      document.getElementById('lost-item-form').reset();
-      document.getElementById('lost-name').value = localStorage.getItem("loggedInAdmin") || "";
-      document.getElementById('lost-email').value = "";
-      document.getElementById('lost-itemColor').value = '#ffffff';
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Lost item submitted successfully!',
+        });
+        document.getElementById('lost-item-form').reset();
+        document.getElementById('lost-name').value = localStorage.getItem("loggedInAdmin") || "";
+        document.getElementById('lost-email').value = "";
+        document.getElementById('lost-itemColor').value = '#ffffff';
     };
     reader.readAsDataURL(imageFile);
-  } else {
-    Swal.fire({
-      icon: 'error',
-      title: 'Missing Image',
-      text: 'Please upload an image!',
-    });
-  }
 }
 
-// Submit Found Item Form
 function submitFoundForm(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const name = document.getElementById('found-name').value;
-  const category = document.getElementById('found-category').value;
-  const itemName = document.getElementById('found-itemName').value;
-  const foundAt = document.getElementById('found-foundAt').value;
-  const dateFound = document.getElementById('found-dateFound').value;
-  const itemColor = document.getElementById('found-itemColor').value;
-  const description = document.getElementById('found-description').value;
-  const imageFile = document.getElementById('found-itemImage').files[0];
-  const reportedBy = localStorage.getItem("loggedInAdmin") || "Admin";
-  const timeReported = formatTime(new Date());
+    const name = document.getElementById('found-name').value;
+    const category = document.getElementById('found-category').value;
+    const itemName = document.getElementById('found-itemName').value;
+    const foundAt = document.getElementById('found-foundAt').value;
+    const dateFound = document.getElementById('found-dateFound').value;
+    const itemColor = document.getElementById('found-itemColor').value;
+    const description = document.getElementById('found-description').value;
+    const imageFile = document.getElementById('found-itemImage').files[0];
+    const reportedBy = localStorage.getItem("loggedInAdmin") || "Admin";
+    const now = new Date();
+    const timeReported = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  document.getElementById('found-timeReported').value = timeReported;
+    if (!itemColor) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Missing Color',
+            text: 'Please select a color.',
+        });
+        return;
+    }
 
-  if (!itemColor) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Missing Color',
-      text: 'Please select a color.',
-    });
-    return;
-  }
+    if (!imageFile) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Missing Image',
+            text: 'Please upload an image!',
+        });
+        return;
+    }
 
-  const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
-  const reports = JSON.parse(localStorage.getItem('reports')) || [];
-  const idFound = idGenerator();
+    const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+    const reports = JSON.parse(localStorage.getItem('reports')) || [];
+    const idFound = idGenerator(foundItems, 'idFound');
 
-  if (imageFile) {
     const reader = new FileReader();
     reader.onload = function(event) {
-      const imageBase64 = event.target.result;
-      const foundItem = {
-        name,
-        category,
-        itemName,
-        foundAt,
-        dateFound,
-        itemColor,
-        description,
-        image: imageBase64,
-        idFound,
-        reportedBy,
-        timeReported,
-        status: "Pending",
-        type: "Found"
-      };
+        const imageBase64 = event.target.result;
+        const foundItem = {
+            name,
+            category,
+            itemName,
+            foundAt,
+            dateFound,
+            itemColor,
+            description,
+            image: imageBase64,
+            idFound,
+            reportedBy,
+            timeReported,
+            status: "Pending",
+            type: "Found",
+            isVisible: true
+        };
 
-      foundItems.push(foundItem);
-      reports.push(foundItem);
-      localStorage.setItem('foundItems', JSON.stringify(foundItems));
-      localStorage.setItem('reports', JSON.stringify(reports));
+        foundItems.push(foundItem);
+        reports.push(foundItem);
+        localStorage.setItem('foundItems', JSON.stringify(foundItems));
+        localStorage.setItem('reports', JSON.stringify(reports));
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Found item submitted successfully!',
-      });
-      document.getElementById('found-item-form').reset();
-      document.getElementById('found-name').value = localStorage.getItem("loggedInAdmin") || "";
-      document.getElementById('found-itemColor').value = '#ffffff';
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Found item submitted successfully!',
+        });
+        document.getElementById('found-item-form').reset();
+        document.getElementById('found-name').value = localStorage.getItem("loggedInAdmin") || "";
+        document.getElementById('found-itemColor').value = '#ffffff';
     };
     reader.readAsDataURL(imageFile);
-  } else {
-    Swal.fire({
-      icon: 'error',
-      title: 'Missing Image',
-      text: 'Please upload an image!',
-    });
-  }
 }
 
-// Improved ID Generator
-function idGenerator() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+function idGenerator(items, idField) {
+    let id = Math.random() * 100000;
+    for (let i = 0; i < items.length; i++) {
+        if (items[i][idField] === id) {
+            id = Math.random() * 100000;
+            i = 0;
+        }
+    }
+    return id;
 }
   </script>
 </body>

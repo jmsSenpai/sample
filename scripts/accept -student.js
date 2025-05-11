@@ -7,55 +7,6 @@ function toggleMenu() {
     sidebar.classList.toggle("collapsed");
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    loadStudentAccounts();
-
-    // Handle logout
-    const logoutButton = document.getElementById("logout-btn");
-    if (logoutButton) {
-        logoutButton.addEventListener("click", function () {
-            document.body.classList.add("fade-out");
-            setTimeout(function () {
-                localStorage.removeItem("loggedInAdmin");
-                const inputs = document.querySelectorAll("input");
-                inputs.forEach(input => {
-                    input.value = "";
-                });
-                window.location.href = "admin-login.html";
-            }, 1000);
-        });
-    }
-
-    // Update admin name in footer
-    const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
-    if (loggedInAdminUsername) {
-        const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
-        if (adminData && adminData.accountType === 'admin') {
-            const fullName = `${adminData.firstName} `;
-            const navFooterTitle = document.getElementById("nav-footer-title");
-            if (navFooterTitle) {
-                navFooterTitle.textContent = fullName;
-                navFooterTitle.href = "#";
-            }
-        }
-    }
-
-    // Modal close on outside click
-    const modal = document.getElementById('student-modal');
-    modal.addEventListener('click', function (event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-
-    // Modal close button listener
-    document.addEventListener('click', function (event) {
-        if (event.target.id === 'close-modal' || event.target.id === 'close-modal-footer') {
-            document.getElementById('student-modal').style.display = 'none';
-        }
-    });
-});
-
 function loadStudentAccounts() {
     const studentAccountsContainer = document.getElementById('student-accounts');
     studentAccountsContainer.innerHTML = '';
@@ -117,14 +68,14 @@ function loadStudentAccounts() {
                     if (response.ok) {
                         studentData.accepted = true;
                         localStorage.setItem(username, JSON.stringify(studentData));
-                        alert('Student accepted and email sent successfully!');
+                        Swal.fire('Success!', 'Student accepted and email sent successfully!', 'success');
                         loadStudentAccounts();
                     } else {
-                        alert('Failed to send acceptance email. Please try again.');
+                        Swal.fire('Error', 'Failed to send acceptance email. Please try again.', 'error');
                     }
                 } catch (error) {
                     console.error('Error sending acceptance email:', error);
-                    alert('Error sending acceptance email. Please try again.');
+                    Swal.fire('Error', 'Error sending acceptance email. Please try again.', 'error');
                 }
             }
         });
@@ -150,14 +101,14 @@ function loadStudentAccounts() {
 
                     if (response.ok) {
                         localStorage.removeItem(username);
-                        alert('Student account rejected and email sent successfully.');
+                        Swal.fire('Rejected', 'Student account rejected and email sent successfully.', 'success');
                         loadStudentAccounts();
                     } else {
-                        alert('Failed to send rejection email. Account not deleted.');
+                        Swal.fire('Error', 'Failed to send rejection email. Account not deleted.', 'error');
                     }
                 } catch (error) {
                     console.error('Error sending rejection email:', error);
-                    alert('Error sending rejection email. Account not deleted.');
+                    Swal.fire('Error', 'Error sending rejection email. Account not deleted.', 'error');
                 }
             }
         });
@@ -166,9 +117,27 @@ function loadStudentAccounts() {
     deleteButtons.forEach(button => {
         button.addEventListener('click', function () {
             const username = this.getAttribute('data-username');
-            localStorage.removeItem(username);
-            alert(`Student account with username ${username} has been deleted.`);
-            loadStudentAccounts();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You are about to delete the student account with username "${username}". This action cannot be undone.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem(username);
+                    Swal.fire(
+                        'Deleted!',
+                        `Student account with username "${username}" has been deleted.`,
+                        'success'
+                    ).then(() => {
+                        loadStudentAccounts();
+                    });
+                }
+            });
         });
     });
 
@@ -181,15 +150,17 @@ function loadStudentAccounts() {
                 studentData = JSON.parse(localStorage.getItem(username));
             } catch (error) {
                 console.error(`Failed to parse student data for username "${username}":`, error);
-                alert('Error loading student details.');
+                Swal.fire('Error', 'Error loading student details.', 'error');
                 return;
             }
 
             if (studentData) {
                 showModal(studentData);
             } else {
-                console.error(`No student data found for username: ${username}`);
-                alert('Student data not found.');
+                console
+
+.error(`No student data found for username: ${username}`);
+                Swal.fire('Error', 'Student data not found.', 'error');
             }
         });
     });
@@ -201,6 +172,7 @@ function showModal(studentData) {
 
     if (!modal || !modalContent) {
         console.error('Modal or modal-content element not found');
+        Swal.fire('Error', 'Modal element not found.', 'error');
         return;
     }
 
@@ -220,22 +192,76 @@ function showModal(studentData) {
     modal.style.display = 'flex';
 }
 
-    
-    const logoutButton = document.getElementById("logout-btn");
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Page loaded, initializing...");
+    loadStudentAccounts();
 
+    // Update admin name in footer
+    const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
+    if (loggedInAdminUsername) {
+        let adminData;
+        try {
+            adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
+        } catch (error) {
+            console.error(`Failed to parse admin data for username "${loggedInAdminUsername}":`, error);
+            Swal.fire('Error', 'Failed to load admin data.', 'error');
+            return;
+        }
+
+        if (adminData && adminData.accountType === 'admin') {
+            const fullName = `${adminData.firstName}`;
+            const navFooterTitle = document.getElementById("nav-footer-title");
+            if (navFooterTitle) {
+                navFooterTitle.textContent = fullName;
+                navFooterTitle.href = "#";
+            }
+        }
+    }
+
+    // Handle logout with SweetAlert2
+    const logoutButton = document.getElementById("logout-btn");
     if (logoutButton) {
         logoutButton.addEventListener("click", function () {
-            document.body.classList.add("fade-out");
-
-            setTimeout(function () {
-                localStorage.removeItem("loggedInAdmin");
-
-                const inputs = document.querySelectorAll("input");
-                inputs.forEach(input => {
-                    input.value = "";
-                });
-
-                window.location.href = "admin-login.html";
-            }, 1000);
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to log out?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, log out",
+                cancelButtonText: "Cancel",
+               
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log("Logout confirmed, proceeding...");
+                    document.body.classList.add("fade-out");
+                    setTimeout(function () {
+                        localStorage.removeItem("loggedInAdmin");
+                        document.querySelectorAll("input").forEach(input => input.value = "");
+                        window.location.href = "admin-login.html";
+                    }, 1000);
+                } else {
+                    console.log("Logout cancelled by user.");
+                }
+            });
         });
     }
+
+    // Modal close on outside click
+    const modal = document.getElementById('student-modal');
+    if (modal) {
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+    // Modal close button listener (simplified)
+    document.addEventListener('click', function (event) {
+        if (event.target.matches('#close-modal, #close-modal-footer')) {
+            document.getElementById('student-modal').style.display = 'none';
+        }
+    });
+});

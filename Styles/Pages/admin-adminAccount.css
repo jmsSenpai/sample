@@ -612,3 +612,9 @@ label[for=nav-footer-toggle] {
   color: inherit; /* Match navbar text color */
   font-size: 1.2em; /* Adjust text size as needed */
 }
+.swal-success {
+  border: 2px solid #28a745 !important;
+}
+.swal-error {
+  border: 2px solid #dc3545 !important;
+}

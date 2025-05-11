@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Found Item</title>
     <link rel="stylesheet" href="Styles/Pages/student-found.css">
-    <!-- Include SweetAlert2 CSS -->
+ 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
     <div id="nav-bar">
         <input id="nav-toggle" type="checkbox"/>
         <div id="nav-header">
-            <a id="nav-title" href="https://codepen.io" target="_blank"><i class="fab fa-codepen">
+            <a id="nav-title" ><i class="fab fa-codepen">
                 <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
             </i>Lost & Found</a>
             <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
@@ -83,7 +83,7 @@
                 <input type="color" id="itemColor" value="rgb(255, 255, 255)" list="white">
             </div>
             <div class="input-group file-group">
-                <label for="itemImage" class="file-label">Image of the Item</label>
+                <label for="itemImage" class="file-label">Image of the Item(Max 5MB, Image Only)</label>
                 <input type="file" id="itemImage" class="file-input" accept="image/*">
             </div>
             <textarea id="description" placeholder="Short description" required></textarea>

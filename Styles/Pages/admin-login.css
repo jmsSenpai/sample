@@ -464,7 +464,7 @@ label {
 }
 
 .password-wrapper {
-  trim: relative;
+  
   width: 100%;
 }
 
@@ -515,4 +515,19 @@ label {
   font-size: 14px;
   color: #333;
   user-select: none;
+}
+
+/* Add to your existing CSS */
+input[type="file"] {
+  background-color: rgba(246, 187, 142, 0.4);
+  border: none;
+  padding: 10px 12px;
+  border-radius: 5px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(12px, 3vw, 14px);
+  cursor: pointer;
+}
+
+input[type="file"]:hover {
+  background-color: rgba(246, 187, 142, 0.6);
 }

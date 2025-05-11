@@ -5,64 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Admin Account</title>
     <link rel="stylesheet" href="Styles/Pages/admin-CreateAccount.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div id="nav-bar">
-        <input id="nav-toggle" type="checkbox"/>
+        <input id="nav-toggle" type="checkbox" aria-label="Toggle navigation"/>
         <div id="nav-header">
             <div id="nav-logo-container">
-              <a id="nav-title" href="https://codepen.io" target="_blank">
-                <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
-                Lost & Found
-              </a>
+                <a id="nav-title">
+                    <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
+                    Lost & Found
+                </a>
             </div>
-            <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
+            <label for="nav-toggle"><span id="nav-toggle-burger" aria-hidden="true"></span></label>
             <hr/>
-          </div>
+        </div>
         <div id="nav-content">
             <a href="Admin-dashboard.html"> 
-                <div class="nav-button"><img src="images/dashboard.png" alt=""><span>Dashboard</span></div>
+                <div class="nav-button"><img src="images/dashboard.png" alt="Dashboard icon"><span>Dashboard</span></div>
             </a>
             <a href="admin-lost.html"> 
-                <div class="nav-button"><img src="images/lost item.png" alt=""><span>Lost Items</span></div>
+                <div class="nav-button"><img src="images/lost item.png" alt="Lost items icon"><span>Lost Items</span></div>
             </a>
             <a href="admin-Found.html">
-                <div class="nav-button"><img src="images/found item.png" alt=""><span>Found Items</span></div>
+                <div class="nav-button"><img src="images/found item.png" alt="Found items icon"><span>Found Items</span></div>
             </a>
             <a href="admin-match.html"> 
-                <div class="nav-button"><img src="images/matched.png" alt=""><span>Matched Items</span></div>
+                <div class="nav-button"><img src="images/matched.png" alt="Matched items icon"><span>Matched Items</span></div>
             </a>
             <a href="Admin-Report-Item.html">  
-                <div class="nav-button"><img src="images/item report.png" alt=""><span>Report An Item</span></div>
+                <div class="nav-button"><img src="images/item report.png" alt="Report item icon"><span>Report An Item</span></div>
             </a>
             <a href="Admin-reports.html">  
-                <div class="nav-button"><img src="images/report.png" alt=""><span>Reports</span></div>
+                <div class="nav-button"><img src="images/report.png" alt="Reports icon"><span>Reports</span></div>
             </a>
             <a href="admin-accounts.html">  
-                <div class="nav-button active"><img src="images/admin acc.png" alt=""><span>Accounts</span></div>
+                <div class="nav-button active"><img src="images/admin acc.png" alt="Accounts icon"><span>Accounts</span></div>
             </a>
-        
-          <hr/>
-          <div class="nav-button" id="logout-btn">
-            <img src="images/logout.png" alt=""><span>Logout</span>
-          </div>
-          <div id="nav-content-highlight"></div>
+            <hr/>
+            <div class="nav-button" id="logout-btn">
+                <img src="images/logout.png" alt="Logout icon"><span>Logout</span>
+            </div>
+            <div id="nav-content-highlight"></div>
         </div>
-        <input id="nav-footer-toggle" type="checkbox"/>
+        <input id="nav-footer-toggle" type="checkbox" aria-label="Toggle footer"/>
         <div id="nav-footer">
             <div id="nav-footer-heading">
-              <div id="nav-footer-avatar"><img src="images/admin acc.png"/></div>
-              <div id="nav-footer-titlebox"><a id="nav-footer-title" >uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>           
+                <div id="nav-footer-avatar"><img src="images/admin acc.png" alt="Admin avatar"/></div>
+                <div id="nav-footer-titlebox"><a id="nav-footer-title">uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>           
             </div>
-          </div>
-      </div>
-      <div class="accounts-content">
+        </div>
+    </div>
+    <div class="accounts-content">
         <a class="back-btn" href="admin-adminAccount.html">Back</a>
         <h1 class="title">Create Admin Account</h1>
-        <div class="create-account-form">
+        <form class="create-account-form">
             <div class="form-group">
                 <label for="firstName">First Name</label>
-                <input type="text" id="firstName" name="firstName" required>
+                <input type="text" id="firstName" name="firstName" required aria-required="true">
             </div>
             <div class="form-group">
                 <label for="middleName">Middle Name</label>
@@ -70,96 +70,42 @@
             </div>
             <div class="form-group">
                 <label for="lastName">Last Name</label>
-                <input type="text" id="lastName" name="lastName" required>
+                <input type="text" id="lastName" name="lastName" required aria-required="true">
             </div>
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" required aria-required="true">
             </div>
             <div class="form-group">
                 <label for="gmail">Gmail</label>
-                <input type="email" id="gmail" name="gmail" placeholder="example@gmail.com" required>
+                <input type="email" id="gmail" name="gmail" placeholder="example@gmail.com" pattern="[a-zA-Z0-9._%+-]+@gmail\.com" title="Please enter a valid Gmail address" required aria-required="true">
             </div>
             <div class="form-group password-group">
                 <label for="password">Password</label>
                 <div class="password-wrapper">
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required aria-required="true">
                     <button type="button" class="toggle-password" aria-label="Toggle password visibility">Show</button>
                 </div>
             </div>
             <div class="form-group password-group">
                 <label for="confirmPassword">Confirm Password</label>
                 <div class="password-wrapper">
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required aria-required="true">
                     <button type="button" class="toggle-password" aria-label="Toggle password visibility">Show</button>
                 </div>
             </div>
             <div class="form-group">
                 <label for="security-question">Security Question</label>
-                <input type="text" id="security-question" name="security-question" placeholder="Enter your security question" required>
+                <input type="text" id="security-question" name="security-question" placeholder="Enter your security question" required aria-required="true">
             </div>
             <div class="form-group">
                 <label for="security-answer">Answer</label>
-                <input type="text" id="security-answer" name="security-answer" required>
+                <input type="text" id="security-answer" name="security-answer" required aria-required="true">
             </div>
             <button type="submit" class="create-btn">Create</button>
-        </div>
-      </div>
-    
-      <!-- Modal for messages -->
-      <div id="messageModal" class="modal">
-          <div class="modal-content">
-              <span id="closeMessageModal" class="close">×</span>
-              <p id="messageText"></p>
-          </div>
-      </div>
+        </form>
+    </div>
 
     <script src="scripts/admin-login.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            if (!localStorage.getItem("loggedInAdmin")) {
-                window.location.href = "admin-login.html";
-            }
-
-            const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
-            if (loggedInAdminUsername) {
-                const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
-                if (adminData && adminData.accountType === 'admin') {
-                    const fullName = `${adminData.firstName}`;
-                    const navFooterTitle = document.getElementById("nav-footer-title");
-                    if (navFooterTitle) {
-                        navFooterTitle.textContent = fullName;
-                        navFooterTitle.href = "#";
-                    }
-                }
-            }
-
-            const logoutButton = document.getElementById("logout-btn");
-            if (logoutButton) {
-                logoutButton.addEventListener("click", function () {
-                    document.body.classList.add("fade-out");
-                    setTimeout(function () {
-                        localStorage.removeItem("loggedInAdmin");
-                        const inputs = document.querySelectorAll("input");
-                        inputs.forEach(input => {
-                            input.value = "";
-                        });
-                        window.location.href = "admin-login.html";
-                    }, 1000);
-                });
-            }
-
-            // Password toggle functionality
-            const toggleButtons = document.querySelectorAll('.toggle-password');
-            toggleButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const passwordInput = this.previousElementSibling;
-                    const isPassword = passwordInput.type === 'password';
-                    passwordInput.type = isPassword ? 'text' : 'password';
-                    this.textContent = isPassword ? 'Hide' : 'Show';
-                });
-            });
-        });
-    </script>
 </body>
 </html>

@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accounts</title> 
     <link rel="stylesheet" href="Styles/Pages/admin-accounts.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div id="nav-bar">
         <input id="nav-toggle" type="checkbox"/>
         <div id="nav-header">
             <div id="nav-logo-container">
-              <a id="nav-title" href="https://codepen.io" target="_blank">
+              <a id="nav-title" target="_blank">
                 <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
                 Lost & Found
               </a>
@@ -80,60 +81,67 @@
     </div>
 
     <script>
-         if (!localStorage.getItem("loggedInAdmin")) {
-           
-           window.location.href = "admin-login.html";
-       }
-         function toggleMenu() {
-            let sidebar = document.getElementById("sidebar");
-            sidebar.classList.toggle("collapsed");
-        }
+        if (!localStorage.getItem("loggedInAdmin")) {
+    window.location.href = "admin-login.html";
+}
 
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = "block";
-        }
+function toggleMenu() {
+    let sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("collapsed");
+}
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = "none";
-        }
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = "block";
+}
 
-        document.addEventListener("DOMContentLoaded", function () {
-    
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Page loaded, initializing...");
     const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
-
 
     if (loggedInAdminUsername) {
         const adminData = JSON.parse(localStorage.getItem(loggedInAdminUsername));
         if (adminData && adminData.accountType === 'admin') {
-        
-            const fullName = `${adminData.firstName} `;
-        
+            const fullName = `${adminData.firstName}`;
             const navFooterTitle = document.getElementById("nav-footer-title");
             if (navFooterTitle) {
                 navFooterTitle.textContent = fullName;
-            
-                navFooterTitle.href = "#"; 
+                navFooterTitle.href = "#";
             }
         }
     }
 
-    
     const logoutButton = document.getElementById("logout-btn");
-
     if (logoutButton) {
         logoutButton.addEventListener("click", function () {
-            document.body.classList.add("fade-out");
-
-            setTimeout(function () {
-                localStorage.removeItem("loggedInAdmin");
-
-                const inputs = document.querySelectorAll("input");
-                inputs.forEach(input => {
-                    input.value = "";
-                });
-
-                window.location.href = "admin-login.html";
-            }, 1000);
+            // Show SweetAlert2 confirmation dialog
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to log out?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, log out",
+                cancelButtonText: "Cancel",
+              
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log("Logout confirmed, proceeding...");
+                    document.body.classList.add("fade-out");
+                    setTimeout(function () {
+                        localStorage.removeItem("loggedInAdmin");
+                        const inputs = document.querySelectorAll("input");
+                        inputs.forEach(input => input.value = "");
+                        window.location.href = "admin-login.html";
+                    }, 1000);
+                } else {
+                    console.log("Logout cancelled by user.");
+                }
+            });
         });
     }
 });

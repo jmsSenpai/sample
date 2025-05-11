@@ -291,6 +291,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            // Validate file size (5MB = 5 * 1024 * 1024 bytes)
+            const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+            if (file.size > maxSize) {
+                showMessage("The uploaded image must be less than 5MB.");
+                idFileInput.value = ''; // Clear the input
+                return;
+            }
+
+            // Validate file type (optional, since accept attribute is used)
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+            if (!allowedTypes.includes(file.type)) {
+                showMessage("Please upload a valid image file (PNG, JPEG, or JPG).");
+                idFileInput.value = ''; // Clear the input
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function (e) {
                 const idImage = e.target.result;

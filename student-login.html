@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="Styles/Pages/student-login.css">
     <title>Student Login</title>
-   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
@@ -30,8 +29,8 @@
                             <span class="toggle-password" data-target="confirm-password">Show</span>
                         </div>
                         <div class="file-wrapper">
-                            <label for="student-id">Upload Student ID</label>
-                            <input type="file" id="student-id" />
+                            <label for="student-id">Upload Student ID (Max 5MB, Image Only)</label>
+                            <input type="file" id="student-id" accept="image/png, image/jpeg, image/jpg" />
                         </div>
                         <div class="security-wrapper">
                             <input type="text" id="security-question" placeholder="security question" autocomplete="off" />
