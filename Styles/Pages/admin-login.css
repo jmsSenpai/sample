@@ -464,7 +464,6 @@ label {
 }
 
 .password-wrapper {
-  
   width: 100%;
 }
 
@@ -530,4 +529,71 @@ input[type="file"] {
 
 input[type="file"]:hover {
   background-color: rgba(246, 187, 142, 0.6);
+}
+
+/* Logo container styles */
+.logo-container {
+  background-color: #FFFFE3;
+  border-radius: 50%;
+  width: 250px;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  z-index: 101;
+}
+
+.logo {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: contain;
+}
+
+/* Ensure overlay-right is visible */
+.overlay-right {
+  right: 0;
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Responsive adjustments for logo */
+@media (max-width: 768px) {
+  .logo-container {
+    width: 120px;
+    height: 120px;
+  }
+
+  .logo {
+    max-width: 80px;
+    max-height: 80px;
+  }
+
+  .overlay-container {
+    left: 60%;
+    width: 40%;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .logo {
+    max-width: 60px;
+    max-height: 60px;
+  }
+
+  .overlay-container {
+    left: 50%;
+    width: 50%;
+  }
+
+  .sign-in-container {
+    left: 0;
+    width: 100%;
+  }
 }

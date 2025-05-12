@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="Styles/Pages/admin-login.css">
   <title>Admin Login</title>
-  <!-- Include SweetAlert2 CSS -->
+ 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
     <div class="form-container sign-in-container">
       <form id="signInForm">
         <h1>Sign in</h1>
-        <input type="text" placeholder="Username" id="admin-email" autocomplete="off" /><br>
+        <input type="text" placeholder="Username or Email" id="admin-email" autocomplete="off" /><br>
         <div class="password-wrapper">
           <input type="password" placeholder="Password" id="admin-pass" autocomplete="off" aria-describedby="toggle-admin-pass-desc" />
           <span class="toggle-password" data-target="admin-pass" role="button" aria-label="Show password" aria-controls="admin-pass">Show</span>
@@ -26,7 +26,11 @@
     <div class="overlay-container">
       <div class="overlay">
         <div class="overlay-panel overlay-left"></div>
-        <div class="overlay-panel overlay-right"></div>
+        <div class="overlay-panel overlay-right">
+          <div class="logo-container">
+            <img src="images/client-logo.png" alt="Logo" class="logo">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -35,7 +39,7 @@
     <div class="modal-content">
       <span id="closeModal" class="close">×</span>
       <div id="security-fields">
-        <input type="text" id="forgot-email" placeholder="Username" />
+        <input type="text" id="forgot-email" placeholder="Username or email" />
         <button id="getOtpBtn">Get OTP</button>
         <button id="securityQuestionBtn">Security Question</button>
         <input type="text" id="forgot-question" placeholder="Enter your security question" style="display: none;" />

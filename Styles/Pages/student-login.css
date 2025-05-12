@@ -225,6 +225,24 @@ input[type="file"] {
 	transition: transform 0.6s ease-in-out;
 }
 
+.overlay-right {
+	right: 0;
+	transform: translateX(0);
+}
+
+.container.right-panel-active .overlay-right {
+	transform: translateX(0);
+	opacity: 1;
+}
+
+.overlay-left {
+	transform: translateX(-20%);
+}
+
+.container.right-panel-active .overlay-left {
+	transform: translateX(0);
+}
+
 #student-email {
 	height: 38px;
 	width: 70%;
@@ -327,7 +345,7 @@ input[type="file"] {
 
 .password-wrapper input[type="password"],
 .password-wrapper input[type="text"] {
-	padding-right: 40px; /* Space for the eye icon */
+	padding-right: 40px;
 }
 
 .toggle-password {
@@ -344,15 +362,10 @@ input[type="file"] {
 	margin-bottom: 15px;
 }
 
-.password-wrapper {
-	position: relative;
-	width: 100%;
-}
-
 .password-wrapper input {
 	width: 100%;
 	padding: 8px;
-	padding-right: 60px; /* Space for the toggle text */
+	padding-right: 60px;
 }
 
 .toggle-password {
@@ -364,4 +377,81 @@ input[type="file"] {
 	font-size: 14px;
 	color: #333;
 	user-select: none;
+}
+
+.logo-container {
+	background-color: #FFFFE3;
+	border-radius: 50%;
+	width: 250px;
+	height: 250px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	margin: 20px auto;
+	z-index: 101;
+}
+
+.logo {
+	max-width: 200px;
+	max-height: 200px;
+	object-fit: contain;
+}
+
+/* Ensure overlay-right is visible for sign-in */
+.container .overlay-right {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.logo-container {
+			width: 120px;
+			height: 120px;
+	}
+
+	.logo {
+			max-width: 80px;
+			max-height: 80px;
+	}
+
+	.overlay-container {
+			left: 60%;
+			width: 40%;
+	}
+
+	.container.right-panel-active .overlay-container {
+			transform: translateX(-150%);
+	}
+}
+
+@media (max-width: 480px) {
+	.logo-container {
+			width: 100px;
+			height: 100px;
+	}
+
+	.logo {
+			max-width: 60px;
+			max-height: 60px;
+	}
+
+	.overlay-container {
+			left: 50%;
+			width: 50%;
+	}
+
+	.container.right-panel-active .overlay-container {
+			transform: translateX(-100%);
+	}
+
+	.sign-in-container {
+			left: 0;
+			width: 100%;
+	}
+
+	.container.right-panel-active .sign-in-container {
+			transform: translateX(0);
+	}
 }

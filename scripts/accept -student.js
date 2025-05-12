@@ -180,7 +180,6 @@ function showModal(studentData) {
     document.getElementById('modal-email').textContent = studentData.email || 'N/A';
     document.getElementById('modal-grade-section').textContent = studentData.gradeSection || 'N/A';
     document.getElementById('modal-username').textContent = studentData.username || 'N/A';
-    document.getElementById('modal-other-info').textContent = studentData.otherInfo || 'N/A';
 
     const idImageContainer = document.getElementById('modal-id-image');
     if (studentData.idImage) {

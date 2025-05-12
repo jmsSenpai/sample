@@ -100,52 +100,79 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // --- Login Function ---
   function handleLogin(event) {
-      event.preventDefault();
-      if (isAnyModalOpen()) {
-          showMessage("Please close all open modals or alerts first.");
-          return;
-      }
+    event.preventDefault();
+    if (isAnyModalOpen()) {
+        showMessage("Please close all open modals or alerts first.");
+        return;
+    }
 
-      const adminEmailInput = document.getElementById("admin-email");
-      const adminPassInput = document.getElementById("admin-pass");
-      const inputUsername = adminEmailInput.value.trim();
-      const password = adminPassInput.value;
-      const now = new Date().getTime();
+    const adminEmailInput = document.getElementById("admin-email");
+    const adminPassInput = document.getElementById("admin-pass");
+    const inputValue = adminEmailInput.value.trim();
+    const password = adminPassInput.value;
+    const now = new Date().getTime();
 
-      if (signInLockedUntil && now < signInLockedUntil) {
-          const seconds = Math.ceil((signInLockedUntil - now) / 1000);
-          showMessage(`Too many attempts. Please try again in ${seconds} second(s).`);
-          return;
-      }
+    if (signInLockedUntil && now < signInLockedUntil) {
+        const seconds = Math.ceil((signInLockedUntil - now) / 1000);
+        showMessage(`Too many attempts. Please try again in ${seconds} second(s).`);
+        return;
+    }
 
-      let adminData = JSON.parse(localStorage.getItem(inputUsername));
+    if (!inputValue || !password) {
+        showMessage("Please enter username/Gmail and password.");
+        return;
+    }
 
-      if (adminData && adminData.accountType === "admin") {
-          if (adminData.password === password) {
-              localStorage.setItem("loggedInAdmin", inputUsername);
-              showMessage("Login successful!", true, true);
-              setTimeout(() => (window.location.href = "admin-dashboard.html"), 2000);
-          } else {
-              showMessage("Incorrect password.");
-              adminPassInput.select();
-              signInAttempts++;
-              if (signInAttempts >= 5) {
-                  signInLockedUntil = now + 60000;
-                  showMessage("Too many failed attempts. Try again in 1 minute.");
-              }
-              adminPassInput.value = "";
-          }
-      } else {
-          showMessage("No account found with this username.");
-          adminEmailInput.value = "";
-          adminPassInput.value = "";
-          signInAttempts++;
-          if (signInAttempts >= 5) {
-              signInLockedUntil = now + 60000;
-              showMessage("Too many failed attempts. Try again in 1 minute.");
-          }
-      }
-  }
+    let adminData = null;
+    let matchedUsername = null;
+
+    // Iterate through localStorage to find a matching username or Gmail
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key === "loggedInAdmin") continue;
+
+        try {
+            const data = JSON.parse(localStorage.getItem(key));
+            if (
+                data.accountType === "admin" &&
+                (data.username === inputValue || data.gmail === inputValue)
+            ) {
+                adminData = data;
+                matchedUsername = key;
+                break;
+            }
+        } catch (e) {
+            console.warn(`Skipping invalid JSON for key: ${key}`);
+            continue;
+        }
+    }
+
+    if (adminData) {
+        if (adminData.password === password) {
+            localStorage.setItem("loggedInAdmin", matchedUsername);
+            showMessage("Login successful!", true, true);
+            setTimeout(() => (window.location.href = "admin-dashboard.html"), 2000);
+        } else {
+            showMessage("Incorrect password.");
+            adminPassInput.select();
+            signInAttempts++;
+            if (signInAttempts >= 5) {
+                signInLockedUntil = now + 60000;
+                showMessage("Too many failed attempts. Try again in 1 minute.");
+            }
+            adminPassInput.value = "";
+        }
+    } else {
+        showMessage("No account found with this username or Gmail.");
+        adminEmailInput.value = "";
+        adminPassInput.value = "";
+        signInAttempts++;
+        if (signInAttempts >= 5) {
+            signInLockedUntil = now + 60000;
+            showMessage("Too many failed attempts. Try again in 1 minute.");
+        }
+    }
+}
 
   // --- Forgot Password Function ---
   async function handleForgotPassword() {
@@ -491,49 +518,69 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const getOtpBtn = document.getElementById("getOtpBtn");
   if (getOtpBtn) {
-      getOtpBtn.addEventListener("click", async function () {
-          console.log("Get OTP button clicked");
-          const username = document.getElementById("forgot-email").value.trim();
-          const now = new Date().getTime();
+    getOtpBtn.addEventListener("click", async function () {
+        console.log("Get OTP button clicked");
+        const inputValue = document.getElementById("forgot-email").value.trim();
+        const now = new Date().getTime();
 
-          if (forgotLockedUntil && now < forgotLockedUntil) {
-              const seconds = Math.ceil((forgotLockedUntil - now) / 1000);
-              showMessage(`Too many attempts. Please try again in ${seconds} second(s).`);
-              return;
-          }
+        if (forgotLockedUntil && now < forgotLockedUntil) {
+            const seconds = Math.ceil((forgotLockedUntil - now) / 1000);
+            showMessage(`Too many attempts. Please try again in ${seconds} second(s).`);
+            return;
+        }
 
-          if (lastEmailSent && now < lastEmailSent + 120000) {
-              const seconds = Math.ceil((lastEmailSent + 120000 - now) / 1000);
-              showMessage(`Please wait ${seconds} second(s) before requesting another code.`);
-              return;
-          }
+        if (lastEmailSent && now < lastEmailSent + 120000) {
+            const seconds = Math.ceil((lastEmailSent + 120000 - now) / 1000);
+            showMessage(`Please wait ${seconds} second(s) before requesting another code.`);
+            return;
+        }
 
-          if (!username) {
-              showMessage("Please enter your username.");
-              return;
-          }
+        if (!inputValue) {
+            showMessage("Please enter your username or Gmail.");
+            return;
+        }
 
-          const adminData = JSON.parse(localStorage.getItem(username));
-          if (!adminData || adminData.accountType !== "admin") {
-              showMessage("No admin account found with this username.");
-              return;
-          }
+        let adminData = null;
+        let matchedUsername = null;
 
-          currentUsername = username;
-          currentStage = 'code';
-          document.getElementById("security-fields").style.display = "none";
-          document.getElementById("verification-fields").style.display = "block";
-          const success = await sendVerificationCode(adminData.gmail, username);
-          if (!success) {
-              currentStage = 'initial';
-              document.getElementById("security-fields").style.display = "block";
-              document.getElementById("verification-fields").style.display = "none";
-              lastEmailSent = null;
-          }
-      });
-  } else {
-      console.error("Get OTP button not found");
-  }
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key === "loggedInAdmin") continue;
+
+            try {
+                const data = JSON.parse(localStorage.getItem(key));
+                if (
+                    data.accountType === "admin" &&
+                    (data.username === inputValue || data.gmail === inputValue)
+                ) {
+                    adminData = data;
+                    matchedUsername = key;
+                    break;
+                }
+            } catch (e) {
+                console.warn(`Skipping invalid JSON for key: ${key}`);
+                continue;
+            }
+        }
+
+        if (!adminData || adminData.accountType !== "admin") {
+            showMessage("No admin account found with this username or Gmail.");
+            return;
+        }
+
+        currentUsername = matchedUsername;
+        currentStage = 'code';
+        document.getElementById("security-fields").style.display = "none";
+        document.getElementById("verification-fields").style.display = "block";
+        const success = await sendVerificationCode(adminData.gmail, matchedUsername);
+        if (!success) {
+            currentStage = 'initial';
+            document.getElementById("security-fields").style.display = "block";
+            document.getElementById("verification-fields").style.display = "none";
+            lastEmailSent = null;
+        }
+    });
+}
 
   const securityQuestionBtn = document.getElementById("securityQuestionBtn");
   if (securityQuestionBtn) {

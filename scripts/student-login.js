@@ -349,18 +349,46 @@ document.addEventListener("DOMContentLoaded", function () {
                 showMessage("Please close all open modals or alerts first.");
                 return;
             }
-
-            const username = studentEmailInput.value.trim();
+    
+            const inputValue = studentEmailInput.value.trim();
             const password = studentPassInput.value;
-            const studentData = JSON.parse(localStorage.getItem(username));
             const now = new Date().getTime();
-
+    
             if (lockedUntil && now < lockedUntil) {
                 const seconds = Math.ceil((lockedUntil - now) / 1000);
                 showMessage(`Too many attempts. Please try again in ${seconds} second(s).`);
                 return;
             }
-
+    
+            if (!inputValue || !password) {
+                showMessage("Please enter both username/email and password.");
+                return;
+            }
+    
+            let studentData = null;
+            let matchedUsername = null;
+    
+            // Iterate through localStorage to find a matching username or email
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key === "loggedInAdmin") continue;
+    
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    if (
+                        data.accountType === "student" &&
+                        (data.username === inputValue || data.email === inputValue)
+                    ) {
+                        studentData = data;
+                        matchedUsername = key;
+                        break;
+                    }
+                } catch (e) {
+                    console.warn(`Skipping invalid JSON for key: ${key}`);
+                    continue;
+                }
+            }
+    
             if (studentData) {
                 if (studentData.password === password) {
                     if (studentData.accepted) {
@@ -385,7 +413,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     studentPassInput.value = '';
                 }
             } else {
-                showMessage("No account found with this username.");
+                showMessage("No account found with this username or email.");
                 studentEmailInput.value = '';
                 studentPassInput.value = '';
                 attempts++;
@@ -421,37 +449,60 @@ document.addEventListener("DOMContentLoaded", function () {
     if (getOtpBtn) {
         getOtpBtn.addEventListener("click", async function () {
             console.log("Get OTP button clicked");
-            const username = document.getElementById("forgot-email").value.trim();
+            const inputValue = document.getElementById("forgot-email").value.trim();
             const now = new Date().getTime();
-
+    
             if (lockedUntil && now < lockedUntil) {
                 const seconds = Math.ceil((lockedUntil - now) / 1000);
                 showMessage(`Too many attempts. Please try again in ${seconds} second(s).`);
                 return;
             }
-
+    
             if (lastEmailSent && now < lastEmailSent + 120000) {
                 const seconds = Math.ceil((lastEmailSent + 120000 - now) / 1000);
                 showMessage(`Please wait ${seconds} second(s) before requesting another code.`);
                 return;
             }
-
-            if (!username) {
-                showMessage("Please enter your username.");
+    
+            if (!inputValue) {
+                showMessage("Please enter your username or email.");
                 return;
             }
-
-            const studentData = JSON.parse(localStorage.getItem(username));
+    
+            let studentData = null;
+            let matchedUsername = null;
+    
+            // Iterate through localStorage to find a matching username or email
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key === "loggedInAdmin") continue;
+    
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    if (
+                        data.accountType === "student" &&
+                        (data.username === inputValue || data.email === inputValue)
+                    ) {
+                        studentData = data;
+                        matchedUsername = key;
+                        break;
+                    }
+                } catch (e) {
+                    console.warn(`Skipping invalid JSON for key: ${key}`);
+                    continue;
+                }
+            }
+    
             if (!studentData || studentData.accountType !== "student") {
-                showMessage("No student account found with this username.");
+                showMessage("No student account found with this username or email.");
                 return;
             }
-
-            currentUsername = username;
+    
+            currentUsername = matchedUsername;
             currentStage = 'code';
             securityFields.style.display = "none";
             verificationFields.style.display = "block";
-            const success = await sendVerificationCode(studentData.email, username);
+            const success = await sendVerificationCode(studentData.email, matchedUsername);
             if (!success) {
                 currentStage = 'initial';
                 securityFields.style.display = "block";
@@ -459,28 +510,49 @@ document.addEventListener("DOMContentLoaded", function () {
                 lastEmailSent = null;
             }
         });
-    } else {
-        console.error("Get OTP button not found");
     }
 
     const securityQuestionBtn = document.getElementById("securityQuestionBtn");
     if (securityQuestionBtn) {
         securityQuestionBtn.addEventListener("click", function () {
-            console.log("Security Question button clicked");
-            const username = document.getElementById("forgot-email").value.trim();
-
-            if (!username) {
-                showMessage("Please enter your username.");
+            console.log(" The Security Question button was clicked");
+            const inputValue = document.getElementById("forgot-email").value.trim();
+    
+            if (!inputValue) {
+                showMessage("Please enter your username or email.");
                 return;
             }
-
-            const studentData = JSON.parse(localStorage.getItem(username));
+    
+            let studentData = null;
+            let matchedUsername = null;
+    
+            // Iterate through localStorage to find a matching username or email
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key === "loggedInAdmin") continue;
+    
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    if (
+                        data.accountType === "student" &&
+                        (data.username === inputValue || data.email === inputValue)
+                    ) {
+                        studentData = data;
+                        matchedUsername = key;
+                        break;
+                    }
+                } catch (e) {
+                    console.warn(`Skipping invalid JSON for key: ${key}`);
+                    continue;
+                }
+            }
+    
             if (!studentData || studentData.accountType !== "student") {
-                showMessage("No student account found with this username.");
+                showMessage("No student account found with this username or email.");
                 return;
             }
-
-            currentUsername = username;
+    
+            currentUsername = matchedUsername;
             currentStage = 'security';
             const questionInput = document.getElementById("forgot-question");
             const answerInput = document.getElementById("forgot-answer");

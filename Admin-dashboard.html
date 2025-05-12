@@ -97,6 +97,14 @@
     </div>
 
     <script>
+
+document.querySelectorAll('.nav-button').forEach(button => {
+  button.addEventListener('click', () => {
+    document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+  });
+});
+
          if (!localStorage.getItem("loggedInAdmin")) {
             window.location.href = "admin-login.html";
         }
