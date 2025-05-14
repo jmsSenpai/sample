@@ -17,12 +17,14 @@ function displayMatchedItems() {
     const matchedListDiv = document.getElementById("matched-list");
     matchedListDiv.innerHTML = "";
 
-    if (matchedItems.length === 0) {
+    const visibleMatchedItems = matchedItems.filter(match => match.isVisible !== false);
+
+    if (visibleMatchedItems.length === 0) {
         matchedListDiv.innerHTML = "<p>No matched items yet.</p>";
         return;
     }
 
-    matchedItems.forEach((match, index) => {
+    visibleMatchedItems.forEach((match, index) => {
         const lost = lostItems.find(item => item.idLost === match.lostID);
         const found = foundItems.find(item => item.idFound === match.foundID);
 
@@ -43,7 +45,7 @@ function displayMatchedItems() {
                 <strong>Lost:</strong> ${lost.itemName} - ${lost.description || "No description"} (Reported: ${lost.timeReported || 'N/A'})<br>
                 <strong>Found:</strong> ${found.itemName} - ${found.description || "No description"} (Reported: ${found.timeReported || 'N/A'})<br>
                 <button class="view-button" onclick="openModal(${match.lostID}, ${match.foundID})">View Match</button>
-                <button class="match-button" data-lostid="${lost.idLost}" data-foundid="${found.idFound}">Send Match Email</button>
+                <button class="match-button ${match.emailSent ? 'disabled-button' : ''}" data-lostid="${lost.idLost}" data-foundid="${found.idFound}">${match.emailSent ? 'Claimed' : 'Send Match Email'}</button>
             </div>
             <div class="item-section">
                 <img src="${found.image || 'images/default-image.png'}" alt="Found Image" onclick="previewImage('${found.image || 'images/default-image.png'}')">
@@ -53,15 +55,42 @@ function displayMatchedItems() {
         matchedListDiv.appendChild(itemDiv);
     });
 
+    // Re-attach event listeners to match buttons
     const matchButtons = document.querySelectorAll('.match-button');
     matchButtons.forEach(button => {
         button.addEventListener('click', function () {
             const lostID = Number(this.getAttribute('data-lostid'));
             const foundID = Number(this.getAttribute('data-foundid'));
+            const isClaimed = this.classList.contains('disabled-button');
+            console.log(`Match button clicked: lostID=${lostID}, foundID=${foundID}, isClaimed=${isClaimed}`);
+
+            if (isClaimed) {
+                // Prompt for claim confirmation
+                Swal.fire({
+                    title: 'Confirm Claim',
+                    text: 'Is this item claimed by the student?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, item is claimed',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        console.log(`Confirming claim for lostID=${lostID}, foundID=${foundID}`);
+                        confirmClaim(lostID, foundID);
+                    } else {
+                        console.log('Claim confirmation cancelled');
+                    }
+                });
+                return;
+            }
+
             const lostItem = lostItems.find(item => item.idLost === lostID);
             const foundItem = foundItems.find(item => item.idFound === foundID);
 
             if (lostItem && lostItem.ownerEmail && foundItem) {
+                console.log(`Sending email for lostID=${lostID}, email=${lostItem.ownerEmail}`);
                 fetch('http://localhost:3000/send-matched-email', {
                     method: 'POST',
                     headers: {
@@ -73,8 +102,22 @@ function displayMatchedItems() {
                         itemName: lostItem.itemName
                     })
                 })
-                    .then(response => response.text())
+                    .then(response => {
+                        if (!response.ok) throw new Error('Email send failed');
+                        return response.text();
+                    })
                     .then(data => {
+                        // Update matchedItems to mark email as sent
+                        const matchedItems = JSON.parse(localStorage.getItem('matchedItems')) || [];
+                        const matchIndex = matchedItems.findIndex(m => m.lostID === lostID && m.foundID === foundID);
+                        if (matchIndex !== -1) {
+                            matchedItems[matchIndex].emailSent = true;
+                            localStorage.setItem('matchedItems', JSON.stringify(matchedItems));
+                            console.log(`Email sent, updated match at index ${matchIndex}: emailSent=true`);
+                        } else {
+                            console.warn(`Match not found for lostID=${lostID}, foundID=${foundID}`);
+                        }
+
                         // Update status of lost and found items to "Matched"
                         const lostIndex = lostItems.findIndex(item => item.idLost === lostID);
                         const foundIndex = foundItems.findIndex(item => item.idFound === foundID);
@@ -94,20 +137,97 @@ function displayMatchedItems() {
                         localStorage.setItem('lostItems', JSON.stringify(lostItems));
                         localStorage.setItem('foundItems', JSON.stringify(foundItems));
 
-                        alert('Match email sent successfully and status updated to Matched!');
-                        console.log('Email response:', data);
-
-                        // Refresh the matched items display
-                        displayMatchedItems();
+                        Swal.fire({
+                            title: 'Success',
+                            text: 'Match email sent successfully and status updated to Matched!',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            customClass: {
+                                popup: 'swal-success'
+                            }
+                        }).then(() => {
+                            console.log('Refreshing matched items display after email send');
+                            displayMatchedItems();
+                        });
                     })
                     .catch(error => {
                         console.error('Email error:', error);
-                        alert('Failed to send match email.');
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Failed to send match email.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            customClass: {
+                                popup: 'swal-error'
+                            }
+                        });
                     });
             } else {
-                alert("Email for the lost item or found item data is not available.");
+                console.warn(`Cannot send email: lostItem=${!!lostItem}, ownerEmail=${lostItem?.ownerEmail}, foundItem=${!!foundItem}`);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Email for the lost item or found item data is not available.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        popup: 'swal-error'
+                    }
+                });
             }
         });
+    });
+}
+
+function confirmClaim(lostID, foundID) {
+    console.log(`Executing confirmClaim for lostID=${lostID}, foundID=${foundID}`);
+    const matchedItems = JSON.parse(localStorage.getItem('matchedItems')) || [];
+    const lostItems = JSON.parse(localStorage.getItem('lostItems')) || [];
+    const foundItems = JSON.parse(localStorage.getItem('foundItems')) || [];
+
+    // Update matched item
+    const matchIndex = matchedItems.findIndex(m => m.lostID === lostID && m.foundID === foundID);
+    if (matchIndex !== -1) {
+        matchedItems[matchIndex].isVisible = false;
+        matchedItems[matchIndex].isConfirmed = true;
+        localStorage.setItem('matchedItems', JSON.stringify(matchedItems));
+        console.log(`Updated matched item at index ${matchIndex}: isVisible=false, isConfirmed=true`);
+    } else {
+        console.warn(`Match not found for lostID=${lostID}, foundID=${foundID}`);
+    }
+
+    // Update lost item
+    const lostIndex = lostItems.findIndex(item => item.idLost === lostID);
+    if (lostIndex !== -1) {
+        lostItems[lostIndex].isVisible = false;
+        lostItems[lostIndex].status = "Claimed";
+        localStorage.setItem('lostItems', JSON.stringify(lostItems));
+        console.log(`Updated lost item at index ${lostIndex}: isVisible=false, status=Claimed`);
+    } else {
+        console.warn(`Lost item ${lostID} not found`);
+    }
+
+    // Update found item
+    const foundIndex = foundItems.findIndex(item => item.idFound === foundID);
+    if (foundIndex !== -1) {
+        foundItems[foundIndex].isVisible = false;
+        foundItems[foundIndex].status = "Claimed";
+        localStorage.setItem('foundItems', JSON.stringify(foundItems));
+        console.log(`Updated found item at index ${foundIndex}: isVisible=false, status=Claimed`);
+    } else {
+        console.warn(`Found item ${foundID} not found`);
+    }
+
+    Swal.fire({
+        title: 'Item Claimed',
+        text: 'The item has been marked as claimed and removed from Lost, Found, and Matched lists.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        customClass: {
+            popup: 'swal-success'
+        }
+    }).then(() => {
+        console.log('Refreshing matched items display after claim confirmation');
+        displayMatchedItems();
     });
 }
 
@@ -118,7 +238,15 @@ function openModal(lostID, foundID) {
     const found = foundItems.find(item => item.idFound === foundID);
 
     if (!lost || !found) {
-        alert("Cannot display match details: Item data not found.");
+        Swal.fire({
+            title: 'Error',
+            text: 'Cannot display match details: Item data not found.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                popup: 'swal-error'
+            }
+        });
         return;
     }
 
@@ -222,7 +350,10 @@ function match(lostItemlist, foundItemlist) {
                     itemFoundLocation, 
                     itemLostDate, 
                     itemFoundDate,
-                    manual: false
+                    manual: false,
+                    emailSent: false,
+                    isConfirmed: false,
+                    isVisible: true
                 };
                 
                 localStorageMatch.push(matched);

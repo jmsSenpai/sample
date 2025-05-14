@@ -1,4 +1,4 @@
-/* ========== General Styles ========== */
+/* General Styles */
 *,
 *::before,
 *::after {
@@ -39,8 +39,7 @@ img {
     display: block;
 }
 
-/* ----------------------------------- */
-/* Navbar Styles (Updated to Match Previous Files) */
+/* Navbar Styles (Consistent with Admin-reports.css) */
 #nav-toggle:checked ~ #nav-header {
     width: calc(var(--navbar-width-min) - 16px);
 }
@@ -359,7 +358,7 @@ label[for=nav-footer-toggle] {
     cursor: pointer;
 }
 
-/* Media Queries for Navbar Responsiveness (Updated to Match Previous Files) */
+/* Media Queries for Navbar Responsiveness */
 @media screen and (max-width: 1024px) {
     :root {
         --navbar-width: 200px;
@@ -394,7 +393,7 @@ label[for=nav-footer-toggle] {
     }
 }
 
-/* ========== Dashboard Styles (Unchanged) ========== */
+/* Dashboard Styles */
 .dashboard {
     margin-left: var(--navbar-width);
     padding: 2rem;
@@ -416,176 +415,72 @@ label[for=nav-footer-toggle] {
     margin-bottom: 1.5rem;
 }
 
-/* ========== Filters (Unchanged) ========== */
-.filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-    margin-bottom: 2rem;
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
     background: var(--card-background);
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.filters label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-.filters input[type="date"],
-.filters select {
-    padding: 0.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-    background: var(--background);
-    transition: border-color 0.2s;
-}
-
-.filters input[type="date"]:focus,
-.filters select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
-}
-
-.filters button {
-    padding: 0.5rem 1rem;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.filters button:hover {
-    background-color: #1565c0;
-}
-
-/* ========== Toggle Buttons (Unchanged) ========== */
-.toggle-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.toggle-buttons button {
-    padding: 0.5rem 1rem;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.toggle-buttons button:hover {
-    background-color: #1565c0;
-}
-
-.toggle-buttons button.active {
-    background-color: #0d47a1;
-}
-
-/* ========== Reported Sections (Unchanged) ========== */
-.reported-section {
-    background: var(--card-background);
-    padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1.5rem;
-    transition: transform 0.2s;
+    overflow: hidden;
 }
 
-.reported-section.hidden {
-    display: none;
-}
-
-.reported-section:hover {
-    transform: translateY(-2px);
-}
-
-.reported-section h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0 0 1rem;
-    color: var(--text-primary);
-}
-
-.item-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.item-list li {
+th, td {
     padding: 1rem;
-    background: var(--background);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    margin-bottom: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
     font-size: 0.9rem;
-    line-height: 1.5;
-    transition: box-shadow 0.2s;
 }
 
-.item-list li:hover {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+th {
+    background-color: maroon;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.item-list li strong {
+th:hover {
+    background-color: maroon;
+}
+
+td {
     color: var(--text-primary);
-    font-weight: 600;
 }
 
-.item-list li p {
-    margin: 0.25rem 0;
-    color: var(--text-secondary);
+tr:hover {
+    background-color: var(--background);
 }
 
-.item-list li button {
+/* Action Buttons */
+.action-button {
     padding: 0.4rem 0.8rem;
-    margin-right: 0.5rem;
-    margin-top: 0.5rem;
     border: none;
     border-radius: 4px;
     font-size: 0.85rem;
     cursor: pointer;
     transition: background-color 0.2s;
+    margin-right: 0.5rem;
 }
 
-.item-list li button:first-of-type {
+.view-button {
     background-color: var(--primary-color);
     color: white;
 }
 
-.item-list li button:first-of-type:hover {
+.view-button:hover {
     background-color: #1565c0;
 }
 
-.item-list li button:last-of-type {
-    background-color: var(--accent-color);
+.restore-button {
+    background-color: #4caf50;
     color: white;
 }
 
-.item-list li button:last-of-type:hover {
-    background-color: #c0392b;
+.restore-button:hover {
+    background-color: #388e3c;
 }
 
-.matched-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-/* ========== Modals (Unchanged) ========== */
+/* Modals */
 .modal {
     position: fixed;
     top: 0;
@@ -658,22 +553,6 @@ label[for=nav-footer-toggle] {
     object-fit: cover;
 }
 
-.modal-content button {
-    padding: 0.5rem 1rem;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 1rem;
-}
-
-.modal-content button:hover {
-    background-color: #388e3c;
-}
-
 .modal-images {
     display: flex;
     justify-content: space-between;
@@ -710,195 +589,24 @@ label[for=nav-footer-toggle] {
     margin: 1rem 0;
 }
 
-/* ========== Image Modal (for preview) (Unchanged) ========== */
-.image-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 1001;
-    align-items: center;
-    justify-content: center;
-    display: none;
+.color-rectangle {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    margin-left: 5px;
 }
 
-.image-modal img {
+/* Image Modal (for preview) */
+#imageModal .modal-content {
     max-width: 90%;
     max-height: 90%;
-    object-fit: contain;
+    padding: 0;
 }
 
-.image-modal .close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    color: white;
-    font-size: 1.5rem;
-}
-
-/* Tab-specific styles (Unchanged) */
-.tabs {
-    display: flex;
-    margin-bottom: 20px;
-}
-
-.tab-button {
-    padding: 10px 20px;
-    margin-right: 5px;
-    border: none;
-    background-color: #e0e0e0;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 4px 4px 0 0;
-    transition: background-color 0.2s;
-}
-
-.tab-button.active {
-    background-color: #007bff;
-    color: white;
-}
-
-.tab-button:hover {
-    background-color: #d0d0d0;
-}
-
-.tab-pane {
-    display: none;
-}
-
-.tab-pane.active {
-    display: block;
-}
-
-/* Action buttons (View Details, Delete, Print Report) (Unchanged) */
-.action-button {
-    padding: 8px 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s;
-    margin-right: 5px;
-}
-
-.action-button:hover {
-    background-color: #0056b3;
-}
-
-.action-button.delete-button {
-    background-color: #dc3545;
-}
-
-.action-button.delete-button:hover {
-    background-color: #c82333;
-}
-
-.modal-content .action-button {
-    margin-top: 15px;
-    display: inline-block;
-}
-
-/* Ensure modal images and details are styled (Unchanged) */
-.modal-images {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.modal-images img {
-    max-width: 200px;
-    border-radius: 4px;
-}
-
-.modal-details p {
-    margin: 8px 0;
-}
-
-/* ========== Responsive Design (Unchanged Non-Navbar Styles) ========== */
-@media screen and (max-width: 768px) {
-    .dashboard {
-        margin-left: var(--navbar-width-min);
-        padding: 1rem;
-    }
-
-    .dashboard h1 {
-        font-size: 1.75rem;
-    }
-
-    .dashboard h2 {
-        font-size: 1rem;
-    }
-
-    .filters {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .filters input[type="date"],
-    .filters select,
-    .filters button {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-
-    .toggle-buttons {
-        flex-direction: column;
-    }
-
-    .toggle-buttons button {
-        width: 100%;
-    }
-
-    .reported-sections {
-        grid-template-columns: 1fr;
-    }
-
-    .modal-content {
-        width: 95%;
-        padding: 1rem;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .modal-images {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .modal-images img {
-        max-width: 100%;
-    }
-}
-
-/* ========== Animation for Fade Out (Unchanged) ========== */
-@keyframes fadeOut {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-}
-
-.fade-out {
-    animation: fadeOut 1s forwards;
-}
-
-#trash-bin-container {
-    position: fixed;
-    top: 3rem;
-    right: 3rem;
-    z-index: 1001;
-}
-
-#trash-bin-icon {
-    width: 52px;
-    height: 52px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-#trash-bin-icon:hover {
-    opacity: 0.8;
+#imageModal img {
+    max-width: 100%;
+    max-height: 80vh;
+    margin: 0;
 }

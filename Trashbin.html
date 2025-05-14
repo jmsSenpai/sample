@@ -3,49 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Reports</title>
-    <link rel="stylesheet" href="Styles/Pages/Admin-reports.css">
+    <title>Trash Bin</title>
+    <link rel="stylesheet" href="Styles/Pages/Trashbin.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-    <div id="trash-bin-container">
-        <a href="trashbin.html">
-            <img src="images/trash.png" alt="Trash Bin" id="trash-bin-icon">
-        </a>
-    </div>
-
     <div id="nav-bar">
         <input id="nav-toggle" type="checkbox"/>
         <div id="nav-header">
             <div id="nav-logo-container">
-              <a id="nav-title" >
-                <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
-                Lost & Found
-              </a>
+                <a id="nav-title">
+                    <img src="images/client-logo.png" alt="Lost & Found Logo" id="nav-logo">
+                    Lost & Found
+                </a>
             </div>
             <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
             <hr/>
-          </div>
+        </div>
         <div id="nav-content">
-            <a href="Admin-dashboard.html"> 
+            <a href="Admin-dashboard.html">
                 <div class="nav-button"><img src="images/dashboard.png" alt=""><span>Dashboard</span></div>
             </a>
-            <a href="admin-lost.html"> 
+            <a href="admin-lost.html">
                 <div class="nav-button"><img src="images/lost item.png" alt=""><span>Lost Items</span></div>
             </a>
             <a href="admin-Found.html">
                 <div class="nav-button"><img src="images/found item.png" alt=""><span>Found Items</span></div>
             </a>
-            <a href="admin-match.html"> 
+            <a href="admin-match.html">
                 <div class="nav-button"><img src="images/matched.png" alt=""><span>Matched Items</span></div>
             </a>
-            <a href="Admin-Report-Item.html">  
+            <a href="Admin-Report-Item.html">
                 <div class="nav-button"><img src="images/item report.png" alt=""><span>Report An Item</span></div>
             </a>
-            <a href="Admin-reports.html">  
-                <div class="nav-button active"><img src="images/report.png" alt=""><span>Reports</span></div>
+            <a href="Admin-reports.html">
+                <div class="nav-button"><img src="images/report.png" alt=""><span>Reports</span></div>
             </a>
-            <a href="admin-accounts.html">  
+            <a href="admin-accounts.html">
                 <div class="nav-button"><img src="images/admin acc.png" alt=""><span>Accounts</span></div>
             </a>
             <hr/>
@@ -57,62 +51,28 @@
         <input id="nav-footer-toggle" type="checkbox"/>
         <div id="nav-footer">
             <div id="nav-footer-heading">
-              <div id="nav-footer-avatar"><img src="images/admin acc.png"/></div>
-              <div id="nav-footer-titlebox"><a id="nav-footer-title" >uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>           
+                <div id="nav-footer-avatar"><img src="images/admin acc.png"/></div>
+                <div id="nav-footer-titlebox"><a id="nav-footer-title">uahnbu</a><span id="nav-footer-subtitle">Admin</span></div>
             </div>
-          </div>
+        </div>
     </div>
 
     <div class="dashboard">
-        <h1>All Reported Items</h1>
-        <h2>Lost, Found, and Matched Items in the System</h2>
+        <h1>Trash Bin</h1>
+        <h2>Deleted Lost, Found, and Matched Items</h2>
 
-        <!-- Filters -->
-        <div class="filters">
-            <label for="startDate">Start Date:</label>
-            <input type="date" id="startDate">
-            <label for="endDate">End Date:</label>
-            <input type="date" id="endDate">
-            <label for="statusFilter">Status:</label>
-            <select id="statusFilter">
-                <option value="All">All</option>
-                <option value="Pending">Pending</option>
-                <option value="Matched">Matched</option>
-                <option value="Claimed">Claimed</option>
-            </select>
-            <button onclick="applyFilters()">Apply Filters</button>
-        </div>
-
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-button active" onclick="showTab('lostTab')">Lost Items</button>
-            <button class="tab-button" onclick="showTab('foundTab')">Found Items</button>
-            <button class="tab-button" onclick="showTab('matchedTab')">Matched Items</button>
-        </div>
-
-        <div class="tab-content">
-            <div id="lostTab" class="tab-pane active">
-                <div class="tab-header">
-                    <h3>Reported Lost Items</h3>
-                    <button class="action-button" onclick="printAllLostItems()">Print All Reports</button>
-                </div>
-                <ul id="recentLostItems" class="item-list"></ul>
-            </div>
-            <div id="foundTab" class="tab-pane" style="display:none;">
-                <div class="tab-header">
-                    <h3>Reported Found Items</h3>
-                    <button class="action-button" onclick="printAllFoundItems()">Print All Reports</button>
-                </div>
-                <ul id="recentFoundItems" class="item-list"></ul>
-            </div>
-            <div id="matchedTab" class="tab-pane" style="display:none;">
-                <div class="tab-header">
-                    <h3>Matched Items</h3>
-                    <button class="action-button" onclick="printAllMatchedItems()">Print All Reports</button>
-                </div>
-                <ul id="matchedItems" class="item-list"></ul>
-            </div>
-        </div>
+        <table id="trashbinTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Type</th>
+                    <th onclick="sortTable(1)">Name</th>
+                    <th onclick="sortTable(2)">Details</th>
+                    <th onclick="sortTable(3)">Deleted At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="trashbinItems"></tbody>
+        </table>
     </div>
 
     <!-- View Lost Item Modal -->
@@ -130,7 +90,6 @@
             <p><strong>Description:</strong> <span id="viewLostDescription"></span></p>
             <p><strong>Reported By:</strong> <span id="viewLostReportedBy"></span></p>
             <p><strong>Status:</strong> <span id="viewLostStatus"></span></p>
-            <button class="action-button" onclick="printLostItem()">Print Report</button>
         </div>
     </div>
 
@@ -149,7 +108,6 @@
             <p><strong>Description:</strong> <span id="viewFoundDescription"></span></p>
             <p><strong>Reported By:</strong> <span id="viewFoundReportedBy"></span></p>
             <p><strong>Status:</strong> <span id="viewFoundStatus"></span></p>
-            <button class="action-button" onclick="printFoundItem()">Print Report</button>
         </div>
     </div>
 
@@ -187,7 +145,6 @@
                 <p><strong>Date Found:</strong> <span id="viewMatchFoundDate"></span></p>
                 <p><strong>Found Time Reported:</strong> <span id="viewMatchFoundTimeReported"></span></p>
                 <p><strong>Found Reported By:</strong> <span id="viewMatchFoundReportedBy"></span></p>
-                <button class="action-button" onclick="printMatchedItem()">Print Report</button>
             </div>
         </div>
     </div>
@@ -200,8 +157,6 @@
         </div>
     </div>
 
-    
-
-    <script src="scripts/main.js"></script>
+    <script src="scripts/Trashbin.js"></script>
 </body>
 </html>
