@@ -142,10 +142,7 @@ function viewLostItem(id) {
     if (!item) {
         console.error(`Lost item not found. ID: ${id}`);
         Swal.fire({
-            title: 'Error',
-            text: 'Lost item not found.',
-            icon: 'error',
-            confirmButtonText: 'OK'
+            title: 'Error', text: 'Lost item not found.', icon: 'error', confirmButtonText: 'OK'
         });
         return;
     }
@@ -174,10 +171,7 @@ function viewFoundItem(id) {
     if (!item) {
         console.error(`Found item not found. ID: ${id}`);
         Swal.fire({
-            title: 'Error',
-            text: 'Found item not found.',
-            icon: 'error',
-            confirmButtonText: 'OK'
+            title: 'Error', text: 'Found item not found.', icon: 'error', confirmButtonText: 'OK'
         });
         return;
     }
@@ -604,13 +598,9 @@ function deleteFoundItem(id) {
 function deleteMatchedItem(lostID, foundID) {
     console.log(`Initiating delete for matched item with Lost ID: ${lostID}, Found ID: ${foundID}`);
     Swal.fire({
-        title: 'Are you sure?',
-        text: 'This matched item will be moved to the trash bin.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!',
+        title: 'Are you sure?', text: 'This matched item will be moved to the trash bin.',
+        icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6', confirmButtonText: 'Yes, delete it!',
         cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -620,10 +610,7 @@ function deleteMatchedItem(lostID, foundID) {
             if (!match) {
                 console.error(`No matched item found with Lost ID: ${lostID}, Found ID: ${foundID}`);
                 Swal.fire({
-                    title: 'Error',
-                    text: 'No matched item found to delete.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
+                    title: 'Error', ext: 'No matched item found to delete.', icon: 'error', confirmButtonText: 'OK'
                 });
                 return;
             }
@@ -632,18 +619,14 @@ function deleteMatchedItem(lostID, foundID) {
 
             let trashbinItems = JSON.parse(localStorage.getItem("trashbinItems")) || [];
             trashbinItems.push({
-                type: 'matched',
-                item: match,
-                deletedAt: new Date().toISOString()
+                type: 'matched', item: match, deletedAt: new Date().toISOString()
             });
             localStorage.setItem("trashbinItems", JSON.stringify(trashbinItems));
             console.log(`Matched item moved to trash bin. Trash bin items: ${trashbinItems.length}`);
 
             Swal.fire({
-                title: 'Deleted!',
-                text: 'The matched item has been moved to the trash bin.',
-                icon: 'success',
-                confirmButtonText: 'OK'
+                title: 'Deleted!', text: 'The matched item has been moved to the trash bin.',
+                icon: 'success', confirmButtonText: 'OK'
             }).then(() => {
                 location.reload();
             });
@@ -684,14 +667,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (logoutButton) {
         logoutButton.addEventListener("click", function () {
             Swal.fire({
-                title: "Are you sure?",
-                text: "Do you want to log out?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, log out",
-                cancelButtonText: "Cancel"
+                title: "Are you sure?", text: "Do you want to log out?", icon: "warning",
+                showCancelButton: true, confirmButtonColor: "#d33", cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, log out", cancelButtonText: "Cancel"
             }).then((result) => {
                 if (result.isConfirmed) {
                     console.log("Logout confirmed, proceeding...");

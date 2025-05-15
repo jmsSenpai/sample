@@ -1,0 +1,90 @@
+Node.js Server Setup and Installation Guide
+This README provides instructions for setting up and running the Node.js server for the web application. The server uses Express.js and Nodemailer to handle API requests and send emails.
+Prerequisites
+Before running the server, ensure the following are installed on your system:
+
+Node.js: Version 14.x or higher. Download and install from nodejs.org. Verify with node -v and npm -v.
+npm: Node Package Manager, included with Node.js installation.
+Git: Optional, for cloning the repository. Download from git-scm.com.
+
+Installation Steps
+
+Clone the Repository (if applicable):
+git clone <repository-url>
+cd <repository-directory>
+
+
+Initialize a Node.js Project (if not already done):If a package.json file does not exist, create one by running:
+npm init -y
+
+This generates a default package.json file.
+
+Install Dependencies:Run the following command to install the required Node.js packages:
+npm install express cors body-parser nodemailer dotenv
+
+This installs the following dependencies, which will be listed in package.json:
+
+express: Web framework for Node.js.
+cors: Middleware for enabling Cross-Origin Resource Sharing.
+body-parser: Middleware for parsing JSON request bodies.
+nodemailer: Module for sending emails.
+dotenv: Module for loading environment variables from a .env file.
+
+
+Set Up Environment Variables:Create a .env file in the root directory of the project and add the following:
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-specific-password
+
+
+Replace your-email@gmail.com with your Gmail address.
+Replace your-app-specific-password with an App Password generated from your Google Account settings (required for Gmail's Nodemailer integration).
+
+
+Verify Installation:Ensure all dependencies are installed by checking the node_modules folder and package.json in your project directory. The dependencies section in package.json should include:
+"dependencies": {
+  "body-parser": "^1.20.3",
+  "cors": "^2.8.5",
+  "dotenv": "^16.4.5",
+  "express": "^4.21.1",
+  "nodemailer": "^6.9.15"
+}
+
+
+
+Running the Server
+
+Install PM2 (if not already installed):PM2 is a process manager for Node.js applications, recommended for running the server in a production-like environment. Install it globally with:
+npm install -g pm2
+
+
+Start the Server:Run the following command to start the server using PM2:
+pm2 start server.js
+
+Alternatively, you can start the server directly with Node.js:
+node server.js
+
+The server will start on http://localhost:3000 (or the port specified in the code, e.g., PORT=3000).
+
+Test the Server:
+
+Open a browser or use a tool like Postman to visit http://localhost:3000/. You should see the message: Server is running.
+Test email endpoints (e.g., /send-matched-email, /send-acceptance-email, /send-rejection-email, /send-verification-code) by sending POST requests with the required JSON payload.
+
+
+
+Troubleshooting
+
+Port Conflict: If port 3000 is in use, update the PORT variable in server.js to an available port or ensure no other application is using port 3000.
+Email Sending Issues: Verify the .env file contains valid Gmail credentials and an App Password. Check the console for error messages from Nodemailer.
+Module Not Found: Run npm install again to ensure all dependencies are installed. Ensure you're in the correct project directory.
+Firewall/Port: Ensure port 3000 is not blocked by your firewall.
+PM2 Issues: If PM2 fails to start, verify it’s installed (pm2 --version) and check logs with pm2 logs.
+
+Additional Notes
+
+The server is configured to handle CORS requests, allowing cross-origin API calls.
+Ensure a stable internet connection for Nodemailer to send emails via Gmail's SMTP server.
+For production, PM2 is recommended as it provides process management, automatic restarts, and logging. Use pm2 logs to monitor the server and pm2 stop server.js to stop it.
+Secure the server with HTTPS in production environments.
+Code Consolidation: The server code includes multiple Express setups, which may cause conflicts (e.g., multiple servers on port 3000). Consider consolidating all endpoints into a single server.js file with one app.listen(PORT).
+
